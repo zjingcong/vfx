@@ -24,7 +24,7 @@ class Renderer
 
   private:
     float delta_s;
-		Color rendering(const Vector& x0, const Vector& np, float s_far_near, float rho, Color color, float K, float delta_s);
+		Color rendering(const Vector& x0, const Vector& np, float s_far_near, float rho, Color color, float K, float delta_s, Sphere sphere);
 };
 
 #endif

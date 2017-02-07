@@ -25,7 +25,7 @@ int main()
 	Color redColor(255.0, 0.0, 0.0, 255.0);
 	// camera setup
 	Camera myCamera;
-	Vector eye(20.0, 0.0, 0.0);
+	Vector eye(30.0, 0.0, 0.0);
   Vector view(-1.0, 0.0, 0.0);
   Vector up(0.0, 1.0, 0.0);
   myCamera.setEyeViewUp(eye, view, up);
@@ -36,6 +36,7 @@ int main()
 	// rendering
 	myRenderer.render(myImg, myCamera, sphere, redColor);
 	// write into file
+	cout << "Write exr image into " << "test.exr" << endl;
 	writeOIIOImage("test.exr", myImg);
 
 	/*
