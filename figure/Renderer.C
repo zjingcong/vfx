@@ -6,6 +6,7 @@
 # include "Shape.h"
 # include "VolumeColor.h"
 
+
 Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, float rho, Color color, float K, float delta_s)
 {
   // initialization
@@ -28,7 +29,7 @@ Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, 
 }
 
 
-void Renderer::render(Image img, Camera camera, Sphere sphere)
+void Renderer::render(Image& img, Camera camera, Sphere sphere, Color myColor)
 {
   int width = img.Width();
   int height = img.Height();
@@ -48,8 +49,7 @@ void Renderer::render(Image img, Camera camera, Sphere sphere)
       float s_far_near = 20.0;
       float rho = 1.0;
       Vector x0 = camera.eye() + np * s_near;
-      Color myColor;
-      myColor.set(255.0, 255.0, 255.0, 255.0);
+      // Color myColor = solidColor.eval(x0);
       float K = 1;
       // test
       Color L = Renderer::rendering(x0, np, s_far_near, rho, myColor, K, delta_s);

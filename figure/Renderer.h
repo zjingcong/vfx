@@ -20,7 +20,7 @@ class Renderer
     Renderer(float delta_s): delta_s(delta_s) {};
     ~Renderer() {};
 
-    void render(Image img, Camera camera, Sphere sphere);
+    void render(Image& img, Camera camera, Sphere sphere, Color myColor);
 
   private:
     float delta_s;

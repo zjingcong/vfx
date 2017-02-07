@@ -11,7 +11,7 @@ namespace lux
 	class Sphere: public Volume<float>
 	{
 		public:
-			Sphere(Vector p, float r): pos(p), radius(r) {};
+			Sphere(Vector p, float r): pos(p), radius(r) {K = 0;};
 			~Sphere() {};
 
 			const float eval(const Vector& x) const {return radius - (x - pos).magnitude();}
@@ -21,7 +21,7 @@ namespace lux
 		private:
 			Vector pos;
 			float radius;
-      float K = 0;
+      float K;
 	};
 
 }
