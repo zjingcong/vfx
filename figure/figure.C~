@@ -17,7 +17,7 @@ int main()
 	// volume setup
 	Sphere sphere(sphere_pos, 10.0);
 	// camera setup
-	Camera myCamera;
+	Camera myCamera();
 	Vector eye(20.0, 0.0, 0.0);
   Vector view(-1.0, 0.0, 0.0);
   Vector up(0.0, 1.0, 0.0);

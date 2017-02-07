@@ -57,6 +57,7 @@ class Volume
    virtual const volumeDataType eval( const Vector& P ) const { volumeDataType base; return base; }
    virtual const volumeGradType grad( const Vector& P ) const { volumeGradType base; return base; }
 
+
 };
 
 typedef Volume<float>* VolumeFloatPtr;

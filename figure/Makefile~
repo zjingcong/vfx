@@ -13,12 +13,12 @@ else
   endif
 endif
 
-HFILES	= Volume.h Shape.h Vector.h Camera.h Color.h Image.h
+HFILES	= Volume.h Shape.h Vector.h Camera.h Color.h VolumeColor.h Image.h
 OFILES  = Camera.o Image.o
 
 PROJECT		= figure
 
-${PROJECT}:	${PROJECT}.o ${OFILES} 
+${PROJECT}:	${PROJECT}.o 
 	${CC} ${LFLAGS} -o ${PROJECT} ${PROJECT}.o ${LDFLAGS}
 
 ${PROJECT}.o:	${PROJECT}.${C} ${HFILES}
@@ -29,6 +29,9 @@ Camera.o: Camera.${C} Camera.h
 
 Image.o: Image.${C} Image.h
 	${CC} ${CFLAGS} -c Image.${C}
+
+# Renderer.o: Renderer.${C} Renderer.h Vector.h Color.h Image.h Shape.h VolumeColor.h Camera.h
+# 	${CC} ${CFLAGS} -c Renderer.${C}
 
 clean:
 	rm -f core.* *.o *~ ${PROJECT}

@@ -3,21 +3,29 @@
 
 # include "Vector.h"
 # include "Color.h"
+# include "Image.h"
+# include "Camera.h"
+# include "Shape.h"
+# include "VolumeColor.h"
 
-namespace lux
-{
+# include "math.h"
+# include <vector>
+
+using namespace std;
+using namespace lux;
 
 class Renderer
 {
-	public: 
-		float rendering(const Vector& x0, const Vector& np, float s, float rho, Color color, float K, float delta_s);
+	public:
+    Renderer(float delta_s): delta_s(delta_s) {};
+    ~Renderer() {};
+
+    void render(Image img, Camera camera, Sphere sphere);
+
+  private:
+    float delta_s;
+		Color rendering(const Vector& x0, const Vector& np, float s_far_near, float rho, Color color, float K, float delta_s);
 };
-
-Renderer::rendering(const Vector& x0, const Vector& np, float s, float rho, Color color, float K, float delta_s)
-{
-}
-
-}
 
 #endif
 
