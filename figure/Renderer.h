@@ -6,7 +6,7 @@
 # include "Image.h"
 # include "Camera.h"
 # include "Shape.h"
-# include "VolumeColor.h"
+# include "PropertyVolume.h"
 
 # include "math.h"
 # include <vector>
@@ -17,14 +17,17 @@ using namespace lux;
 class Renderer
 {
 	public:
-    Renderer(float delta_s): delta_s(delta_s) {};
-    ~Renderer() {};
+    Renderer(Image& img, Camera& camera, float delta_s): img(img), camera(camera), step_size(delta_s) {}
+    ~Renderer() {}
 
-    void render(Image& img, Camera camera, Sphere sphere, Color myColor);
+    void render(Sphere& sphere, ColorVolume& colorVolume, DensityVolume& densityVolume);
 
   private:
-    float delta_s;
-		Color rendering(const Vector& x0, const Vector& np, float s_far_near, float rho, Color color, float K, float delta_s, Sphere sphere);
+    float step_size;
+		Image& img;
+		Camera& camera;
+
+		Color rendering(const Vector& x0, const Vector& np, float s_far_near, DensityVolume& densityVolume, ColorVolume& colorVolume, float K);
 };
 
 #endif

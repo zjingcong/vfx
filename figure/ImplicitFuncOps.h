@@ -19,7 +19,7 @@ namespace lux
 			ImplicitUnion(Volume<float>& f, Volume<float>& g): e1(f), e2(g) {}
 			~ImplicitUnion()	{}
 
-			float eval(const Vector& x) const	{return max(e1 -> eval(x), e2 -> eval(x));}
+			const float eval(const Vector& x) const	{return max(e1.eval(x), e2.eval(x));}
 
 		private:
 			Volume<float>& e1;
@@ -34,7 +34,7 @@ namespace lux
 			ImplicitIntersec(Volume<float>& f, Volume<float>& g): e1(f), e2(g) {}
 			~ImplicitIntersec()	{}
 
-			float eval(const Vector& x) const	{return min(e1 -> eval(x), e2 -> eval(x));}
+			const float eval(const Vector& x) const	{return min(e1.eval(x), e2.eval(x));}
 
 		private:
 			Volume<float>& e1;
@@ -49,7 +49,7 @@ namespace lux
 			ImplicitCutout(Volume<float>& f, Volume<float>& g): e1(f), e2(g) {}
 			~ImplicitCutout()	{}
 
-			float eval(const Vector& x) const	{return min(e1 -> eval(x), -(e2 -> eval(x)));}
+			const float eval(const Vector& x) const	{return min(e1.eval(x), -(e2.eval(x)));}
 
 		private:
 			Volume<float>& e1;
@@ -64,7 +64,7 @@ namespace lux
 			ImplicitBlinnBlend(Volume<float>& f, Volume<float>& g, float s1 = 1.0, float s2 = 1.0, float beta = 2.0): e1(f), e2(g),  s1(s1), s2(s2), beta(beta){}
 			~ImplicitBlinnBlend()	{}
 
-			float eval(const Vector& x) const	{return exp((e1 -> eval(x)) / s1) + exp((e2 -> eval(x)) / s2) - beta;}
+			const float eval(const Vector& x) const	{return exp((e1.eval(x)) / s1) + exp((e2.eval(x)) / s2) - beta;}
 
 		private:
 			Volume<float>& e1;
@@ -80,7 +80,7 @@ namespace lux
 			ImplicitMask(Volume<float>& f): e1(f) {}
 			~ImplicitMask()	{}
 
-			float eval(const Vector& x) const	{return (e1 -> eval(x) > 0.0) ? 1.0 : 0.0;}
+			const float eval(const Vector& x) const	{return (e1.eval(x) > 0.0) ? 1.0 : 0.0;}
 
 		private:
 			Volume<float>& e1;
@@ -94,9 +94,9 @@ namespace lux
 			ImplicitClamp(Volume<float>& f, float a, float b): e1(f), a(a), b(b) {}
 			~ImplicitClamp()	{}
 
-			float eval(const Vector& x) const	
+			const float eval(const Vector& x) const	
 			{
-				float f = e1 -> eval(x);
+				float f = e1.eval(x);
 				if (f <= a)	{return a;}
 				if (f >= b)	{return b;}
 				return f;

@@ -4,10 +4,10 @@
 # include "Image.h"
 # include "Camera.h"
 # include "Shape.h"
-# include "VolumeColor.h"
+# include "PropertyVolume.h"
 
 
-Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, float rho, Color color, float K, float delta_s, Sphere sphere)
+Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, DensityVolume& densityVolume, ColorVolume& colorVolume, float K)
 {
   // initialization
   Vector x = x0;
@@ -19,32 +19,21 @@ Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, 
   // iteration
   while (s <= s_far_near && T >= threshold)
   {
-    x += np * delta_s;
+    x += np * step_size;
+		float rho = densityVolume.DensityMask(x);
+		Color color = colorVolume.ColorMask(x);
 
-		// test
-		// rho = (sphere.eval(x) >= 0.0) ? rho : 0.0;
-		// cout << "T: " << T << endl;
-		// cout << "---------" << endl;
-		// if (sphere.eval(x) <= 0.0)	{cout << sphere.eval(x) << endl;	cout << L.X() << ", " << L.Y() << ", " << L.Z() << endl;}
-		// cout << "------------------" << endl;
-		// test
-
-		// if (sphere.eval(x) <= 0.0)
-		// {
-    float delta_T = exp(-rho * delta_s * K);
-		cout << delta_T << endl;
+    float delta_T = exp(-rho * step_size * K);
    	L += (color / K) * T * (1 - delta_T);
    	T *= delta_T;
-		// }
+		s += step_size;
   }
-
-	// cout << L.X() << ", " << L.Y() << ", " << L.Z() << endl;
-
+	cout << "sb" << endl;
   return L;
 }
 
 
-void Renderer::render(Image& img, Camera camera, Sphere sphere, Color myColor)
+void Renderer::render(Sphere& sphere, ColorVolume& colorVolume, DensityVolume& densityVolume)
 {
   int width = img.Width();
   int height = img.Height();
@@ -57,19 +46,17 @@ void Renderer::render(Image& img, Camera camera, Sphere sphere, Color myColor)
     {
       u = i / float(width - 1);
       Vector np = camera.view(u, v);
-			// cout << "np: " << endl;			
-			// cout << np.X() << ", " << np.Y() << ", " << np.Z() << endl;
+			
+			float s_near = camera.nearPlane();
+			float s_far = camera.farPlane();	
+      float s_far_near = s_far - s_near;
+			Vector x0 = camera.eye() + np * s_near;
 
-      // test
-      float s_near = 20.0;
-      float s_far = 40.0;
-      float s_far_near = 20.0;
-			float rho = 1.0;
-      Vector x0 = camera.eye() + np * s_near;
+			// float rho = 1.0;
       // Color myColor = solidColor.eval(x0);
       float K = 1;
-      // test
-      Color L = Renderer::rendering(x0, np, s_far_near, rho, myColor, K, delta_s, sphere);
+
+      Color L = Renderer::rendering(x0, np, s_far_near, densityVolume, colorVolume, K);
 
       std::vector<float> colorValue;
       colorValue.resize(4);

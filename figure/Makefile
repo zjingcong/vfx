@@ -13,7 +13,7 @@ else
   endif
 endif
 
-HFILES	= Shape.h Vector.h Camera.h Renderer.h Image.h VolumeColor.h OIIOFiles.h
+HFILES	= Shape.h Vector.h Camera.h Renderer.h Image.h OIIOFiles.h PropertyVolume.h ImplicitFuncOps.h
 OFILES  = Camera.o Image.o Renderer.o OIIOFiles.o
 
 PROJECT		= figure
@@ -33,7 +33,7 @@ Image.o: Image.${C} Image.h
 OIIOFiles.o: OIIOFiles.${C} Image.h OIIOFiles.h
 	${CC} ${CFLAGS} -c OIIOFiles.${C}
 
-Renderer.o: Renderer.${C} Renderer.h Vector.h Color.h Image.h Camera.h Shape.h VolumeColor.h
+Renderer.o: Renderer.${C} Renderer.h Vector.h Color.h Image.h Camera.h Shape.h PropertyVolume.h
 	${CC} ${CFLAGS} -c Renderer.${C}
 
 clean:

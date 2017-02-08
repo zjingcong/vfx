@@ -2,8 +2,8 @@
 # include "Vector.h"
 # include "Camera.h"
 # include "Renderer.h"
-# include "VolumeColor.h"
 # include "OIIOFiles.h"
+# include "PropertyVolume.h"
 
 # include <iostream>
 # include <stdlib.h>
@@ -18,11 +18,13 @@ using namespace std;
 
 int main()
 {
-	// volume positions
-	Vector sphere_pos(0.0, 0.0, 0.0);
 	// volume setup
+	Vector sphere_pos(0.0, 0.0, 0.0);
 	Sphere sphere(sphere_pos, 10.0);
 	Color redColor(255.0, 0.0, 0.0, 255.0);
+	ColorVolume sphereColor(sphere, redColor);
+	float density = 1.0;
+	DensityVolume sphereDensity(sphere, density);
 	// camera setup
 	Camera myCamera;
 	Vector eye(30.0, 0.0, 0.0);
@@ -30,11 +32,11 @@ int main()
   Vector up(0.0, 1.0, 0.0);
   myCamera.setEyeViewUp(eye, view, up);
   // renderer setup
-  Renderer myRenderer(STEP_SIZE);
 	Image myImg;
 	myImg.reset(WEIGHT, HEIGHT);
+  Renderer myRenderer(myImg, myCamera, STEP_SIZE);
 	// rendering
-	myRenderer.render(myImg, myCamera, sphere, redColor);
+	myRenderer.render(sphere, sphereColor, sphereDensity);
 	// write into file
 	cout << "Write exr image into " << "test.exr" << endl;
 	writeOIIOImage("test.exr", myImg);
