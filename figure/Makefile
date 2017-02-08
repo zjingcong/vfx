@@ -33,7 +33,7 @@ Image.o: Image.${C} Image.h
 OIIOFiles.o: OIIOFiles.${C} Image.h OIIOFiles.h
 	${CC} ${CFLAGS} -c OIIOFiles.${C}
 
-Renderer.o: Renderer.${C} Renderer.h Vector.h Color.h Image.h Camera.h Shape.h PropertyVolume.h
+Renderer.o: Renderer.${C} Renderer.h Vector.h Color.h Image.h Camera.h Volume.h PropertyVolume.h
 	${CC} ${CFLAGS} -c Renderer.${C}
 
 clean:

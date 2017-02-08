@@ -3,8 +3,8 @@
 # include "Color.h"
 # include "Image.h"
 # include "Camera.h"
-# include "Shape.h"
 # include "PropertyVolume.h"
+# include "Volume.h"
 
 
 Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, DensityVolume& densityVolume, ColorVolume& colorVolume, float K)
@@ -28,12 +28,12 @@ Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, 
    	T *= delta_T;
 		s += step_size;
   }
-	cout << "sb" << endl;
+
   return L;
 }
 
 
-void Renderer::render(Sphere& sphere, ColorVolume& colorVolume, DensityVolume& densityVolume)
+void Renderer::render(Volume<float>& scalarVolume, ColorVolume& colorVolume, DensityVolume& densityVolume)
 {
   int width = img.Width();
   int height = img.Height();
@@ -57,6 +57,7 @@ void Renderer::render(Sphere& sphere, ColorVolume& colorVolume, DensityVolume& d
       float K = 1;
 
       Color L = Renderer::rendering(x0, np, s_far_near, densityVolume, colorVolume, K);
+			// cout << "Color of (" << i << ", " << j << "): " << L.X() << " " << L.Y() << " " << L.Z() << endl;
 
       std::vector<float> colorValue;
       colorValue.resize(4);

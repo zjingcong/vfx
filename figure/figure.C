@@ -12,25 +12,42 @@ using namespace lux;
 using namespace std;
 
 # define STEP_SIZE 0.3
-# define WEIGHT 100
-# define HEIGHT 100
+# define WEIGHT 320
+# define HEIGHT 180
 
+
+// static Sphere sphere;
+// static ColorVolume sphereColor;
+// static DensityVolume sphereDensity;
+
+/*
+void volume_setup()
+{
+	sphere.setup(1.0);
+	Color redColor(255.0, 0.0, 0.0, 255.0);
+	sphereColor.setConstantColor(sphere, redColor);
+	float density = 1.0;
+	sphereDensity.setConstantDensity(sphere, density);
+}*/
 
 int main()
 {
+	
 	// volume setup
-	Vector sphere_pos(0.0, 0.0, 0.0);
-	Sphere sphere(sphere_pos, 10.0);
+	Sphere sphere(1.0);
 	Color redColor(255.0, 0.0, 0.0, 255.0);
 	ColorVolume sphereColor(sphere, redColor);
 	float density = 1.0;
 	DensityVolume sphereDensity(sphere, density);
+	
+	// volume_setup();
 	// camera setup
 	Camera myCamera;
-	Vector eye(30.0, 0.0, 0.0);
+	Vector eye(6.0, 0.0, 0.0);
   Vector view(-1.0, 0.0, 0.0);
   Vector up(0.0, 1.0, 0.0);
   myCamera.setEyeViewUp(eye, view, up);
+	myCamera.setFarPlane(10.0);
   // renderer setup
 	Image myImg;
 	myImg.reset(WEIGHT, HEIGHT);

@@ -5,8 +5,8 @@
 # include "Color.h"
 # include "Image.h"
 # include "Camera.h"
-# include "Shape.h"
 # include "PropertyVolume.h"
+# include "Volume.h"
 
 # include "math.h"
 # include <vector>
@@ -20,7 +20,7 @@ class Renderer
     Renderer(Image& img, Camera& camera, float delta_s): img(img), camera(camera), step_size(delta_s) {}
     ~Renderer() {}
 
-    void render(Sphere& sphere, ColorVolume& colorVolume, DensityVolume& densityVolume);
+    void render(Volume<float>& scalarVolume, ColorVolume& colorVolume, DensityVolume& densityVolume);
 
   private:
     float step_size;
