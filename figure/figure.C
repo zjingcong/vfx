@@ -16,31 +16,16 @@ using namespace std;
 # define HEIGHT 180
 
 
-// static Sphere sphere;
-// static ColorVolume sphereColor;
-// static DensityVolume sphereDensity;
-
-/*
-void volume_setup()
-{
-	sphere.setup(1.0);
-	Color redColor(255.0, 0.0, 0.0, 255.0);
-	sphereColor.setConstantColor(sphere, redColor);
-	float density = 1.0;
-	sphereDensity.setConstantDensity(sphere, density);
-}*/
-
 int main()
 {
-	
 	// volume setup
 	Sphere sphere(1.0);
 	Color redColor(255.0, 0.0, 0.0, 255.0);
-	ColorVolume sphereColor(sphere, redColor);
-	float density = 1.0;
-	DensityVolume sphereDensity(sphere, density);
-	
-	// volume_setup();
+	ConstantColor redColorField(redColor);
+	ColorVolume sphereColor(redColorField, sphere);
+	ConstantFloat constantDensity(1.0);
+	DensityVolume sphereDensity(constantDensity, sphere);
+
 	// camera setup
 	Camera myCamera;
 	Vector eye(6.0, 0.0, 0.0);

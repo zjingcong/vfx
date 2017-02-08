@@ -11,7 +11,7 @@ namespace lux
 	{
 		public:
 			Sphere()	{setup(1.0);}
-			Sphere(float r): radius(r) {K = 0;}
+			Sphere(float r): radius(r) {K = 1;}
 			~Sphere() {};
 
 			void setup(float r)	{radius = r;}

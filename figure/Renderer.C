@@ -20,8 +20,8 @@ Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, 
   while (s <= s_far_near && T >= threshold)
   {
     x += np * step_size;
-		float rho = densityVolume.DensityMask(x);
-		Color color = colorVolume.ColorMask(x);
+		float rho = densityVolume.maskeval(x);
+		Color color = colorVolume.maskeval(x);
 
     float delta_T = exp(-rho * step_size * K);
    	L += (color / K) * T * (1 - delta_T);
