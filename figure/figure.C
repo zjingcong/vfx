@@ -20,12 +20,18 @@ using namespace std;
 int main()
 {
 	// volume setup
-	Sphere testVolume1(1.0);
-	Vector xt(0.0, 0.5, 0.0);
-	ScalarTranslate testVolume(testVolume1, xt);
-	// Box testVolume(1.0, 2);
+	// Sphere testVolume1(1.0);
+	// Box testVolume1(1.0, 2);
+	// Vector xt(0.0, 2.0, 0.0);
+	// ScalarTranslate testVolume(testVolume1, xt);
+	// ScalarRotation testVolume(testVolume1, Vector(1.0, 0.0, 0.0), 45.0);
+	// ScalarScaling testVolume(testVolume1, 0.5);
+
 	// Torus testVolume(2.0, 1.0);
 	// SteinerPatch testVolume;
+	// Ellipse testVolume(3.0, 1.0, Vector(0.0, 1.0, 0.0));
+	// Icosahedron testVolume;
+	Cone testVolume(45.0, 5.0, Vector(0.0, -1.0, 0.0), Vector(0.0, 1.0, 0.0));
 
 	Color redColor(255.0, 0.0, 0.0, 255.0);
 	ConstantColor redColorField(redColor);
@@ -35,11 +41,11 @@ int main()
 
 	// camera setup
 	Camera myCamera;
-	Vector eye(8.0, 0.0, 0.0);
+	Vector eye(10.0, 0.0, 0.0);
   Vector view(-1.0, 0.0, 0.0);
   Vector up(0.0, 1.0, 0.0);
   myCamera.setEyeViewUp(eye, view, up);
-	myCamera.setFarPlane(10.0);
+	myCamera.setFarPlane(20.0);
   // renderer setup
 	Image myImg;
 	myImg.reset(WEIGHT, HEIGHT);
