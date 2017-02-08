@@ -2,7 +2,6 @@
 #define __LUX_PROPERTYVOLUME_H__
 
 # include "Color.h"
-# include "Shape.h"
 # include "Volume.h"
 # include "Vector.h"
 # include "ImplicitFuncOps.h"
@@ -77,7 +76,6 @@ namespace lux
 			const float clampeval(const Vector& x) const	{return DensityClamp(x, density.eval(x));}
 
 		private:
-			// Volume<float> tmp;
 			Volume<float>& density;
 			Volume<float>& e1;
 

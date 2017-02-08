@@ -52,8 +52,6 @@ void Renderer::render(Volume<float>& scalarVolume, ColorVolume& colorVolume, Den
       float s_far_near = s_far - s_near;
 			Vector x0 = camera.eye() + np * s_near;
 
-			// float rho = 1.0;
-      // Color myColor = solidColor.eval(x0);
       float K = 1;
 
       Color L = Renderer::rendering(x0, np, s_far_near, densityVolume, colorVolume, K);

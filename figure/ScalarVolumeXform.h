@@ -20,7 +20,7 @@ namespace lux
 			ScalarTranslate(Volume<float>& f, Vector& xt): e1(f), xt(xt)	{}
 			~ScalarTranslate() {}
 
-			float eval(const Vector& x) const	{return e1 -> eval(x - xt);}
+			const float eval(const Vector& x) const	{return e1.eval(x - xt);}
 
 		private:
 			Volume<float>& e1;
@@ -35,7 +35,7 @@ namespace lux
 			ScalarScaling(Volume<float>& f, float lambda): e1(f), lambda(lambda)	{}
 			~ScalarScaling()	{}
 
-			float eval(const Vector& x) const	{return e1 -> eval(x / float(lambda));}
+			const float eval(const Vector& x) const	{return e1.eval(x / float(lambda));}
 
 		private:
 			Volume<float>& e1;
@@ -48,25 +48,20 @@ namespace lux
 	class ScalarRotation: public Volume<float>
 	{
 		public:
-			ScalarRotation(Volume<float>& f, Vector n, float theta)
-			{
-				e1 = f;
-				axis = n.unitvector();
-				theta = theta;
-			} 
+			ScalarRotation(Volume<float>& f, Vector n, float theta): e1(f), axis(n.unitvector()), theta(theta)	{}
 			~ScalarRotation()	{}
 
-			float eval(const Vector& x) const
+			const float eval(const Vector& x) const
 			{
 				Vector Vr;
 				// f'(x) = f(R(n, -theta)x)
 				// -theta
-				cos_theta = cos((-theta) * PI / 180.0);
-				sin_theta = sin((-theta) * PI / 180.0);
+				double cos_theta = cos((-theta) * PI / 180.0);
+				double sin_theta = sin((-theta) * PI / 180.0);
 				// multipilcation: *, inner product: *, cross product: ^
 				Vr = x * cos_theta + (axis * x) * (1 - cos_theta) * axis + (axis ^ x) * sin_theta;
 				
-				return e1 -> eval(Vr);
+				return e1.eval(Vr);
 			}
 
 		private:

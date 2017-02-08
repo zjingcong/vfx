@@ -13,7 +13,7 @@ else
   endif
 endif
 
-HFILES	= Shape.h Vector.h Camera.h Renderer.h Image.h OIIOFiles.h PropertyVolume.h ImplicitFuncOps.h
+HFILES	= Shape.h Vector.h Camera.h Renderer.h Image.h OIIOFiles.h PropertyVolume.h ImplicitFuncOps.h ScalarVolumeXform.h
 OFILES  = Camera.o Image.o Renderer.o OIIOFiles.o
 
 PROJECT		= figure
