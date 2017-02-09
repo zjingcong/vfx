@@ -4,7 +4,7 @@
 # include "Color.h"
 # include "Volume.h"
 # include "Vector.h"
-# include "ImplicitFuncOps.h"
+# include "Operations.h"
 
 
 namespace lux
@@ -46,7 +46,7 @@ namespace lux
 			~ColorVolume()	{}
 
 			// color mask
-			const Color maskeval(const Vector& x) const	{return ColorMask(x, colorField.eval(x));}
+			const Color eval(const Vector& x) const	{return ColorMask(x, colorField.eval(x));}
 
 		private:
 			Volume<Color>& colorField;
@@ -63,21 +63,21 @@ namespace lux
 	// --------------------------------------------------------------------------	
 	
 	// density for volume
+	// clamped: 1 - clamp, 0 - mask
 	class DensityVolume: public Volume<float>
 	{
 		public:
-			DensityVolume(Volume<float>& density, Volume<float>& f): density(density), e1(f)	{}
-			// DensityVolume(Volume<float>& f, float density): e1(f), density(density)	{}
+			DensityVolume(Volume<float>& density, Volume<float>& f, int clamped = 1): density(density), e1(f), clamped(clamped)	{}
 			~DensityVolume()	{}
 
 			// density mask
-			const float maskeval(const Vector& x) const	{return DensityMask(x, density.eval(x));}
-			// density clamp
-			const float clampeval(const Vector& x) const	{return DensityClamp(x, density.eval(x));}
+			const float eval(const Vector& x) const	
+				{return (clamped == 1) ? DensityClamp(x, density.eval(x)) : DensityMask(x, density.eval(x));}
 
 		private:
 			Volume<float>& density;
 			Volume<float>& e1;
+			int clamped;
 
 			// use mask for density
 			float DensityMask(const Vector& x, float rho) const

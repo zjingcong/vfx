@@ -7,7 +7,7 @@
 # include "Volume.h"
 
 
-Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, DensityVolume& densityVolume, ColorVolume& colorVolume, float K)
+Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, Volume<float>& densityVolume, Volume<Color>& colorVolume, float K)
 {
   // initialization
   Vector x = x0;
@@ -20,8 +20,8 @@ Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, 
   while (s <= s_far_near && T >= threshold)
   {
     x += np * step_size;
-		float rho = densityVolume.maskeval(x);
-		Color color = colorVolume.maskeval(x);
+		float rho = densityVolume.eval(x);
+		Color color = colorVolume.eval(x);
 
     float delta_T = exp(-rho * step_size * K);
    	L += (color / K) * T * (1 - delta_T);
@@ -33,7 +33,7 @@ Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, 
 }
 
 
-void Renderer::render(Volume<float>& scalarVolume, ColorVolume& colorVolume, DensityVolume& densityVolume)
+void Renderer::render(Volume<float>& scalarVolume, Volume<Color>& colorVolume, Volume<float>& densityVolume)
 {
   int width = img.Width();
   int height = img.Height();
@@ -52,7 +52,7 @@ void Renderer::render(Volume<float>& scalarVolume, ColorVolume& colorVolume, Den
       float s_far_near = s_far - s_near;
 			Vector x0 = camera.eye() + np * s_near;
 
-      float K = 1;
+      float K = 0.1;
 
       Color L = Renderer::rendering(x0, np, s_far_near, densityVolume, colorVolume, K);
 			// cout << "Color of (" << i << ", " << j << "): " << L.X() << " " << L.Y() << " " << L.Z() << endl;

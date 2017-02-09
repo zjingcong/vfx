@@ -17,14 +17,14 @@ namespace lux
 	class ScalarTranslate: public Volume<float>
 	{
 		public:
-			ScalarTranslate(Volume<float>& f, Vector& xt): e1(f), xt(xt)	{}
+			ScalarTranslate(Volume<float>& f, Vector xt): e1(f), xt(xt)	{}
 			~ScalarTranslate() {}
 
 			const float eval(const Vector& x) const	{return e1.eval(x - xt);}
 
 		private:
 			Volume<float>& e1;
-			Vector& xt;
+			Vector xt;
 	};
 
 

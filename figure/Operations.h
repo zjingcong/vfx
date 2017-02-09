@@ -4,6 +4,7 @@
 # include "Volume.h"
 # include "Vector.h"
 # include "math.h"
+# include "Color.h"
 
 # define max(x, y) (x > y ? x : y)
 # define min(x, y) (x < y ? x : y)
@@ -12,6 +13,37 @@
 namespace lux
 {
 
+	// ============================Float Ops============================================
+	class FloatAdd: public Volume<float>
+	{
+		public:
+			FloatAdd(Volume<float>& f, Volume<float>& g): e1(f), e2(g)	{}
+			~FloatAdd()	{}
+
+			const float eval(const Vector& x) const	{return e1.eval(x) + e2.eval(x);}
+
+		private:
+			Volume<float>& e1;
+			Volume<float>& e2;
+	};
+
+
+	// ============================Color Ops============================================
+	class ColorAdd: public Volume<Color>
+	{
+		public:
+			ColorAdd(Volume<Color>& f, Volume<Color>& g): e1(f), e2(g)	{}
+			~ColorAdd()	{}
+
+			const Color eval(const Vector& x) const	{return e1.eval(x) + e2.eval(x);}
+
+		private:
+			Volume<Color>& e1;
+			Volume<Color>& e2;
+	};
+
+
+	// ============================ CSG Ops============================================= 
 	// union
 	class ImplicitUnion: public Volume<float>
 	{
