@@ -20,14 +20,14 @@ class Renderer
     Renderer(Image& img, Camera& camera, float delta_s): img(img), camera(camera), step_size(delta_s) {}
     ~Renderer() {}
 
-    void render(Volume<float>& scalarVolume, Volume<Color>& colorVolume, Volume<float>& densityVolume);
+    void render(Volume<Color>& colorVolume, Volume<float>& densityVolume, Volume<float>& kVolume);
 
   private:
 		Image& img;
 		Camera& camera;
 		float step_size;
 
-		Color rendering(const Vector& x0, const Vector& np, float s_far_near, Volume<float>& densityVolume, Volume<Color>& colorVolume, float K);
+		Color rendering(const Vector& x0, const Vector& np, float s_far_near, Volume<float>& densityVolume, Volume<Color>& colorVolume, Volume<float>& kVolume);
 };
 
 #endif

@@ -93,6 +93,23 @@ namespace lux
 				return rho * (clampedVolume.eval(x));
 			}
 	};
+
+	// --------------------------------------------------------------------------
+
+	class KVolume: public Volume<float>
+	{
+		public:
+			KVolume(float K, Volume<float>& f): K(K), e1(f)	{}
+			~KVolume()	{}
+
+			const float eval(const Vector& x) const	
+				{return K * ((e1.eval(x) > 0.0) ? 1.0 : -1.0);}
+
+		private:
+			float K;
+			Volume<float>& e1;
+	};
+
 }
 
 #endif

@@ -23,7 +23,7 @@ namespace lux
 		public:
 			Sphere(float r): radius(r) {}
 			~Sphere() {};
-
+			
 			const float eval(const Vector& x) const {return radius - (x).magnitude();}
 		
 		private:
@@ -93,19 +93,19 @@ namespace lux
 	class Ellipse: public Volume<float>
 	{
 		public: 
-		Ellipse(float r1, float r2, Vector n): R_major(r1), R_minor(r2), normal(n.unitvector())	{}
-		~Ellipse()	{}
+			Ellipse(float r1, float r2, Vector n): R_major(r1), R_minor(r2), normal(n.unitvector())	{}
+			~Ellipse()	{}
 
-		const float eval(const Vector& x) const
-		{
-			float Z = x * normal;
-			Vector x_perp = x - Z * normal;
+			const float eval(const Vector& x) const
+			{
+				float Z = x * normal;
+				Vector x_perp = x - Z * normal;
 
-			float a = pow(Z, 2.0) / pow(R_major, 2.0);
-			float b = pow(x_perp.magnitude(), 2.0) / pow(R_minor, 2.0);
+				float a = pow(Z, 2.0) / pow(R_major, 2.0);
+				float b = pow(x_perp.magnitude(), 2.0) / pow(R_minor, 2.0);
 
-			return 1 - a - b;
-		}
+				return 1 - a - b;
+			}
 
 		private:
 			float R_major;

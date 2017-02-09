@@ -15,11 +15,13 @@
 using namespace lux;
 using namespace std;
 
-# define STEP_SIZE 0.3
+# define STEP_SIZE 0.5
 # define WEIGHT 320
 # define HEIGHT 180
-# define FAR 10
-# define FRAME_NUM 4
+# define CAMERA 10
+# define NEAR 7
+# define FAR 20
+# define FRAME_NUM 2
 # define PI 3.14159265
 
 
@@ -50,26 +52,56 @@ Vector vecRotation(Vector v, Vector axis, float a)
 
 
 // ===================================== setup ========================================
-// volume setup
-Sphere volume1(1.0);
-Box box(2.0, 2);
-ScalarTranslate volume2(box, Vector(0.0, 0.0, 2.0));
 
 Color redColor(1.0, 0.0, 0.0, 0.5);
 Color greenColor(0.0, 1.0, 0.0, 0.5);
-ConstantColor redColorField(redColor);
-ConstantColor greenColorField(greenColor);
-ConstantFloat constantDensity(1.0);
+Color whiteColor(1.0, 1.0, 1.0, 1.0);
+ConstantColor red(redColor);
+ConstantColor green(greenColor);
+ConstantColor white(whiteColor);
 
-ImplicitUnion finalVolume(volume1, volume2);
-ColorVolume volume1Color(redColorField, volume1);
-DensityVolume volume1Density(constantDensity, volume1);
-ColorVolume volume2Color(greenColorField, volume2);
-DensityVolume volume2Density(constantDensity, volume2);
-ColorAdd finalColor(volume1Color, volume2Color);
-FloatAdd finalDensity(volume1Density, volume2Density);
+ConstantFloat consRho_1(1.0);
+ConstantFloat consRho_2(10.0);
 
-Vector originEye(10.0, 0.0, 0.0);
+Vector originEye(CAMERA, 0.0, 0.0);
+
+// ------------------------------------------------------------------------------------
+
+// volume setup
+// uphead
+Sphere head1(1.0);
+Box box1(10.0, 6);
+ScalarTranslate cutoutbox1(box1, Vector(0.0, -1.4, 0.0));
+ImplicitCutout uphead(head1, cutoutbox1);
+ColorVolume upColor(green, uphead);
+DensityVolume upDensity(consRho_1, uphead);
+KVolume upK(0.1, uphead);
+//lowhead
+Box box2(0.8, 6);
+ScalarTranslate cutoutbox2(box2, Vector(0.0, -1.6, 0.0));
+ImplicitIntersec lowhead1(box2, cutoutbox2);
+ScalarTranslate lowhead(lowhead1, Vector(0.0, 0.3, 0.0));
+ColorVolume lowColor(green, lowhead);
+DensityVolume lowDensity(consRho_1, lowhead);
+KVolume lowK(0.1, lowhead);
+// left eye
+Sphere eye1(0.4);
+ScalarTranslate lefteye(eye1, Vector(0.0, 1.0, 0.5));
+ColorVolume leftEyeColor(white, lefteye);
+DensityVolume leftEyeDensity(consRho_2, lefteye);
+KVolume leftEyeK(0.1, lefteye);
+
+// color add
+ColorAdd color1(upColor, lowColor);
+ColorAdd finalColor(color1, leftEyeColor);
+
+// density add
+FloatAdd dens1(upDensity, lowDensity);
+FloatAdd finalDensity(dens1, leftEyeDensity);
+
+// K add
+FloatAdd k1(upK, lowK);
+FloatAdd finalK(k1, leftEyeK);
 
 // ------------------------------------------------------------------------------------
 
@@ -84,9 +116,10 @@ int main()
 		myImg.reset(WEIGHT, HEIGHT);
 
 		Camera myCamera;
+		myCamera.setFarPlane(NEAR);
 		myCamera.setFarPlane(FAR);
 
-		float angle = float(360) / FRAME_NUM;
+		float angle = float(180) / FRAME_NUM;
 		float theta = frame_id  * angle;
 		Vector up(0.0, 1.0, 0.0);
 		Vector lookAt(0.0, 0.0, 0.0);
@@ -99,7 +132,7 @@ int main()
 
 		// rendering
 		Renderer myRenderer(myImg, myCamera, STEP_SIZE);
-		myRenderer.render(finalVolume, finalColor, finalDensity);
+		myRenderer.render(finalColor, finalDensity, finalK);
 
 		// write into file
 		char file_name[50];
