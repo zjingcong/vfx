@@ -37,4 +37,5 @@ Renderer.o: Renderer.${C} Renderer.h Vector.h Color.h Image.h Camera.h Volume.h 
 	${CC} ${CFLAGS} -c Renderer.${C}
 
 clean:
-	rm -f core.* *.o *~ ${PROJECT}
+	# rm -f core.* *.o *~ ${PROJECT}
+	rm -rf *.o *~

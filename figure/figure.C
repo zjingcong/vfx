@@ -18,7 +18,7 @@ using namespace std;
 # define HEIGHT 180
 
 
-// reference:
+// reference: basicShape & Xform
 // ------------------------------------------------------------------------------
 	// Sphere testVolume(1.0);
 	// Box testVolume1(0.3, 2);
