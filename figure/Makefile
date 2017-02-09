@@ -2,14 +2,14 @@
 CC		= g++
 C		= C
 
-CFLAGS		= -g -Wall `Magick++-config --cppflags`
-LFLAGS		= -g `Magick++-config --ldflags`
+CFLAGS		= -g -Wall 
+LFLAGS		= -g
 
 ifeq ("$(shell uname)", "Darwin")
   LDFLAGS     = -framework Foundation -framework GLUT -framework OpenGL -lMagick++ -lm
 else
   ifeq ("$(shell uname)", "Linux")
-    LDFLAGS     = -L /usr/lib64/ -lMagick++ -lOpenImageIO -lm
+    LDFLAGS     = -L /usr/lib64/ -lOpenImageIO -lm
   endif
 endif
 

@@ -35,37 +35,65 @@ using namespace std;
 	// ImplicitBlinnBlend testVolume(testVolume2, testVolume3);
 
 
+// volume setup
+Sphere volume1(1.0);
+Box box(2.0, 2);
+ScalarTranslate volume2(box, Vector(0.0, 0.0, 2.0));
+
+Color redColor(1.0, 0.0, 0.0, 0.5);
+Color greenColor(0.0, 1.0, 0.0, 0.5);
+ConstantColor redColorField(redColor);
+ConstantColor greenColorField(greenColor);
+ConstantFloat constantDensity(1.0);
+
+ImplicitUnion finalVolume(volume1, volume2);
+ColorVolume volume1Color(redColorField, volume1);
+DensityVolume volume1Density(constantDensity, volume1);
+ColorVolume volume2Color(greenColorField, volume2);
+DensityVolume volume2Density(constantDensity, volume2);
+ColorAdd finalColor(volume1Color, volume2Color);
+FloatAdd finalDensity(volume1Density, volume2Density);
+
+// camera setup
+Camera myCamera;
+
+// frame setup
+Image myImg;
+
+// ------------------------------------------------------------------------------------
+
+
+// turntable of 360 degrees/120 frames
+// start from xc at x-axis at frame-0
+Vector turntable(int frame_id, float distance)
+{
+  Vector c0(distance, 0.0, 0.0);
+  return
+}
+
+
+void renderSetup()
+{
+  myCamera.setFarPlane(20.0);
+  myImg.reset(WEIGHT, HEIGHT);
+}
+
+
+// turntable
+void frameRender(int frame_id)
+{
+  
+}
+
+
 int main()
 {
-	// volume setup
-	Sphere volume1(1.0);
-	Box box(2.0, 2);
-	ScalarTranslate volume2(box, Vector(0.0, 0.0, 2.0));
+  renderSetup();
 
-	Color redColor(1.0, 0.0, 0.0, 0.5);
-	Color greenColor(0.0, 1.0, 0.0, 0.5);
-	ConstantColor redColorField(redColor);
-	ConstantColor greenColorField(greenColor);
-	ConstantFloat constantDensity(1.0);
-
-	ImplicitUnion finalVolume(volume1, volume2);
-	ColorVolume volume1Color(redColorField, volume1);
-	DensityVolume volume1Density(constantDensity, volume1);
-	ColorVolume volume2Color(greenColorField, volume2);
-	DensityVolume volume2Density(constantDensity, volume2);
-	ColorAdd finalColor(volume1Color, volume2Color);
-	FloatAdd finalDensity(volume1Density, volume2Density);
-
-	// camera setup
-	Camera myCamera;
 	Vector eye(10.0, 0.0, 0.0);
-	Vector view(-1.0, 0.0, 0.0);
+	Vector view(-1.0, 0.0, 0.0);  // camera view will set to unitvector in Camera.C
 	Vector up(0.0, 1.0, 0.0);
 	myCamera.setEyeViewUp(eye, view, up);
-	myCamera.setFarPlane(20.0);
-  // renderer setup
-	Image myImg;
-	myImg.reset(WEIGHT, HEIGHT);
   Renderer myRenderer(myImg, myCamera, STEP_SIZE);
 	// rendering
 	myRenderer.render(finalVolume, finalColor, finalDensity);
