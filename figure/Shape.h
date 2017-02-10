@@ -172,10 +172,10 @@ namespace lux
 			}
 
 		private:
-			Vector x0;
 			float theta;
 			float h;
 			Vector normal;
+			Vector x0;
 	};
 
 

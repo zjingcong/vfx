@@ -2,8 +2,8 @@
 CC		= g++
 C		= C
 
-CFLAGS		= -g -Wall
-LFLAGS		= -g
+CFLAGS		= -g -Wall -fopenmp
+LFLAGS		= -g -fopenmp
 
 ifeq ("$(shell uname)", "Darwin")
   LDFLAGS     = -framework Foundation -framework GLUT -framework OpenGL -lMagick++ -lm
@@ -19,7 +19,7 @@ OFILES  = Camera.o Image.o Renderer.o OIIOFiles.o
 PROJECT		= figure
 
 ${PROJECT}:	${PROJECT}.o ${OFILES}
-	${CC} ${LFLAGS} -o ${PROJECT} ${PROJECT}.o ${OFILES} ${LDFLAGS} -fopenmp
+	${CC} ${LFLAGS} -o ${PROJECT} ${PROJECT}.o ${OFILES} ${LDFLAGS}
 
 ${PROJECT}.o:	${PROJECT}.${C} ${HFILES}
 	${CC} ${CFLAGS} -c ${PROJECT}.${C}

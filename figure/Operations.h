@@ -42,6 +42,30 @@ namespace lux
 			Volume<Color>& e2;
 	};
 
+/*
+	class ColorAddList: public Volume<Color>
+	{
+		public:
+			ColorAddList(Volume<Color> f[], int num): e1(f), num(num)	{}
+			~ColorAddList()	{}
+
+			const Color eval(const Vector& x) const
+			{
+				Color result;
+				for (int i = 0; i < num; ++i)
+				{
+					result += e1[i].eval(x);
+					cout << "******************" << endl;
+					cout << result.X() << result.X() << result.X() << endl;
+				}
+				return result;
+			}
+
+		private:
+			VolumeColorPtr e1;
+			int num;
+	};
+*/
 
 	// ============================ CSG Ops============================================= 
 	// union

@@ -5,23 +5,11 @@
 # include "Volume.h"
 # include "Vector.h"
 # include "Operations.h"
+# include "math.h"
 
 
 namespace lux
 {
-	// constant list
-	// constant color
-	class ConstantColor: public Volume<Color>
-	{
-		public:
-			ConstantColor(Color color): constantC(color)	{}
-			~ConstantColor()	{}
-
-			const Color eval(const Vector& x) const	{return constantC;}
-
-		private:
-			Color constantC;
-	};
 
 	// constant float
 	class ConstantFloat: public Volume<float>
@@ -37,6 +25,31 @@ namespace lux
 	};
 
 	// ----------------------------------------------------------------------------
+
+	// constant color
+	class ConstantColor: public Volume<Color>
+	{
+		public:
+			ConstantColor(Color color): constantC(color)	{}
+			~ConstantColor()	{}
+
+			const Color eval(const Vector& x) const	{return constantC;}
+
+		private:
+			Color constantC;
+	};
+
+	class Colorful: public Volume<Color>
+	{
+		public:
+			Colorful()	{}
+			~Colorful()	{}
+			const Color eval(const Vector& x) const
+			{
+				float xz = abs(x.Z() - int(x.Z()));
+				return Color(xz / 10.0, 0.0, (1 - xz) / 10.0, 1.0);
+			}
+	};
 
 	// color volume for scalar field volume
 	class ColorVolume: public Volume<Color>
