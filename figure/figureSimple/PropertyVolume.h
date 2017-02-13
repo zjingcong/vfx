@@ -1,3 +1,10 @@
+// ------------------------------
+// Volumes:
+// 	- ColorVolume
+// 	- DensityVolume
+//	- KVolume
+// ------------------------------
+
 #ifndef __LUX_PROPERTYVOLUME_H__
 #define __LUX_PROPERTYVOLUME_H__
 

@@ -1,8 +1,16 @@
+// ------------------------------------------------------
+// main program
+// To generate a character and render it with turntable.
+// To compile it (using openmp), use Makefile.
+// Usage: 
+// 		./figure <start_frame_id> <frame_num>
+// ------------------------------------------------------
+
 # include "Shape.h"
 # include "Vector.h"
 # include "Camera.h"
 # include "Renderer.h"
-// # include "OIIOFiles.h"
+# include "OIIOFiles.h"
 # include "PropertyVolume.h"
 # include "ScalarVolumeXform.h"
 # include "Operations.h"
@@ -16,8 +24,8 @@ using namespace lux;
 using namespace std;
 
 # define STEP_SIZE 0.2
-# define WEIGHT 320
-# define HEIGHT 180
+# define WEIGHT 1920
+# define HEIGHT 1080
 # define CAMERA_X 15
 # define CAMERA_Y -2
 # define NEAR 12
@@ -72,7 +80,7 @@ ImplicitCutout uphead(head1, cutoutbox1);
 
 ColorVolume upColor(green, uphead);
 DensityVolume upDensity(consRho_3, uphead);
-KVolume upK(1, uphead);
+// KVolume upK(1, uphead);
 
 //lowhead
 Box box2(0.8, 6);
@@ -82,10 +90,10 @@ ScalarTranslate lowhead(lowhead1, Vector(0.0, 0.3, 0.0));
 
 ColorVolume lowColor(green, lowhead);
 DensityVolume lowDensity(consRho_3, lowhead);
-KVolume lowK(1, lowhead);
+// KVolume lowK(1, lowhead);
 // --------------------------------------------
 // left eye
-Ellipse eye1(0.48, 0.3, Vector(0.0, 1.0, 0.0));
+Ellipse eye1(0.5, 0.4, Vector(0.0, 1.0, 0.0));
 ScalarTranslate eye2(eye1, Vector(0.85, 0.75, 0.5));
 ImplicitCutout lefteye(eye2, uphead);
 // right eye
@@ -95,7 +103,7 @@ ImplicitCutout righteye(eye3, uphead);
 ImplicitUnion eyes(lefteye, righteye);
 ColorVolume eyesColor(white, eyes);
 DensityVolume eyesDensity(consRho_0, eyes);
-KVolume eyesK(10, eyes);
+// KVolume eyesK(10, eyes);
 // --------------------------------------------
 // upbody
 // up
@@ -107,7 +115,7 @@ ScalarTranslate cutoutbox3(box4, Vector(0.0, 1.6, 0.0));
 ImplicitCutout upbody1(body2, cutoutbox3);
 // left arm & right arm
 Sphere shoulder1(1.5);
-Ellipse arm00(3.5 , 0.5, Vector(0.0, 1.0, 0.0));
+Ellipse arm00(3.5 , 1.0, Vector(0.0, 1.0, 0.0));
 ScalarTranslate arm_0(arm00, Vector(0.0, -3.0, 0.0));
 ImplicitBlinnBlend arm0(arm_0, shoulder1);
 ScalarScaling arm1(arm0, 0.5);
@@ -124,7 +132,7 @@ ImplicitUnion upbody(arms, upbody1);
 
 ColorVolume upbodyColor(green, upbody);
 DensityVolume upbodyDensity(consRho_3, upbody);
-KVolume upbodyK(2, upbody);
+// KVolume upbodyK(2, upbody);
 // ----------------------------------------------
 // mouth
 ScalarScaling mouth1(upbody1, 0.4);
@@ -132,7 +140,7 @@ ScalarTranslate mouth(mouth1, Vector(0.6, 0.1, 0.0));
 
 ColorVolume mouthColor(red, mouth);
 DensityVolume mouthDensity(consRho_1, mouth);
-KVolume mouthK(1, mouth);
+// KVolume mouthK(1, mouth);
 // -----------------------------------------------
 // lowbody
 Ellipse leg1(3.0, 0.8, Vector(0.0, 1.0, 0.0));
@@ -150,14 +158,14 @@ ImplicitUnion leg(leftrightleg, hip);
 
 ColorVolume legColor(blue, leg);
 DensityVolume legDensity(consRho_3, leg);
-KVolume legK(2, leg);
+// KVolume legK(2, leg);
 // ------------------------------------------------
 // belt
-Torus belt1(1.35, 0.18, Vector(0.0, 1.0, 0.0));
-ScalarTranslate belt(belt1, Vector(0.0, -1.85, 0.0));
+Torus belt1(1.4, 0.22, Vector(0.0, 1.0, 0.0));
+ScalarTranslate belt(belt1, Vector(0.0, -1.8, 0.0));
 ColorVolume beltColor(red, belt);
-DensityVolume beltDensity(consRho_4, belt);
-KVolume beltK(1, belt);
+DensityVolume beltDensity(consRho_1, belt);
+// KVolume beltK(1, belt);
 
 // button
 SteinerPatch button1;
@@ -165,7 +173,7 @@ ScalarTranslate button(button1, Vector(0.0, -4.0, 2.0));
 
 ColorVolume buttonColor(yellow, button);
 DensityVolume buttonDensity(consRho_0, button);
-KVolume buttonK(10, button);
+// KVolume buttonK(10, button);
 
 
 // flower
@@ -175,14 +183,14 @@ ScalarTranslate flower(flower2, Vector(0.0, -4.0, -2.0));
 
 ColorVolume flowerColor(yellow, flower);
 DensityVolume flowerDensity(consRho_3, flower);
-KVolume flowerK(0.5, flower);
+// KVolume flowerK(0.5, flower);
 
 // prodium
 ScalarScaling prodium1(lowhead1, 2.0);
 ScalarTranslate prodium(prodium1, Vector(0.0, -4.0, 0.0));
 ColorVolume prodiumColor(blue, prodium);
 DensityVolume prodiumDensity(consRho_4, prodium);
-KVolume prodiumK(0.1, prodium);
+// KVolume prodiumK(0.1, prodium);
 // ------------------------------------------------------------------------------------
 
 // color add
@@ -215,6 +223,7 @@ FloatAdd dens4(dens3, buttonDensity);
 FloatAdd finalDensity(dens4, headalld);
 
 // K add
+/*
 FloatAdd headk(upK, lowK);
 FloatAdd headallk(headk, eyesK);
 
@@ -227,18 +236,24 @@ FloatAdd k3(k2, flowerK);
 FloatAdd k4(k3, buttonK);
 
 FloatAdd finalK(k3, headallk);
+*/
 
 // ======================================================================================
 
 int main(int argc, char* argv[])
 {
 	// usage: ./figure frameStart frameNum
-	int frameStart = atof(argv[1]);
-	int frameNum = atof(argv[2]);
+	int frameStart = 0;
+	int frameNum = 120;
+	if (argc == 3)
+	{	
+		frameStart = atof(argv[1]);
+		frameNum = atof(argv[2]);
+	}
 
-	cout << "Rendering start..." << endl;
 	cout << "Total render frame: " << frameNum << endl;
 	cout << "Start frame id: " << frameStart << endl;
+	cout << "Rendering start..." << endl;
 	cout << "---------------------------------" << endl;
 	# pragma omp parallel for
 	for (int i = 0; i < frameNum; ++i)
@@ -265,15 +280,13 @@ int main(int argc, char* argv[])
 
 		// rendering
 		Renderer myRenderer(myImg, myCamera, STEP_SIZE);
-		myRenderer.render(finalColor, finalDensity, frame_id);
+		myRenderer.render(finalColor, finalDensity);
 
-		/*
 		// write into file
 		char file_name[50];
 		sprintf(file_name, "./result/jingcoz_hw1.%04d.exr", frame_id);
 		cout << "Frame " << frame_id << " into" << file_name << " complete."<< endl;
 		writeOIIOImage(file_name, myImg);
-		*/	
 	}
 	cout << "Rendering complete!" << endl;
 

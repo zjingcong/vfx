@@ -1,0 +1,8 @@
+figure
+
+Jingcong Zhang <jingcoz@clemson.edu>
+----------------------------------------
+This is a program to generate a humanoid character turntable frame sequence.
+
+To compile: use Makefile
+To run: ./figure <start_render_frame>[optional] <frame_num>[optional]

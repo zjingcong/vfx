@@ -9,12 +9,12 @@ ifeq ("$(shell uname)", "Darwin")
   LDFLAGS     = -framework Foundation -framework GLUT -framework OpenGL -lMagick++ -lm
 else
   ifeq ("$(shell uname)", "Linux")
-    LDFLAGS     = -L /usr/lib64/
+    LDFLAGS     = -L /usr/lib64/ -lOpenImageIO -lm
   endif
 endif
 
-HFILES	= Shape.h Vector.h Camera.h Renderer.h Image.h PropertyVolume.h Operations.h ScalarVolumeXform.h
-OFILES  = Camera.o Image.o Renderer.o
+HFILES	= Shape.h Vector.h Camera.h Renderer.h Image.h OIIOFiles.h PropertyVolume.h Operations.h ScalarVolumeXform.h
+OFILES  = Camera.o Image.o Renderer.o OIIOFiles.o
 
 PROJECT		= figure
 
@@ -30,9 +30,12 @@ Camera.o: Camera.${C} Camera.h Vector.h
 Image.o: Image.${C} Image.h
 	${CC} ${CFLAGS} -c Image.${C}
 
+OIIOFiles.o: OIIOFiles.${C} Image.h OIIOFiles.h
+	${CC} ${CFLAGS} -c OIIOFiles.${C}
+
 Renderer.o: Renderer.${C} Renderer.h Vector.h Color.h Image.h Camera.h Volume.h PropertyVolume.h
 	${CC} ${CFLAGS} -c Renderer.${C}
 
 clean:
-	# rm -f core.* *.o *~ ${PROJECT}
-	rm -rf *.o *~
+	rm -f core.* *.o *~ ${PROJECT}
+

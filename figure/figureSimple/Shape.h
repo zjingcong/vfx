@@ -1,7 +1,7 @@
-//
-// basic shape: 
-// sphere, box, torus, steiner patch, cone, icosahedron, ellipse, plane
-//
+// ------------------------------------------------------------------------
+// Implicit Functions of Basic Shape 
+// 	- sphere, box, torus, steiner patch, cone, icosahedron, ellipse, plane
+// ------------------------------------------------------------------------
 
 # ifndef __LUX_SHAPE_H__
 # define __LUX_SHAPE_H__

@@ -1,13 +1,21 @@
+// ----------------------------------
+// Operations:
+// 	- FloatVolume Ops
+//	- ColorVolume Ops
+// 	- CSG Ops
+// ----------------------------------
+
+
 #ifndef __LUX_IMPLICITFUNCOPS_H__
 #define __LUX_IMPLICITFUNCOPS_H__
-
-# define getMax(x, y) (x > y ? x : y)
-# define getMin(x, y) (x < y ? x : y)
 
 # include "Volume.h"
 # include "Vector.h"
 # include "math.h"
 # include "Color.h"
+
+# define max(x, y) (x > y ? x : y)
+# define min(x, y) (x < y ? x : y)
 
 
 namespace lux
@@ -42,30 +50,6 @@ namespace lux
 			Volume<Color>& e2;
 	};
 
-/*
-	class ColorAddList: public Volume<Color>
-	{
-		public:
-			ColorAddList(Volume<Color> f[], int num): e1(f), num(num)	{}
-			~ColorAddList()	{}
-
-			const Color eval(const Vector& x) const
-			{
-				Color result;
-				for (int i = 0; i < num; ++i)
-				{
-					result += e1[i].eval(x);
-					cout << "******************" << endl;
-					cout << result.X() << result.X() << result.X() << endl;
-				}
-				return result;
-			}
-
-		private:
-			VolumeColorPtr e1;
-			int num;
-	};
-*/
 
 	// ============================ CSG Ops============================================= 
 	// union
@@ -75,7 +59,7 @@ namespace lux
 			ImplicitUnion(Volume<float>& f, Volume<float>& g): e1(f), e2(g) {}
 			~ImplicitUnion()	{}
 
-			const float eval(const Vector& x) const	{return getMax(e1.eval(x), e2.eval(x));}
+			const float eval(const Vector& x) const	{return max(e1.eval(x), e2.eval(x));}
 
 		private:
 			Volume<float>& e1;
@@ -90,7 +74,7 @@ namespace lux
 			ImplicitIntersec(Volume<float>& f, Volume<float>& g): e1(f), e2(g) {}
 			~ImplicitIntersec()	{}
 
-			const float eval(const Vector& x) const	{return getMin(e1.eval(x), e2.eval(x));}
+			const float eval(const Vector& x) const	{return min(e1.eval(x), e2.eval(x));}
 
 		private:
 			Volume<float>& e1;
@@ -105,7 +89,7 @@ namespace lux
 			ImplicitCutout(Volume<float>& f, Volume<float>& g): e1(f), e2(g) {}
 			~ImplicitCutout()	{}
 
-			const float eval(const Vector& x) const	{return getMin(e1.eval(x), -(e2.eval(x)));}
+			const float eval(const Vector& x) const	{return min(e1.eval(x), -(e2.eval(x)));}
 
 		private:
 			Volume<float>& e1;

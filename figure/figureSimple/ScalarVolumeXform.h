@@ -1,3 +1,10 @@
+// ---------------------------------
+// ScalarVolume Transformation:
+// 	- Translate
+// 	- Scaling
+// 	- Rotation
+// ---------------------------------
+
 #ifndef __LUX_SCALARVOLUMEXFORM_H__
 #define __LUX_SCALARVOLUMEXFORM_H__
 

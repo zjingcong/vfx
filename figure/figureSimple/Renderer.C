@@ -6,9 +6,6 @@
 # include "PropertyVolume.h"
 # include "Volume.h"
 
-# include <iostream>
-# include <fstream>
-
 
 Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, Volume<float>& densityVolume, Volume<Color>& colorVolume)
 {	
@@ -39,15 +36,12 @@ Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, 
 }
 
 
-void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume, int frame_id)
+void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume)
 {
   int width = img.Width();
   int height = img.Height();
   float u, v;
-
-	char file_name[50];
-	sprintf(file_name, "./file_result/frame%04d.txt", frame_id);
-
+  
   for (int j = 0; j < height; ++j)
   {
     v = j / float(height - 1);
@@ -63,17 +57,13 @@ void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume, 
 
       Color L = Renderer::rendering(x0, np, s_far_near, densityVolume, colorVolume);
 
-      // std::vector<float> colorValue;
-      // colorValue.resize(4);
-      // colorValue[0] = L.X();
-      // colorValue[1] = L.Y();
-      // colorValue[2] = L.Z();
-      // colorValue[3] = L.W();
-      // setPixel(img, i, j, colorValue);
-			ofstream colorFile;
-			colorFile.open(file_name, fstream::in | fstream::out | fstream::app);
-			colorFile << L.X() << " " << L.Y() << " " << L.Z() << " " << L.W() << '\n';
-			colorFile.close();
+      std::vector<float> colorValue;
+      colorValue.resize(4);
+      colorValue[0] = L.X();
+      colorValue[1] = L.Y();
+      colorValue[2] = L.Z();
+      colorValue[3] = L.W();
+      setPixel(img, i, j, colorValue);
     }
   }
 }

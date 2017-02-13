@@ -1,3 +1,8 @@
+// --------------------------
+// Ray Matching Render
+// --------------------------
+
+
 # ifndef __LUX_RENDERER_H__
 # define __LUX_RENDERER_H__
 
@@ -20,7 +25,7 @@ class Renderer
     Renderer(Image& img, Camera& camera, float delta_s): img(img), camera(camera), step_size(delta_s) {}
     ~Renderer() {}
 
-    void render(Volume<Color>& colorVolume, Volume<float>& densityVolume, int frame_id);
+    void render(Volume<Color>& colorVolume, Volume<float>& densityVolume);
 
   private:
 		Image& img;
