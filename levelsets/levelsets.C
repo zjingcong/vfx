@@ -9,6 +9,7 @@
 # include "PolyModel.h"
 # include "Types.h"
 # include "Tools.h"
+# include "Grid.h"
 
 using namespace std;
 using namespace lux;
@@ -30,10 +31,11 @@ int main(int argc, char* argv[])
 		cout << pos0.X() << " " << pos0.Y() << " " << pos0.Z() << endl;
 	}
 	*/
+
 	/*
 	// test signed distance
 	Face f = polyBunny[0];
-	Point p = f.getPoint(0);
+	Point p = f.getPoint(1);
 	Vector pos0 = p.getPos();
 	cout << pos0.X() << " " << pos0.Y() << " " << pos0.Z() << endl;
 
@@ -41,6 +43,8 @@ int main(int argc, char* argv[])
 	cout << "distance: " << d << endl;
 	*/
 
+	/*
+	// test polyLevelsets
 	// create a sparse grid
 	FloatGrid::Ptr grid = FloatGrid::create();
 	// set grid voxel size	
@@ -49,6 +53,14 @@ int main(int argc, char* argv[])
 	grid -> setTransform(trans);
 
 	polyLevelsets(*grid, polyBunny);
+	*/
+
+	// test inter
+	FloatGrid::Ptr grid = FloatGrid::create(0.1);
+	FloatGridVolume gridVolumef(*grid);
+	Vector x(0.0, 0.0, 0.0);
+	float value = gridVolumef.eval(x);
+	cout << "value: " << value << endl;
 
 	return 0;
 }
