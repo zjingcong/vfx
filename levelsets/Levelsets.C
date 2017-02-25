@@ -6,6 +6,7 @@
 # define myMax(x, y) (x > y ? x : y)
 # define myMin(x, y) (x < y ? x : y)
 
+
 PolyLevelsets::PolyLevelsets(PolyModel poly, int w, float s)
 {
 	polyModel = poly;
@@ -89,14 +90,18 @@ void PolyLevelsets::createFaceLevelsets(Face face)
 				// get the signed distance to the face
 				float signDis = face.getSignDistance(gridPointPosVec);
 				// save the signed distance to the grid point value
-				// if the distance is smaller than previous grid point value
+				// if the previous grid point value is not assigned, then save the distance
+				// else if the distance is smaller than previous grid point value, 
 				// then refresh the grid point value
 				const float gridBack = myGrid -> background();
-				if ((accessor.getValue(gridPointCoord) == gridBack) || 
-						(signDis < accessor.getValue(gridPointCoord))
+				if (accessor.getValue(gridPointCoord) == gridBack)
 				{
 					accessor.setValue(gridPointCoord, signDis);
+					// if the signed distance is positive, add the point to positiveCoordSet
+					if (signDis > 0)	{positiveCoordSet.insert(gridPointCoord);}
 				}
+				else if (signDis < accessor.getValue(gridPointCoord))
+					{accessor.setValue(gridPointCoord, signDis);}
 			}
 		}
 	}
@@ -108,17 +113,49 @@ void PolyLevelsets::createLevelsets()
 { 
 	// traverse all the faces of the polymodel
 	for (std::vector<Face>::iterator iter = polyBunny.polyFaces.begin(); 
-			 iter != polyBunny.polyFaces.end(); 
-			 ++iter)
+	     iter != polyBunny.polyFaces.end(); 
+	     ++iter)
 	{
 		Face f = *iter;
 		// within the narrow band, calculate the signed distance
 		createFaceLevelsets(f);
 		// for grid points interior to narrow band, set values to +1000
+		// traverse every point in positive set
+		for (std::set<Coord>::iterator iter = positiveCoordSet.begin(); 
+		     iter != positiveCoordSet.end(); 
+		     ++iter)
+		{
+			Coord ijk = *iter;
+			Int32 i0 = ijk.x();
+			Int32 j0 = ijk.y();
+			Int32 k0 = ijk.z();
+			// find the neighbor of the point
+			for (Int32 i = i0 - 1; Int32 i = i0 + 1; ++i)
+			{
+				for (Int32 j = j0 - 1; Int32 j = j0 + 1; ++j)
+				{
+					for (Int32 k = k0 -1; Int32 k = k0 + 1; ++k)
+					{
+						Coord neighborCoord(i, j, k);
+						// if the neighbor is unassigned
+						if (accessor.getValue(gridPointCoord) == gridBack)
+						{
+							// set the value to +1000
+							accessor.setValue(gridPointCoord, 1000);
+							// add neighbor to positive set
+							positiveCoordSet.insert(neighborCoord);
+						}
+					}
+				}
+			}
+			// end of neighbor finding
+		}
+		// end of traversing
 	}
 }
 
 
+// return the polymodel levelsets
 FloatGrid::Ptr getLevelsets()
 {
 	createLevelsets();
