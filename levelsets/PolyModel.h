@@ -44,7 +44,8 @@ class Face
 
 		void setPoints(Point P0, Point P1, Point P2);
 		Point getPoint(int point_id);
-		float getSignDistance(Vector p);	// get the min distance from a point to a face
+		// get the min signed distance from a point to a face
+		float getSignDistance(Vector p);
 
 	private:
 		Point p0;
@@ -57,11 +58,25 @@ class Face
 };
 
 
-// obj file parser
-// v position0, position1, position2
-// (vn nx, ny, nz)
-// f p0, p1, p2
-void load_obj(string filePath, std::vector<Face>& polyBunny);
+class PolyModel
+{
+	public:
+		PolyModel()	{}
+		~PolyModel()	{}
+
+		std::vector<Face> polyFaces;
+
+		// obj file parser
+		// v position0, position1, position2
+		// (vn nx, ny, nz)
+		// f p0, p1, p2
+		void loadObj(string filePath);
+
+	private:
+		int vertex_num;
+		int face_num;
+		int vertex_normal_num;
+};
 
 # endif
 

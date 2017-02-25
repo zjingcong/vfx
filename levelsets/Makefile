@@ -9,7 +9,7 @@ INCLUDES = -I ./ `Magick++-config  --cppflags --cxxflags` -I/group/dpa/local/ope
 
 PROJECT	= levelsets
 
-SOURCES = PolyModel.C Grid.C Matrix.C Camera.C levelsets.C 
+SOURCES = PolyModel.C Grid.C Matrix.C Camera.C levelsetsmain.C 
 
 $(PROJECT): $(SOURCES:%.$(C)=%.o)
 	$(CC) $(SOURCES:%.$(C)=%.o) $(INCLUDES) $(LDFLAGS) -o $@

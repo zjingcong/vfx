@@ -114,11 +114,12 @@ float Face::getSignDistance(Vector x)
 
 // ----------------------------------------------------------------------------------------
 
+// ----------------------------- PolyModel Class ------------------------------------------
 
 // obj file parser
 // v position0, position1, position2
 // f p0, p1, p2
-void load_obj(string filePath, std::vector<Face>& polyModel)
+void PolyModel::loadObj(string filePath)
 {
 	cout << "Load model " << filePath << "..." << endl;
 	// load model file
@@ -127,9 +128,6 @@ void load_obj(string filePath, std::vector<Face>& polyModel)
 
 	std::vector<Point> modelPoints;	// a vector container to store model points
 	string line;
-	int vertex_num = 0;
-	int face_num = 0;
-	int vertex_normal_num = 0;
 
 	while (getline(modelFile, line))
 	{
@@ -157,7 +155,7 @@ void load_obj(string filePath, std::vector<Face>& polyModel)
 			if (tag == "f")
 			{
 				Face face(modelPoints[a - 1], modelPoints[b - 1], modelPoints[c - 1]);	// the point index 0 = first point
-				polyModel.push_back(face);
+				polyFaces.push_back(face);
 				face_num++;
 			}
 		}
@@ -167,4 +165,6 @@ void load_obj(string filePath, std::vector<Face>& polyModel)
 	cout << "vertex_normal_num: " << vertex_normal_num << endl;
 	cout << "Load model success." << endl;
 }
+
+// ----------------------------------------------------------------------------------------
 
