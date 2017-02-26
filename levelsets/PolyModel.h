@@ -61,7 +61,7 @@ class Face
 class PolyModel
 {
 	public:
-		PolyModel()	{}
+		PolyModel();
 		~PolyModel()	{}
 
 		std::vector<Face> polyFaces;

@@ -9,6 +9,7 @@
 # include "PolyModel.h"
 # include "Types.h"
 # include "Grid.h"
+# include "Levelsets.h"
 
 using namespace std;
 using namespace lux;
@@ -17,8 +18,12 @@ using namespace lux;
 int main(int argc, char* argv[])
 {
 	string bunnyPath = "./models/bunny.obj";
+	// load bunny model
 	PolyModel polyBunny;
 	polyBunny.loadObj(bunnyPath);
+	// generate bunny levelsets
+	PolyLevelsets bunnyLevelsets(polyBunny, 3, 0.004);
+	FloatGrid::Ptr bunnyGrid = bunnyLevelsets.getLevelsets();
 
 	/*
 	// test
@@ -42,6 +47,7 @@ int main(int argc, char* argv[])
 	cout << "distance: " << d << endl;
 	*/
 
+	/*
 	// test polyLevelsets
 	// create a sparse grid
 	FloatGrid::Ptr grid = FloatGrid::create();
@@ -51,13 +57,21 @@ int main(int argc, char* argv[])
 	grid -> setTransform(trans);
 
 	polyLevelsets(*grid, polyBunny.polyFaces);
+	*/
 
 	/*
 	// test inter
-	FloatGrid::Ptr grid = FloatGrid::create(0.1);
-	FloatGridVolume gridVolumef(*grid);
-	Vector x(0.0, 0.0, 0.0);
-	float value = gridVolumef.eval(x);
+	FloatGrid::Ptr grid;
+	// grid = FloatGrid::create(0.1);
+	grid = openvdb::createLevelSet<FloatGrid>(0.01, 10);
+	grid -> setBackground(-1000);
+	// FloatGridVolume gridVolumef(*grid);
+	// Vector x(0.0, 0.0, 0.0);
+	// float value = gridVolumef.eval(x);
+	// cout << "value: " << value << endl;
+	FloatGrid::Accessor accessor = grid -> getAccessor();
+	Coord ijk(1, 0, 0);
+	float value = accessor.getValue(ijk);
 	cout << "value: " << value << endl;
 	*/
 

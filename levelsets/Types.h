@@ -17,6 +17,8 @@
 # include <openvdb/util/Util.h>
 
 // typedef a FloatTree and FloatGrid
+
+typedef int32_t Int32;
 typedef openvdb::tree::Tree4<float, 5, 4, 3>::Type FloatTree;
 typedef openvdb::Grid<FloatTree> FloatGrid;
  

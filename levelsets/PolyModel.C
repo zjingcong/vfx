@@ -64,12 +64,14 @@ float Face::getSignDistance(Vector x)
 	float a, b, t, d;
 	int isInside;	// inside: 1, outside: -1
 	
-	t = normal * (pos0 - x);	// t < 0 outside
-	isInside = (t < 0) ? (-1) : 1;
+	t = -normal * (pos0 - x);	// t < 0 outside
+	isInside = (t < 0) ? (-1) : (1);
 	a = e2 * (normal ^ (x - pos0)) / (e2 * (normal ^ e1));
 	b = e1 * (normal ^ (x - pos0)) / (e1 * (normal ^ e2));
+
 	// case 1
-	if (a <= 1 && a >= 0 && b <= 1 && b >= 0 && (a + b) <= 1 && (a + b) >= 0)	{return t;}
+	if (a <= 1 && a >= 0 && b <= 1 && b >= 0 && (a + b) <= 1 && (a + b) >= 0)
+		{return t;}
 	// case 2
 	else
 	{
@@ -115,6 +117,14 @@ float Face::getSignDistance(Vector x)
 // ----------------------------------------------------------------------------------------
 
 // ----------------------------- PolyModel Class ------------------------------------------
+
+PolyModel::PolyModel()
+{
+	vertex_num = 0;
+	face_num = 0;
+	vertex_normal_num = 0;
+}
+
 
 // obj file parser
 // v position0, position1, position2

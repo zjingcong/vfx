@@ -12,24 +12,25 @@ namespace lux
 	class PolyLevelsets
 	{
 		public:
-			PolyLevelsets(PolyModel poly, int w, float s);
+			// gridBack should be negative
+			// default gridBack is -1000
+			PolyLevelsets(PolyModel poly, int w, float s, float back = -1000);
 			~PolyLevelsets()	{}
-
+			
 			FloatGrid::Ptr getLevelsets();
 
 		private:
 			PolyModel polyModel;
 			int halfWidth;
 			float voxelSize;
+			float gridBack;
 
 			FloatGrid::Ptr myGrid;	// levelsets grid
 			Transform::Ptr xform;	// levelsets grid's transform
-			FloatGrid::Accessor accessor;	// accessor of the levelsets grid
-
-			std::set<Coord> positiveCoordSet;	// a set containing positive grid points
 
 			void createFaceLevelsets(Face face);
 			void createLevelsets();
+			void createLevelsets_all();
 	};
 
 }
