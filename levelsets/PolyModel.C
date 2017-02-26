@@ -1,6 +1,8 @@
+# include <algorithm>
+# include <vector>
+# include <iostream>
 
 # include "PolyModel.h"
-# include <iostream>
 
 using namespace std;
 
@@ -69,47 +71,53 @@ float Face::getSignDistance(Vector x)
 	a = e2 * (normal ^ (x - pos0)) / (e2 * (normal ^ e1));
 	b = e1 * (normal ^ (x - pos0)) / (e1 * (normal ^ e2));
 
-	// case 1
+	// case 1: calculate the min distance to the face plane
 	if (a <= 1 && a >= 0 && b <= 1 && b >= 0 && (a + b) <= 1 && (a + b) >= 0)
 		{return t;}
-	// case 2
+	// case 2: calculate the min distance to the triangle edges
 	else
 	{
+		float d1 = 0; 
+		float d2 = 0;
+		float d3 = 0;
+		Vector e3 = e2 - e1;
+		Vector pos1 = p1.getPos();
 		a = (e1 * (x - pos0)) / (e1.magnitude() * e1.magnitude());
+		b = (e2 * (x - pos0)) / (e2.magnitude() * e2.magnitude());
+		float c = (e3 * (x - pos1)) / (e3.magnitude() * e3.magnitude());
+		std::vector<float> disvec;
 		if (a <= 1 && a >= 0)
 		{
-			d = (x - pos0 - a * e1).magnitude();
+			d1 = (x - pos0 - a * e1).magnitude();
+			disvec.push_back(d1);
+		}
+		if (b <= 1 && b >= 0)
+		{
+			d2 = (x - pos0 - b * e2).magnitude();
+			disvec.push_back(d2);
+		}
+		if (c <= 1 && c >= 0)
+		{
+			d3 = (x - pos1 - c * e3).magnitude();
+			disvec.push_back(d3);
+		}
+		// find the min distance to edge
+		if (!disvec.empty())
+		{
+			// find the min
+			std::sort(disvec.begin(), disvec.end());
+			d = disvec[0];
 			return d * isInside;
 		}
+		// case 3: calculate the min distance to triangle points
 		else
 		{
-			b = (e2 * (x - pos0)) / (e2.magnitude() * e2.magnitude());
-			if (b <= 1 && b >= 0)
-			{
-				d = (x - pos0 - b * e2).magnitude();
-				return d * isInside;
-			}
-			else
-			{
-				Vector e3 = e2 - e1;
-				Vector pos1 = p1.getPos();
-				float c = (e3 * (x - pos1)) / (e3.magnitude() * e3.magnitude());
-				if (c <= 1 && c >= 0)
-				{
-					d = (x - pos1 - c * e3).magnitude();
-					return d * isInside;
-				}
-				// case 3
-				else
-				{
-					float d0 = (x - pos0).magnitude();
-					float d1 = (x - p1.getPos()).magnitude();
-					float d2 = (x - p2.getPos()).magnitude();
-					float tmp = myMin(d0, d1);
-					float d_myMin = myMin(tmp, d2);
-					return d_myMin * isInside;
-				}
-			}
+			float dd0 = (x - pos0).magnitude();
+			float dd1 = (x - p1.getPos()).magnitude();
+			float dd2 = (x - p2.getPos()).magnitude();
+			float tmp = myMin(dd0, dd1);
+			float d_myMin = myMin(tmp, dd2);
+			return d_myMin * isInside;
 		}
 	}
 }
