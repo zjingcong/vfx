@@ -1,40 +1,21 @@
+C	= C
+CC = g++
 
-CC		= g++
-C		= C
+CFLAGS		= -g -Wall -O2 -fopenmp
 
-CFLAGS		= -g -Wall -fopenmp
-LFLAGS		= -g -fopenmp
+LDFLAGS =  `Magick++-config  --cppflags --cxxflags --ldflags --libs` -L/usr/local/lib -L/group/dpa/local/openvdb/lib -lOpenImageIO -lHalf -ltbb -lopenvdb -Wl,--rpath=/group/dpa/local/openvdb/lib -fopenmp
 
-ifeq ("$(shell uname)", "Darwin")
-  LDFLAGS     = -framework Foundation -framework GLUT -framework OpenGL -lMagick++ -lm
-else
-  ifeq ("$(shell uname)", "Linux")
-    LDFLAGS     = -L /usr/lib64/ -lOpenImageIO -lm
-  endif
-endif
+INCLUDES = -I ./ `Magick++-config  --cppflags --cxxflags` -I/group/dpa/local/openvdb/include
 
-HFILES	= Shape.h Vector.h Camera.h Renderer.h Image.h OIIOFiles.h PropertyVolume.h Operations.h ScalarVolumeXform.h
-OFILES  = Camera.o Image.o Renderer.o OIIOFiles.o
+PROJECT	= figure
 
-PROJECT		= figure
+SOURCES = Matrix.C Image.C Camera.C OIIOFiles.C Renderer.C figure.C
 
-${PROJECT}:	${PROJECT}.o ${OFILES}
-	${CC} ${LFLAGS} -o ${PROJECT} ${PROJECT}.o ${OFILES} ${LDFLAGS}
+$(PROJECT): $(SOURCES:%.$(C)=%.o)
+	$(CC) $(SOURCES:%.$(C)=%.o) $(INCLUDES) $(LDFLAGS) -o $@
 
-${PROJECT}.o:	${PROJECT}.${C} ${HFILES}
-	${CC} ${CFLAGS} -c ${PROJECT}.${C}
-
-Camera.o: Camera.${C} Camera.h Vector.h
-	${CC} ${CFLAGS} -c Camera.${C}
-
-Image.o: Image.${C} Image.h
-	${CC} ${CFLAGS} -c Image.${C}
-
-OIIOFiles.o: OIIOFiles.${C} Image.h OIIOFiles.h
-	${CC} ${CFLAGS} -c OIIOFiles.${C}
-
-Renderer.o: Renderer.${C} Renderer.h Vector.h Color.h Image.h Camera.h Volume.h PropertyVolume.h
-	${CC} ${CFLAGS} -c Renderer.${C}
+$(SOURCES:%.$(C)=%.o): %.o: %.$(C)
+	$(CC) -o $@ -c $(CFLAGS) $(INCLUDES) $<
 
 clean:
 	rm -f core.* *.o *~ ${PROJECT}

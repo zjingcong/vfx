@@ -24,8 +24,8 @@ using namespace lux;
 using namespace std;
 
 # define STEP_SIZE 0.2
-# define WEIGHT 1920
-# define HEIGHT 1080
+# define WEIGHT 320
+# define HEIGHT 180
 # define CAMERA_X 15
 # define CAMERA_Y -2
 # define NEAR 12
@@ -255,7 +255,6 @@ int main(int argc, char* argv[])
 	cout << "Start frame id: " << frameStart << endl;
 	cout << "Rendering start..." << endl;
 	cout << "---------------------------------" << endl;
-	# pragma omp parallel for
 	for (int i = 0; i < frameNum; ++i)
 	{
 		int frame_id = i + frameStart;
@@ -278,7 +277,7 @@ int main(int argc, char* argv[])
 		Vector view_new = lookAt - eye_new;
 		myCamera.setEyeViewUp(eye_new, view_new, up);
 
-		// rendering
+		// rendering (multithreading)
 		Renderer myRenderer(myImg, myCamera, STEP_SIZE);
 		myRenderer.render(finalColor, finalDensity);
 

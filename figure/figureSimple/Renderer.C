@@ -42,6 +42,8 @@ void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume)
   int height = img.Height();
   float u, v;
   
+	// multithreading
+	# pragma omp parallel for
   for (int j = 0; j < height; ++j)
   {
     v = j / float(height - 1);
