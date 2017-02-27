@@ -64,7 +64,10 @@ class PolyModel
 		PolyModel();
 		~PolyModel()	{}
 
+		// a vector container to store all the model faces
 		std::vector<Face> polyFaces;
+		// model bounding box
+		float x_min, y_min, z_min, x_max, y_max, z_max;
 
 		// obj file parser
 		// v position0, position1, position2

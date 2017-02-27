@@ -107,7 +107,8 @@ void PolyLevelsets::createFaceLevelsets(Face face)
 					accessor.setValue(gridPointCoord, signDis);
 					accessor.setValueOn(gridPointCoord);
 				}
-				else if (signDis < accessor.getValue(gridPointCoord))
+				else if (abs(signDis) < abs(accessor.getValue(gridPointCoord)))
+				// else if (signDis < accessor.getValue(gridPointCoord))
 					{accessor.setValue(gridPointCoord, signDis);}
 			}
 		}
@@ -220,6 +221,7 @@ void PolyLevelsets::createLevelsets()
 		createFaceLevelsets(f);
 	}
 
+/*
 	// ----------------------------------------------------------------------
 
 	// get initial positive points list
@@ -311,6 +313,7 @@ void PolyLevelsets::createLevelsets()
 
 		cout << "-----------------------------------------------------------------" << endl;
 	}	// end of while
+*/
 }
 
 

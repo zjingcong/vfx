@@ -140,6 +140,9 @@ void PolyModel::loadObj(string filePath)
 	std::vector<Point> modelPoints;	// a vector container to store model points
 	string line;
 
+	std::vector<float> xvec;
+	std::vector<float> yvec;
+	std::vector<float> zvec;
 	while (getline(modelFile, line))
 	{
 		istringstream iss(line);
@@ -150,8 +153,11 @@ void PolyModel::loadObj(string filePath)
 			// parse the vertices
 			if (tag == "v")
 			{
-				// Vector point_pos(a * 5, b * 5, c * 5);	// test here
-				Vector point_pos(a, b, c);
+				xvec.push_back(a);
+				yvec.push_back(b);
+				zvec.push_back(c);
+				Vector point_pos(a * 5, b * 5, c * 5);	// test here
+				// Vector point_pos(a, b, c);
 				Point modelPoint(point_pos);
 				modelPoints.push_back(modelPoint);
 				vertex_num++;
@@ -172,10 +178,25 @@ void PolyModel::loadObj(string filePath)
 			}
 		}
 	}
+	// get the model bounding box
+	std::sort(xvec.begin(), xvec.end());
+	x_min = xvec.front();
+	x_max = xvec.back();
+	std::sort(yvec.begin(), yvec.end());
+	y_min = yvec.front();
+	y_max = yvec.back();
+	std::sort(zvec.begin(), zvec.end());
+	z_min = zvec.front();
+	z_max = zvec.back();
+	// log the model info
 	cout << "vertex_num: " << vertex_num << endl;
 	cout << "face_num: " << face_num << endl;
 	cout << "vertex_normal_num: " << vertex_normal_num << endl;
 	cout << "Load model success." << endl;
+	cout << "Model bounding box: " << endl;
+	cout << " - x: " << x_min << ", " << x_max << endl;
+	cout << " - y: " << y_min << ", " << y_max << endl;
+	cout << " - z: " << z_min << ", " << z_max << endl;
 }
 
 // ----------------------------------------------------------------------------------------
