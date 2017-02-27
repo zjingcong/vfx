@@ -157,6 +157,7 @@ void PolyModel::loadObj(string filePath)
 			// parse the vertices
 			if (tag == "v")
 			{
+				// Vector point_pos(a * 100, b * 100, c * 100);	// test here
 				Vector point_pos(a, b, c);
 				Point modelPoint(point_pos);
 				modelPoints.push_back(modelPoint);

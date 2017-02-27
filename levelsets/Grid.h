@@ -11,13 +11,13 @@ namespace lux
 	class FloatGridVolume: public Volume<float>
 	{
 		public:
-			FloatGridVolume(FloatGrid& grid): floatGrid(grid)	{}
+			FloatGridVolume(FloatGrid::Ptr grid): myFloatGrid(grid)	{}
 			~FloatGridVolume()	{}
 
 			const float eval(const Vector& x) const;
 
 		private:
-			FloatGrid floatGrid;
+			FloatGrid::Ptr myFloatGrid;
 	};
 
 }
