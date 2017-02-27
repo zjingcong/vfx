@@ -101,24 +101,17 @@ float Face::getSignDistance(Vector x)
 			d3 = (x - pos1 - c * e3).magnitude();
 			disvec.push_back(d3);
 		}
-		// find the min distance to edge
-		if (!disvec.empty())
-		{
-			// find the min
-			std::sort(disvec.begin(), disvec.end());
-			d = disvec[0];
-			return d * isInside;
-		}
 		// case 3: calculate the min distance to triangle points
-		else
-		{
-			float dd0 = (x - pos0).magnitude();
-			float dd1 = (x - p1.getPos()).magnitude();
-			float dd2 = (x - p2.getPos()).magnitude();
-			float tmp = myMin(dd0, dd1);
-			float d_myMin = myMin(tmp, dd2);
-			return d_myMin * isInside;
-		}
+		float dd1 = (x - pos0).magnitude();
+		float dd2 = (x - p1.getPos()).magnitude();
+		float dd3 = (x - p2.getPos()).magnitude();
+		disvec.push_back(dd1);
+		disvec.push_back(dd2);
+		disvec.push_back(dd3);
+		// find the min distance to edges and points
+		std::sort(disvec.begin(), disvec.end());
+		d = disvec[0];
+		return d * isInside;
 	}
 }
 
@@ -157,7 +150,7 @@ void PolyModel::loadObj(string filePath)
 			// parse the vertices
 			if (tag == "v")
 			{
-				// Vector point_pos(a * 100, b * 100, c * 100);	// test here
+				// Vector point_pos(a * 5, b * 5, c * 5);	// test here
 				Vector point_pos(a, b, c);
 				Point modelPoint(point_pos);
 				modelPoints.push_back(modelPoint);

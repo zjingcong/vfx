@@ -24,59 +24,38 @@ using namespace lux;
 # define WEIGHT 320
 # define HEIGHT 180
 # define STEP_SIZE 0.1
-# define NEAR 2
+# define NEAR 0.1
 # define FAR 10
 
 int main(int argc, char* argv[])
 {
-
 	string bunnyPath = "./models/bunny.obj";
 	// load bunny model
 	PolyModel polyBunny;
 	polyBunny.loadObj(bunnyPath);
 	// generate bunny levelsets
-	PolyLevelsets bunnyLevelsets(polyBunny, 3, 0.005);
+	PolyLevelsets bunnyLevelsets(polyBunny, 3, 0.004);
 	FloatGrid::Ptr bunnyGrid = bunnyLevelsets.getLevelsets();
 	// generate bunny volume
 	FloatGridVolume bunnyVolume(bunnyGrid);
-	// Vector x(0.05, 0.01, 0.003);
-	// float value = bunnyVolume.eval(x);
-	// cout << "value: " << value << endl;
 
 /*
 	FloatGrid::Ptr grid = FloatGrid::create(0);
-	grid -> setBackground(-1);
+	grid -> setBackground(0);
 	Transform::Ptr transform = grid->transformPtr();
 	// create a linear transform that sets the voxel size of the grid to 0.1
   transform = Transform::createLinearTransform(0.1);
 	FloatGrid::Accessor accessor = grid->getAccessor();
-	for (int i = 0; i <= 10; ++i)
-	{
-		for (int j = 0; j <= 10; ++j)
-		{
-			for (int k = 0; k <= 10; ++k)
-			{
-				Coord ijk(i, j, k);
-				accessor.setValue(ijk, 1);
-			}
-		}
-	}
-
-	for (FloatGrid::ValueOnIter iter = grid->beginValueOn(); iter; ++iter)
-	{
-		Coord ijk = iter.getCoord();
-		cout << "Coord: " << ijk;
-		Vec3s pos = transform->indexToWorld(ijk);
-		cout << " pos: " << pos;
-		cout << " value: " << *iter << endl;
-	}
-
-	Vec3s pos(0, 2, 0);
+	Coord ijk0(0, 0, 0);
+	Coord ijk1(0, 0, 1);
+	accessor.setValue(ijk0, -1);
+	accessor.setValue(ijk1, -1);
+	Vec3s pos(0, 0, 0.3);
 	Coord newijk = transform->worldToIndexNodeCentered(pos);
 	cout << "coord: " << newijk << endl;
-	cout << "pos(0, 2, 0): " << accessor.getValue(newijk) << endl;
+	cout << "pos(0, 0, 0.3): " << accessor.getValue(newijk) << endl;
 
-	openvdb::tools::GridSampler<FloatGrid, openvdb::tools::PointSampler> sampler(*grid);
+	openvdb::tools::GridSampler<FloatGrid, openvdb::tools::BoxSampler> sampler(*grid);
 	std::cout << "sampler: " << sampler.wsSample(pos) << std::endl;
 */
 
@@ -91,11 +70,7 @@ int main(int argc, char* argv[])
 	openvdb::tools::GridSampler<FloatGrid, openvdb::tools::PointSampler> sampler(*grid);
 	std::cout << "sampler: " << sampler.wsSample(pos) << std::endl;
 */
-/*
-	cout << "*" << endl;
-	FloatGridVolume bunnyVolume(grid);
-	cout << "#" << endl;
-*/
+
 
 /*
 	Vector x(0, 1, 0);
@@ -104,6 +79,7 @@ int main(int argc, char* argv[])
 	cout << bunnyVolume.eval(y) << endl;
 	Vector z(0, 2, 0);
 	cout << bunnyVolume.eval(z) << endl;
+*/
 
 	Color redColor(100, 100, 100, 1.0);
 	ConstantColor red(redColor);
@@ -118,7 +94,7 @@ int main(int argc, char* argv[])
 	myImg.reset(WEIGHT, HEIGHT);
 	cout << "set camera..." << endl;
 	Camera myCamera;
-	Vector eye(0.0, 0.5, 5.0);
+	Vector eye(0.0, 0.5, 4.0);
 	Vector view(0.0, 0.0, -1.0);
 	Vector up(0.0, 1.0, 0.0);
 	myCamera.setEyeViewUp(eye, view, up);
@@ -134,7 +110,7 @@ int main(int argc, char* argv[])
 	sprintf(file_name, "./results/jingcoz_hw2.%04d.exr", frame_id);
 	cout << "Frame " << frame_id << " into" << file_name << " complete."<< endl;
 	writeOIIOImage(file_name, myImg);
-*/
+
 	return 0;
 }
 

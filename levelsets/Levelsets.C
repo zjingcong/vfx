@@ -237,29 +237,29 @@ void PolyLevelsets::createLevelsets()
 		int unassigned_num = 0;
 
 		/// ============================ test ==================================
-		/// int points_num = 0;
-		/// int point0num = 0;
-		/// int positive_num = 0;
-		/// int negative_num = 0;
-		/// int current_positive = 0;
-		/// for (FloatGrid::ValueOnIter iter = myGrid -> beginValueOn(); iter; ++iter)
-		/// {
-		/// 	// cout << iter.getCoord() << ": " << *iter << endl;
-		/// 	points_num++;
-		/// 	if (*iter == 0) {point0num++;}
-		/// 	if (*iter < 0)	{negative_num++;}
-		/// 	if (*iter > 0)	{positive_num++;}
-		/// }
-		/// cout << "points_num: " << points_num << endl;
-		/// cout << "point0num: " << point0num << endl;
-		/// cout << "negative_num: " << negative_num << endl;
-		/// cout << "positive_num: " << positive_num << endl;
-		/// for (std::set<Coord>::iterator iter = positiveCoordSet.begin(); 
-		///      iter != positiveCoordSet.end(); ++iter)
-		/// {
-		/// 	current_positive++;
-		/// }
-		/// cout << "current_positive_num: " << current_positive << endl;
+		int points_num = 0;
+		int point0num = 0;
+		int positive_num = 0;
+		int negative_num = 0;
+		int current_positive = 0;
+		for (FloatGrid::ValueOnIter iter = myGrid -> beginValueOn(); iter; ++iter)
+		{
+			// cout << iter.getCoord() << ": " << *iter << endl;
+			points_num++;
+			if (*iter == 0) {point0num++;}
+			if (*iter < 0)	{negative_num++;}
+			if (*iter > 0)	{positive_num++;}
+		}
+		cout << "points_num: " << points_num << endl;
+		cout << "point0num: " << point0num << endl;
+		cout << "negative_num: " << negative_num << endl;
+		cout << "positive_num: " << positive_num << endl;
+		for (std::set<Coord>::iterator iter = positiveCoordSet.begin(); 
+		     iter != positiveCoordSet.end(); ++iter)
+		{
+			current_positive++;
+		}
+		cout << "current_positive_num: " << current_positive << endl;
 		/// ============================ test ==================================
 
 		// a new set to store new positive points
