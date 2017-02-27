@@ -30,12 +30,12 @@ using namespace lux;
 int main(int argc, char* argv[])
 {
 
-	string bunnyPath = "./models/cube.obj";
+	string bunnyPath = "./models/bunny.obj";
 	// load bunny model
 	PolyModel polyBunny;
 	polyBunny.loadObj(bunnyPath);
 	// generate bunny levelsets
-	PolyLevelsets bunnyLevelsets(polyBunny, 3, 0.1);
+	PolyLevelsets bunnyLevelsets(polyBunny, 3, 0.005);
 	FloatGrid::Ptr bunnyGrid = bunnyLevelsets.getLevelsets();
 	// generate bunny volume
 	FloatGridVolume bunnyVolume(bunnyGrid);
@@ -97,6 +97,7 @@ int main(int argc, char* argv[])
 	cout << "#" << endl;
 */
 
+/*
 	Vector x(0, 1, 0);
 	cout << bunnyVolume.eval(x) << endl;
 	Vector y(0, 0, 0);
@@ -133,7 +134,7 @@ int main(int argc, char* argv[])
 	sprintf(file_name, "./results/jingcoz_hw2.%04d.exr", frame_id);
 	cout << "Frame " << frame_id << " into" << file_name << " complete."<< endl;
 	writeOIIOImage(file_name, myImg);
-
+*/
 	return 0;
 }
 
