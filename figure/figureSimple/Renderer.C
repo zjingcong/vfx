@@ -43,10 +43,10 @@ void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume)
   float u, v;
   
 	// multithreading
-	# pragma omp parallel for
   for (int j = 0; j < height; ++j)
   {
     v = j / float(height - 1);
+	# pragma omp parallel for
     for (int i = 0; i < width; ++i)
     {
       u = i / float(width - 1);
