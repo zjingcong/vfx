@@ -17,8 +17,24 @@ const float FloatGridVolume::eval(const Vector& x) const
 	float gridValue;
 	gridValue = sampler.wsSample(xyz);	// world space sample
 
-	// use negative to test openvdb levelsets(outside is pos and inside is neg)
 	return gridValue;
+}
+
+// ----------------------------------------------------------------------------------------------
+
+
+// ---------------------------- Class ColorGridVolume -------------------------------------------
+
+const Color ColorGridVolume::eval(const Vector& x) const
+{
+	Vec3s xyz(x.X(), x.Y(), x.Z());	// world space
+	// construct a color grid box sampler to perform trilinear interpolation
+	openvdb::tools::GridSampler<Vec4fGrid, openvdb::tools::BoxSampler> sampler(*myColorGrid);
+	Vec4s gridValue;
+	gridValue = sampler.wsSample(xyz);	// world space sample
+	Color colorValue(gridValue.x(), gridValue.y(), gridValue.z(), gridValue.w());
+
+	return colorValue;
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -43,12 +59,8 @@ void FloatVolumeToGrid::createVolumeGrid()
 	FloatGrid::Accessor accessor = myGrid -> getAccessor();
 	Vec3s llc = volumeBBox.min();
 	Vec3s urc = volumeBBox.max();
-	// std::cout << "vec llc: " << llc << std::endl;
-	// std::cout << "vec urc: " << urc << std::endl;
 	Coord ijk0 = transform -> worldToIndexNodeCentered(llc);
 	Coord ijk1 = transform -> worldToIndexNodeCentered(urc);
-	// std::cout << "coord llc: " << ijk0 << std::endl;
-	// std::cout << "coord urc: " << ijk1 << std::endl;
 	for (int i = ijk0.x(); i <= ijk1.x(); ++i)
 	{
 		for (int j = ijk0.y(); j <= ijk1.y(); ++j)
@@ -57,11 +69,8 @@ void FloatVolumeToGrid::createVolumeGrid()
 			{
 				Coord ijk(i, j, k);
 				Vec3s gridPointPos = transform -> indexToWorld(ijk);
-				// std::cout << "vec: " << gridPointPos << std::endl;
 				lux::Vector vec(gridPointPos.x(), gridPointPos.y(), gridPointPos.z());
-				// std::cout << "Vector: " << vec.X() << " " << vec.Y() << " " << vec.Z() << std::endl;
 				float value = myVolume.eval(vec);
-				// std::cout << "value: " << value << std::endl;
 				accessor.setValue(ijk, value);
 			}
 		}
@@ -70,6 +79,54 @@ void FloatVolumeToGrid::createVolumeGrid()
 
 
 FloatGrid::Ptr FloatVolumeToGrid::getVolumeGrid()
+{
+	createVolumeGrid();
+	return myGrid;
+}
+
+// ----------------------------------------------------------------------------------------------
+
+
+// ---------------------------- Class ColorVolumeToGrid -----------------------------------------
+
+ColorVolumeToGrid::ColorVolumeToGrid(Volume<Color>& f, float s, BBox& bbox): 
+	myVolume(f), voxelSize(s), volumeBBox(bbox)
+{
+	// create the float grid
+	myGrid = Vec4fGrid::create();
+	// get the grid transform
+	transform = myGrid -> transformPtr();
+	// set voxel size
+	transform = Transform::createLinearTransform(voxelSize);
+	myGrid -> setTransform(transform);
+}
+
+void ColorVolumeToGrid::createVolumeGrid()
+{
+	Vec4fGrid::Accessor accessor = myGrid -> getAccessor();
+	Vec3s llc = volumeBBox.min();
+	Vec3s urc = volumeBBox.max();
+	Coord ijk0 = transform -> worldToIndexNodeCentered(llc);
+	Coord ijk1 = transform -> worldToIndexNodeCentered(urc);
+	for (int i = ijk0.x(); i <= ijk1.x(); ++i)
+	{
+		for (int j = ijk0.y(); j <= ijk1.y(); ++j)
+		{
+			for (int k = ijk0.z(); k <= ijk1.z(); ++k)
+			{
+				Coord ijk(i, j, k);
+				Vec3s gridPointPos = transform -> indexToWorld(ijk);
+				lux::Vector vec(gridPointPos.x(), gridPointPos.y(), gridPointPos.z());
+				Color value = myVolume.eval(vec);
+				Vec4s mycolor(value.X(), value.Y(), value.Z(), value.W());
+				accessor.setValue(ijk, mycolor);
+			}
+		}
+	}
+}
+
+
+Vec4fGrid::Ptr ColorVolumeToGrid::getVolumeGrid()
 {
 	createVolumeGrid();
 	return myGrid;

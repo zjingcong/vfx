@@ -148,20 +148,19 @@ void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume, 
   float u, v;
   
 	// multithreading
+	# pragma omp parallel for collapse(2)
   for (int j = 0; j < height; ++j)
   {
-    v = j / float(height - 1);
-		# pragma omp parallel for
+		// # pragma omp parallel for
     for (int i = 0; i < width; ++i)
     {
+			v = j / float(height - 1);
       u = i / float(width - 1);
       Vector np = camera.view(u, v);
 			
 			s_min_max minmax = intersect(volumeBBox, np);
 			float s_near = minmax.min;
 			float s_far = minmax.max;
-			// float s_near = camera.nearPlane();
-			// float s_far = camera.farPlane();	
       float s_far_near = s_far - s_near;
 			Vector x0 = camera.eye() + np * s_near;
 

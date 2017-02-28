@@ -63,6 +63,9 @@ int main(int argc, char* argv[])
 	FloatVolumeToGrid humanVolume2Grid(humanFinalDensity, 0.1, humanBBox);
 	FloatGrid::Ptr humanGrid = humanVolume2Grid.getVolumeGrid();
 	FloatGridVolume finalDensity(humanGrid);
+	ColorVolumeToGrid humanColor2Grid(humanFinalColor, 0.1, humanBBox);
+	Vec4fGrid::Ptr humanColorGrid = humanColor2Grid.getVolumeGrid();
+	ColorGridVolume finalColor(humanColorGrid);
 
 	/// ---------------------------------------------------------------------
 
@@ -82,7 +85,7 @@ int main(int argc, char* argv[])
 	cout << "start rendering..." << endl;
 	// rendering (multithreading)
 	Renderer myRenderer(myImg, myCamera, STEP_SIZE);
-	myRenderer.render(humanFinalColor, finalDensity, humanBBox);
+	myRenderer.render(humanFinalColor, humanFinalDensity, humanBBox);
 	cout << "rendering complete." << endl;
 	// write into file
 	char file_name[50];
