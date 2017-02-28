@@ -16,17 +16,16 @@ const float SingleScatterVolume::eval(const Vector& x) const
 	float T = 0;
 	float s0 = 0;
 	// iteration - multithreading
-	float T_list[n_max + 1];
 	# pragma omp parallel for
 	for (int n = 0; n <= n_max; ++n)
 	{
 		float s = s0 + step_size * n;
 		Vector y = x + normal * s;
 		float rho = densityVolume.eval(y);
-		T_list[n] = rho * step_size;
-	}
 
-	for (int n = 0; n <= n_max; ++n)	{T += T_list[n];}
+		# pragma omp atomic
+		T += rho * step_size;
+	}
 
 	return T;
 }
@@ -50,6 +49,7 @@ void LightVolume::singleScatterStamping()
 		{
 			LightSource lit = lights[i];
 			SingleScatterVolume sc(densityVolume, lit, step_size);
+			std::cout << "Stamping LightSource " << i << "..." << std::endl;
 			// stamp T on the grid
 			FloatVolumeToGrid scVolume2Grid(sc, voxelSize, volumeBBox);
 			FloatGrid::Ptr singleScatterGrid = scVolume2Grid.getVolumeGrid();

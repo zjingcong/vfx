@@ -26,13 +26,13 @@ using namespace lux;
 # define WEIGHT 320
 # define HEIGHT 180
 # define STEP_SIZE 0.01
-# define NEAR 0.1
-# define FAR 5
+# define NEAR 12
+# define FAR 18
 
 int main(int argc, char* argv[])
 {
 	/// --------------------------- bunny ------------------------------------
-
+/*
 	string bunnyPath = "./models/cleanbunny.obj";
 	// load bunny model
 	PolyModel polyBunny;
@@ -53,11 +53,11 @@ int main(int argc, char* argv[])
 	ConstantFloat rho(10.0);
 	ColorVolume finalColor(red, bunnyVolume);
 	DensityVolume finalDensity(rho, bunnyVolume);
+*/
 	// set K
 	float K = 1;
 
 	/// ---------------------------------------------------------------------
-	/*
 
 	Vec3s humanLLC(-3.0, -6.0, -3.0);
 	Vec3s humanURC(3.0, 3.0, 3.0);
@@ -68,7 +68,6 @@ int main(int argc, char* argv[])
 	ColorVolumeToGrid humanColor2Grid(humanFinalColor, 0.1, humanBBox);
 	Vec4fGrid::Ptr humanColorGrid = humanColor2Grid.getVolumeGrid();
 	ColorGridVolume finalColor(humanColorGrid);
-	*/
 
 	/// ---------------------------------------------------------------------
 
@@ -89,9 +88,9 @@ int main(int argc, char* argv[])
 	LightSource rimLight(rimPos, rimColor);
 	LightSource backLight(backPos, backColor);
 	myLights.push_back(keyLight);
-	myLights.push_back(rimLight);
-	myLights.push_back(backLight);
-	LightVolume lightVolume(myLights, finalDensity, K, STEP_SIZE, 0.05, bunnyBBox);
+	// myLights.push_back(rimLight);
+	// myLights.push_back(backLight);
+	LightVolume lightVolume(myLights, finalDensity, K, STEP_SIZE, 0.1, humanBBox);
 
 	// set rendering
 	int frame_id = 0;
@@ -101,7 +100,7 @@ int main(int argc, char* argv[])
 	myImg.reset(WEIGHT, HEIGHT);
 	cout << "set camera..." << endl;
 	Camera myCamera;
-	Vector eye(4.0, 0.0, 0.0);
+	Vector eye(15.0, -2.0, 0.0);
 	Vector view(-1.0, 0.0, 0.0);
 	Vector up(0.0, 1.0, 0.0);
 	myCamera.setEyeViewUp(eye, view, up);
@@ -110,7 +109,7 @@ int main(int argc, char* argv[])
 	// rendering (multithreading)
 	cout << "start rendering..." << endl;
 	Renderer myRenderer(myImg, myCamera, STEP_SIZE);
-	myRenderer.render(finalColor, finalDensity, K, lightVolume, bunnyBBox);
+	myRenderer.render(finalColor, finalDensity, K, lightVolume, humanBBox);
 	cout << "rendering complete." << endl;
 	// write into file
 	char file_name[50];
