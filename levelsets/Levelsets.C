@@ -234,7 +234,7 @@ void PolyLevelsets::createLevelsets()
 
 	// for grid points interior to narrow band, set values to +1000
 	bool noneighborFlag = false;
-	for (int i  = 0; i < 3; i++)	// test here
+	for (int i  = 0; i < 5; i++)	// test here
 	// while (!noneighborFlag)
 	{
 		int unassigned_num = 0;

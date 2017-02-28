@@ -3,6 +3,7 @@
 
 # include "Volume.h"
 # include "Types.h"
+# include "Vector.h"
 
 namespace lux
 {
@@ -18,6 +19,27 @@ namespace lux
 
 		private:
 			FloatGrid::Ptr myFloatGrid;
+	};
+
+
+	// stamp a float volume to a float grid
+	class FloatVolumeToGrid
+	{
+		public:
+			FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox);
+			~FloatVolumeToGrid()	{}
+
+			FloatGrid::Ptr getVolumeGrid();
+
+		private:
+			Volume<float>& myVolume;
+			float voxelSize;
+			BBox volumeBBox;
+
+			FloatGrid::Ptr myGrid;
+			Transform::Ptr transform;
+
+			void createVolumeGrid();
 	};
 
 }

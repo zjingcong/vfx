@@ -178,4 +178,3 @@ void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume, 
   }
 }
 
-

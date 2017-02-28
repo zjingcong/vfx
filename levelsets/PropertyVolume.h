@@ -46,17 +46,6 @@ namespace lux
 			Color constantC;
 	};
 
-	class Colorful: public Volume<Color>
-	{
-		public:
-			Colorful()	{}
-			~Colorful()	{}
-			const Color eval(const Vector& x) const
-			{
-				float xz = abs(x.Z() - int(x.Z()));
-				return Color(xz / 10.0, 0.0, (1 - xz) / 10.0, 1.0);
-			}
-	};
 
 	// color volume for scalar field volume
 	class ColorVolume: public Volume<Color>

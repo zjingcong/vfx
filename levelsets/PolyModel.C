@@ -153,11 +153,10 @@ void PolyModel::loadObj(string filePath)
 			// parse the vertices
 			if (tag == "v")
 			{
-				xvec.push_back(a * 5);
-				yvec.push_back(b * 5);
-				zvec.push_back(c * 5);
-				Vector point_pos(a * 5, b * 5, c * 5);	// test here
-				// Vector point_pos(a, b, c);
+				xvec.push_back(a);
+				yvec.push_back(b);
+				zvec.push_back(c);
+				Vector point_pos(a, b, c);
 				Point modelPoint(point_pos);
 				modelPoints.push_back(modelPoint);
 				vertex_num++;

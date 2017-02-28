@@ -52,5 +52,5 @@ class Renderer
 		s_min_max intersect(BBox bbox, const Vector& np);
 };
 
-#endif
+# endif
 

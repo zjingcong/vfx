@@ -15,7 +15,6 @@ Color greyColor(0.1, 0.1, 0.1, 1.0);
 Color yellowColor(1.0, 1.0, 0.0, 1.0);
 Color brownColor(0.54, 0.27, 0.074, 1.0);
 Color blueColor(0.0, 0.0, 0.5, 1.0);
-Colorful colorfulVolume;
 ConstantColor red(redColor);
 ConstantColor green(greenColor);
 ConstantColor white(whiteColor);
