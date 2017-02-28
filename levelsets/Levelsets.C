@@ -221,8 +221,8 @@ void PolyLevelsets::createLevelsets()
 		createFaceLevelsets(f);
 	}
 
-/*
 	// ----------------------------------------------------------------------
+
 
 	// get initial positive points list
 	std::set<Coord> positiveCoordSet;
@@ -234,7 +234,8 @@ void PolyLevelsets::createLevelsets()
 
 	// for grid points interior to narrow band, set values to +1000
 	bool noneighborFlag = false;
-	while (!noneighborFlag)
+	for (int i  = 0; i < 3; i++)	// test here
+	// while (!noneighborFlag)
 	{
 		int unassigned_num = 0;
 
@@ -313,7 +314,6 @@ void PolyLevelsets::createLevelsets()
 
 		cout << "-----------------------------------------------------------------" << endl;
 	}	// end of while
-*/
 }
 
 

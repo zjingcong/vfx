@@ -17,6 +17,7 @@
 # include "Camera.h"
 # include "PropertyVolume.h"
 # include "Color.h"
+# include "MyHumanoid.h"	// load humanoid
 
 using namespace std;
 using namespace lux;
@@ -34,17 +35,21 @@ int main(int argc, char* argv[])
 	PolyModel polyBunny;
 	polyBunny.loadObj(bunnyPath);
 	// generate bunny levelsets
-	PolyLevelsets bunnyLevelsets(polyBunny, 3, 0.01);
+	PolyLevelsets bunnyLevelsets(polyBunny, 4, 0.01);
 	FloatGrid::Ptr bunnyGrid = bunnyLevelsets.getLevelsets();
 	// generate bunny volume
 	FloatGridVolume bunnyVolume(bunnyGrid);
+	// generate bunny BBox
+	Vec3s bunnyLLC(polyBunny.x_min, polyBunny.y_min, polyBunny.z_min);
+	Vec3s bunnyURC(polyBunny.x_max, polyBunny.y_max, polyBunny.z_max);
+	BBox bunnyBBox (bunnyLLC, bunnyURC);
 
 	/// ---------------------------------------------------------------------
 
 	// create bunny color volume and density volume
 	Color redColor(1.0, 0.0, 0.0, 1.0);
 	ConstantColor red(redColor);
-	ConstantFloat rho(100);
+	ConstantFloat rho(100.0);
 	ColorVolume finalColor(red, bunnyVolume);
 	DensityVolume finalDensity(rho, bunnyVolume);
 	// set rendering
@@ -54,8 +59,8 @@ int main(int argc, char* argv[])
 	myImg.reset(WEIGHT, HEIGHT);
 	cout << "set camera..." << endl;
 	Camera myCamera;
-	Vector eye(0.0, 0.5, 3.0);
-	Vector view(0.0, 0.0, -1.0);
+	Vector eye(3.0, 0.5, 0.0);
+	Vector view(-1.0, 0.0, 0.0);
 	Vector up(0.0, 1.0, 0.0);
 	myCamera.setEyeViewUp(eye, view, up);
 	myCamera.setFarPlane(NEAR);
@@ -63,7 +68,7 @@ int main(int argc, char* argv[])
 	cout << "start rendering..." << endl;
 	// rendering (multithreading)
 	Renderer myRenderer(myImg, myCamera, STEP_SIZE);
-	myRenderer.render(finalColor, finalDensity);
+	myRenderer.render(finalColor, finalDensity, bunnyBBox);
 	cout << "rendering complete." << endl;
 	// write into file
 	char file_name[50];

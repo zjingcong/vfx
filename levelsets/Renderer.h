@@ -34,7 +34,10 @@ class Renderer
     Renderer(Image& img, Camera& camera, float delta_s): img(img), camera(camera), step_size(delta_s) {}
     ~Renderer() {}
 
+		// render the scene without AABB
     void render(Volume<Color>& colorVolume, Volume<float>& densityVolume);
+		// render the scene with AABB
+		void render(Volume<Color>& colorVolume, Volume<float>& densityVolume, BBox volumeBBox);
 
   private:
 		Image& img;

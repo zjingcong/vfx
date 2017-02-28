@@ -104,6 +104,7 @@ s_min_max Renderer::intersect(BBox bbox, const Vector& np)
 }
 
 
+// render without AABB
 void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume)
 {
   int width = img.Width();
@@ -137,4 +138,44 @@ void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume)
     }
   }
 }
+
+
+// render with AABB
+void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume, BBox volumeBBox)
+{
+  int width = img.Width();
+  int height = img.Height();
+  float u, v;
+  
+	// multithreading
+  for (int j = 0; j < height; ++j)
+  {
+    v = j / float(height - 1);
+		# pragma omp parallel for
+    for (int i = 0; i < width; ++i)
+    {
+      u = i / float(width - 1);
+      Vector np = camera.view(u, v);
+			
+			s_min_max minmax = intersect(volumeBBox, np);
+			float s_near = minmax.min;
+			float s_far = minmax.max;
+			// float s_near = camera.nearPlane();
+			// float s_far = camera.farPlane();	
+      float s_far_near = s_far - s_near;
+			Vector x0 = camera.eye() + np * s_near;
+
+      Color L = Renderer::rendering(x0, np, s_far_near, densityVolume, colorVolume);
+
+      std::vector<float> colorValue;
+      colorValue.resize(4);
+      colorValue[0] = L.X();
+      colorValue[1] = L.Y();
+      colorValue[2] = L.Z();
+      colorValue[3] = L.W();
+      setPixel(img, i, j, colorValue);
+    }
+  }
+}
+
 
