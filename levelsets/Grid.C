@@ -39,6 +39,7 @@ const Color ColorGridVolume::eval(const Vector& x) const
 
 // ----------------------------------------------------------------------------------------------
 
+/// =============================================================================================
 
 // ---------------------------- Class FloatVolumeToGrid -----------------------------------------
 
@@ -46,7 +47,7 @@ FloatVolumeToGrid::FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox):
 	myVolume(f), voxelSize(s), volumeBBox(bbox)
 {
 	// create the float grid
-	myGrid = FloatGrid::create();
+	myGrid = FloatGrid::create(0.0);
 	// get the grid transform
 	transform = myGrid -> transformPtr();
 	// set voxel size
