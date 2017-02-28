@@ -11,18 +11,22 @@ const float SingleScatterVolume::eval(const Vector& x) const
 {
 	float s_max = (x - light.getPos()).magnitude();
 	Vector normal = (light.getPos() - x).unitvector();
-	// Vector normal = light.getNormal(x);
+	int n_max = s_max / step_size;
 	// initialization
 	float T = 0;
-	float s = 0;
-	// iteration
-	while (s <= s_max)
+	float s0 = 0;
+	// iteration - multithreading
+	float T_list[n_max + 1];
+	# pragma omp parallel for
+	for (int n = 0; n <= n_max; ++n)
 	{
+		float s = s0 + step_size * n;
 		Vector y = x + normal * s;
 		float rho = densityVolume.eval(y);
-		T += rho * step_size;
-		s += step_size;
+		T_list[n] = rho * step_size;
 	}
+
+	for (int n = 0; n <= n_max; ++n)	{T += T_list[n];}
 
 	return T;
 }
