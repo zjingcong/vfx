@@ -36,15 +36,15 @@ class Renderer
 			img(img), camera(camera), step_size(delta_s) {}
     ~Renderer() {}
 
-		// render the scene with AABB and lights
-		void render(Volume<Color>& colorVolume, Volume<float>& densityVolume, float K, Volume<Color>& lightVolume, BBox volumeBBox);
+		// render the scene with AABB and lights and antialiasing
+		void render(Volume<Color>& colorVolume, Volume<float>& densityVolume, float K, Volume<Color>& lightVolume, BBox volumeBBox, int Na);
 
   private:
 		Image& img;
 		Camera& camera;
 		float step_size;
 
-		Color rendering(const Vector& x0, const Vector& np, float s_far_near, Volume<float>& densityVolume, Volume<Color>& colorVolume, float K, Volume<Color>& lightVolume);
+		Color raymatch(const Vector& x0, const Vector& np, float s_far_near, Volume<float>& densityVolume, Volume<Color>& colorVolume, float K, Volume<Color>& lightVolume);
 
 		// smit's method for ray-box intersection
 		// return the min and max distance between camera eye and AABB along the view direction

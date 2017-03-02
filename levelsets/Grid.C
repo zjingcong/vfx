@@ -1,5 +1,6 @@
 # include <openvdb/tools/Interpolation.h>
 # include <iostream>
+# include <ctime>
 
 # include "Grid.h"
 
@@ -72,13 +73,16 @@ FloatVolumeToGrid::FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox):
 	myGrid -> setTransform(transform);
 }
 
+
 void FloatVolumeToGrid::createVolumeGrid()
 {
+	int start_s = clock();
 	FloatGrid::Accessor accessor = myGrid -> getAccessor();
 	Vec3s llc = volumeBBox.min();
 	Vec3s urc = volumeBBox.max();
 	Coord ijk0 = transform -> worldToIndexNodeCentered(llc);
 	Coord ijk1 = transform -> worldToIndexNodeCentered(urc);
+	# pragma omp parallel for
 	for (int i = ijk0.x(); i <= ijk1.x(); ++i)
 	{
 		for (int j = ijk0.y(); j <= ijk1.y(); ++j)
@@ -89,10 +93,16 @@ void FloatVolumeToGrid::createVolumeGrid()
 				Vec3s gridPointPos = transform -> indexToWorld(ijk);
 				lux::Vector vec(gridPointPos.x(), gridPointPos.y(), gridPointPos.z());
 				float value = myVolume.eval(vec);
-				accessor.setValue(ijk, value);
+
+				# pragma omp critical
+				{
+					accessor.setValue(ijk, value);
+				}
 			}
 		}
 	}
+	int stop_s = clock();
+	std::cout << "	 | Elapsed CPU Time: " << (stop_s - start_s) / double(CLOCKS_PER_SEC) * 1000 << "s" << std::endl;
 }
 
 
@@ -118,6 +128,7 @@ ColorVolumeToGrid::ColorVolumeToGrid(Volume<Color>& f, float s, BBox& bbox):
 	transform = Transform::createLinearTransform(voxelSize);
 	myGrid -> setTransform(transform);
 }
+
 
 void ColorVolumeToGrid::createVolumeGrid()
 {

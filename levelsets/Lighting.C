@@ -1,4 +1,6 @@
 
+# include <ctime>
+
 # include "Lighting.h"
 # include "Grid.h"
 
@@ -45,9 +47,9 @@ void LightVolume::DSMStamping()
 		int light_num = lights.size();
 		for (int i = 0; i < light_num; ++i)
 		{
+			std::cout << "Stamping LightSource " << i << "..." << std::endl;
 			LightSource lit = lights[i];
 			DSMVolume sc(densityVolume, lit, step_size);
-			std::cout << "Stamping LightSource " << i << "..." << std::endl;
 			// stamp T on the grid
 			FloatVolumeToGrid scVolume2Grid(sc, voxelSize, volumeBBox);
 			FloatGrid::Ptr DSMGrid = scVolume2Grid.getVolumeGrid();

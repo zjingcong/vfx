@@ -35,6 +35,7 @@ int main(int argc, char* argv[])
 	// load bunny model
 	PolyModel polyBunny;
 	polyBunny.loadObj(bunnyPath);
+	cout << "=====================================" << endl;
 	// generate bunny levelsets
 	cout << "Create levelsets..." << endl;
 	PolyLevelsets bunnyLevelsets(true, polyBunny, 3, 0.01);
@@ -48,7 +49,7 @@ int main(int argc, char* argv[])
 	BBox bunnyBBox(bunnyLLC, bunnyURC);
 
 	// create bunny color volume and density volume
-	Color whiteColor(1.0, 0.0, 1.0, 1.0);
+	Color whiteColor(1.0, 1.0, 1.0, 1.0);
 	Color noColor(0.0, 0.0, 0.0, 0.0);
 	ConstantColor bunnyMatColor(whiteColor);
 	ConstantColor bunnyemColor(noColor);
@@ -77,15 +78,15 @@ int main(int argc, char* argv[])
 
 
 	// lighting
-	cout << "set lights..." << endl;
+	cout << "Set lights..." << endl;
 	std::vector<LightSource> myLights;
 	// light position
 	Vector keyPos(0.0, 15.0, 0.0);
 	Vector rimPos(0.0, -15.0, 0.0);
 	Vector backPos(0.0, 0.0, -15.0);
 	// light color
-	Color keyColor(10.0, 0.0, 0.0, 1.0);
-	Color rimColor(5.0, 0.0, 0.0, 1.0);
+	Color keyColor(10.0, 10.0, 10.0, 1.0);
+	Color rimColor(1.0, 1.0, 1.0, 1.0);
 	Color backColor(5.0, 0.0, 0.0, 1.0);
 	// set lights
 	LightSource keyLight(keyPos, keyColor);
@@ -95,14 +96,13 @@ int main(int argc, char* argv[])
 	myLights.push_back(rimLight);
 	myLights.push_back(backLight);
 	LightVolume lightVolume(myLights, finalDensity, bunnyMatColor, K, STEP_SIZE, 0.1, bunnyBBox);
-
 	// set rendering
 	int frame_id = 0;
 	// set camera and image
-	cout << "set image..." << endl;
+	cout << "Set image..." << endl;
 	Image myImg;
 	myImg.reset(WEIGHT, HEIGHT);
-	cout << "set camera..." << endl;
+	cout << "Set camera..." << endl;
 	Camera myCamera;
 	Vector eye(0, 0, 4);
 	Vector view(0.0, 0.0, -1.0);
@@ -110,11 +110,12 @@ int main(int argc, char* argv[])
 	myCamera.setEyeViewUp(eye, view, up);
 	myCamera.setFarPlane(NEAR);
 	myCamera.setFarPlane(FAR);
+	cout << "=====================================" << endl;
 	// rendering (multithreading)
-	cout << "start rendering..." << endl;
+	cout << "Start rendering..." << endl;
 	Renderer myRenderer(myImg, myCamera, STEP_SIZE);
-	myRenderer.render(finalColor, finalDensity, K, lightVolume, bunnyBBox);
-	cout << "rendering complete." << endl;
+	myRenderer.render(finalColor, finalDensity, K, lightVolume, bunnyBBox, 1);
+	cout << "Rendering complete." << endl;
 	// write into file
 	char file_name[50];
 	sprintf(file_name, "./results/jingcoz_hw2.%04d.exr", frame_id);
