@@ -30,6 +30,7 @@ typedef openvdb::Grid<Vec4fTree> Vec4fGrid;
 typedef openvdb::math::Vec3s Vec3s;
 typedef openvdb::math::Vec3s Vec3f;
 typedef openvdb::math::Vec3d Vec3d;
+// typedef openvdb::math::Vec3<Index32> Vec3I;
 typedef openvdb::math::Vec3<uint32_t> Vec3I;
 typedef openvdb::math::Vec4<uint32_t> Vec4I;
 typedef openvdb::math::Vec4s Vec4s;

@@ -12,6 +12,20 @@ namespace lux
 
 	// -------------------------------- Grid to Volume -----------------------------------------
 
+	// convert a vdb levelset grid to a float volume
+	class VDBLevelsetsVolume: public Volume<float>
+	{
+		public:
+			VDBLevelsetsVolume(FloatGrid::Ptr grid): myFloatGrid(grid)	{}
+			~VDBLevelsetsVolume()	{}
+
+			const float eval(const Vector& x) const;
+
+		private:
+			FloatGrid::Ptr myFloatGrid;
+	};
+
+
 	// convert a float grid to a float volume
 	class FloatGridVolume: public Volume<float>
 	{

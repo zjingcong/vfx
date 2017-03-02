@@ -156,8 +156,12 @@ void PolyModel::loadObj(string filePath)
 				xvec.push_back(a);
 				yvec.push_back(b);
 				zvec.push_back(c);
+
 				Vector point_pos(a, b, c);
+				Vec3s pos(a, b, c);
 				Point modelPoint(point_pos);
+
+				polyPoints.push_back(pos);
 				modelPoints.push_back(modelPoint);
 				vertex_num++;
 			}
@@ -171,6 +175,8 @@ void PolyModel::loadObj(string filePath)
 			// parse the faces
 			if (tag == "f")
 			{
+				Vec3I index(a - 1, b - 1, c - 1);
+				triIndices.push_back(index);
 				Face face(modelPoints[a - 1], modelPoints[b - 1], modelPoints[c - 1]);	// the point index 0 = first point
 				polyFaces.push_back(face);
 				face_num++;

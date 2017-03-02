@@ -16,14 +16,12 @@ const float SingleScatterVolume::eval(const Vector& x) const
 	float T = 0;
 	float s0 = 0;
 	// iteration - multithreading
-	# pragma omp parallel for
 	for (int n = 0; n <= n_max; ++n)
 	{
 		float s = s0 + step_size * n;
 		Vector y = x + normal * s;
 		float rho = densityVolume.eval(y);
 
-		# pragma omp atomic
 		T += rho * step_size;
 	}
 

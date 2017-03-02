@@ -4,8 +4,6 @@
 # include <stdio.h>
 # include <string>
 # include <vector>
-# include <openvdb/tools/LevelSetSphere.h>	// delete later
-# include <openvdb/tools/Interpolation.h>	// delete later
 
 # include "Types.h"	// openvdb type define
 # include "Vector.h"
@@ -26,39 +24,42 @@ using namespace lux;
 # define WEIGHT 320
 # define HEIGHT 180
 # define STEP_SIZE 0.01
-# define NEAR 12
-# define FAR 18
+# define NEAR 0.1
+# define FAR 10
 
 int main(int argc, char* argv[])
 {
 	/// --------------------------- bunny ------------------------------------
-/*
+
 	string bunnyPath = "./models/cleanbunny.obj";
 	// load bunny model
 	PolyModel polyBunny;
 	polyBunny.loadObj(bunnyPath);
 	// generate bunny levelsets
-	PolyLevelsets bunnyLevelsets(polyBunny, 4, 0.05);
+	cout << "Create levelsets..." << endl;
+	PolyLevelsets bunnyLevelsets(polyBunny, 3, 0.01);
 	FloatGrid::Ptr bunnyGrid = bunnyLevelsets.getLevelsets();
 	// generate bunny volume
-	FloatGridVolume bunnyVolume(bunnyGrid);
+	cout << "Stamping model..." << endl;
+	VDBLevelsetsVolume bunnyVolume(bunnyGrid);
 	// generate bunny BBox
 	Vec3s bunnyLLC(polyBunny.x_min, polyBunny.y_min, polyBunny.z_min);
 	Vec3s bunnyURC(polyBunny.x_max, polyBunny.y_max, polyBunny.z_max);
 	BBox bunnyBBox(bunnyLLC, bunnyURC);
 
 	// create bunny color volume and density volume
-	Color whiteColor(1.0, 1.0, 1.0, 1.0);
+	Color whiteColor(0.0, 0.0, 0.0, 0.0);
 	ConstantColor red(whiteColor);
-	ConstantFloat rho(10.0);
+	ConstantFloat rho(100.0);
 	ColorVolume finalColor(red, bunnyVolume);
 	DensityVolume finalDensity(rho, bunnyVolume);
-*/
+
 	// set K
 	float K = 1;
 
 	/// ---------------------------------------------------------------------
 
+/*
 	Vec3s humanLLC(-3.0, -6.0, -3.0);
 	Vec3s humanURC(3.0, 3.0, 3.0);
 	BBox humanBBox(humanLLC, humanURC);
@@ -68,6 +69,7 @@ int main(int argc, char* argv[])
 	ColorVolumeToGrid humanColor2Grid(humanFinalColor, 0.1, humanBBox);
 	Vec4fGrid::Ptr humanColorGrid = humanColor2Grid.getVolumeGrid();
 	ColorGridVolume finalColor(humanColorGrid);
+*/
 
 	/// ---------------------------------------------------------------------
 
@@ -81,16 +83,16 @@ int main(int argc, char* argv[])
 	Vector backPos(0.0, 0.0, -15.0);
 	// light color
 	Color keyColor(10.0, 0.0, 0.0, 1.0);
-	Color rimColor(5.0, 5.0, 0.0, 1.0);
-	Color backColor(0.0, 0.0, 8.0, 1.0);
+	Color rimColor(0.0, 5.0, 0.0, 1.0);
+	Color backColor(0.0, 0.0, 10.0, 1.0);
 	// set lights
 	LightSource keyLight(keyPos, keyColor);
 	LightSource rimLight(rimPos, rimColor);
 	LightSource backLight(backPos, backColor);
 	myLights.push_back(keyLight);
-	// myLights.push_back(rimLight);
-	// myLights.push_back(backLight);
-	LightVolume lightVolume(myLights, finalDensity, K, STEP_SIZE, 0.1, humanBBox);
+	myLights.push_back(rimLight);
+	myLights.push_back(backLight);
+	LightVolume lightVolume(myLights, finalDensity, K, STEP_SIZE, 0.1, bunnyBBox);
 
 	// set rendering
 	int frame_id = 0;
@@ -100,8 +102,8 @@ int main(int argc, char* argv[])
 	myImg.reset(WEIGHT, HEIGHT);
 	cout << "set camera..." << endl;
 	Camera myCamera;
-	Vector eye(15.0, -2.0, 0.0);
-	Vector view(-1.0, 0.0, 0.0);
+	Vector eye(0, 0, 4);
+	Vector view(0.0, 0.0, -1.0);
 	Vector up(0.0, 1.0, 0.0);
 	myCamera.setEyeViewUp(eye, view, up);
 	myCamera.setFarPlane(NEAR);
@@ -109,7 +111,7 @@ int main(int argc, char* argv[])
 	// rendering (multithreading)
 	cout << "start rendering..." << endl;
 	Renderer myRenderer(myImg, myCamera, STEP_SIZE);
-	myRenderer.render(finalColor, finalDensity, K, lightVolume, humanBBox);
+	myRenderer.render(finalColor, finalDensity, K, lightVolume, bunnyBBox);
 	cout << "rendering complete." << endl;
 	// write into file
 	char file_name[50];

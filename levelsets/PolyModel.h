@@ -8,6 +8,7 @@
 # include <vector>
 
 # include "Vector.h"
+# include "Types.h"
 
 using namespace std;
 using namespace lux;
@@ -66,6 +67,11 @@ class PolyModel
 
 		// a vector container to store all the model faces
 		std::vector<Face> polyFaces;
+		// a vector container to store all triangle indices
+		std::vector<Vec3I> triIndices;
+		// a vector container to store all point positions
+		std::vector<Vec3s> polyPoints;
+
 		// model bounding box
 		float x_min, y_min, z_min, x_max, y_max, z_max;
 

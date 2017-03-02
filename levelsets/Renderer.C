@@ -25,6 +25,7 @@ Color Renderer::rendering(const Vector& x0, const Vector& np, float s_far_near, 
 		Color c_emission = colorVolume.eval(x);
 		Color c_light = lightVolume.eval(x);
 		Color color = c_emission + c_light;
+		// Color color = c_light;
 
     float delta_T = exp(-rho * step_size * K);
    	L += (color / K) * T * (1 - delta_T);

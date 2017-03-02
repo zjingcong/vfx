@@ -8,6 +8,23 @@ using namespace lux;
 
 // ---------------------------- Class FloatGridVolume -------------------------------------------
 
+const float VDBLevelsetsVolume::eval(const Vector& x) const
+{
+	// FloatGrid::Accessor accessor = myFloatGrid.getAccessor();
+	Vec3s xyz(x.X(), x.Y(), x.Z());	// world space
+	// construct a float grid box sampler to perform trilinear interpolation
+	openvdb::tools::GridSampler<FloatGrid, openvdb::tools::BoxSampler> sampler(*myFloatGrid);
+	float gridValue;
+	// openvdb use negative values as levelsets inside and positive values as levelsets outside
+	gridValue = -sampler.wsSample(xyz);	// world space sample
+
+	return gridValue;
+}
+
+// ----------------------------------------------------------------------------------------------
+
+// ---------------------------- Class FloatGridVolume -------------------------------------------
+
 const float FloatGridVolume::eval(const Vector& x) const
 {
 	// FloatGrid::Accessor accessor = myFloatGrid.getAccessor();
@@ -113,6 +130,7 @@ void ColorVolumeToGrid::createVolumeGrid()
 	{
 		for (int j = ijk0.y(); j <= ijk1.y(); ++j)
 		{
+			# pragma omp parallel for
 			for (int k = ijk0.z(); k <= ijk1.z(); ++k)
 			{
 				Coord ijk(i, j, k);
@@ -120,7 +138,11 @@ void ColorVolumeToGrid::createVolumeGrid()
 				lux::Vector vec(gridPointPos.x(), gridPointPos.y(), gridPointPos.z());
 				Color value = myVolume.eval(vec);
 				Vec4s mycolor(value.X(), value.Y(), value.Z(), value.W());
-				accessor.setValue(ijk, mycolor);
+
+				# pragma omp critical
+				{
+					accessor.setValue(ijk, mycolor);
+				}
 			}
 		}
 	}
