@@ -21,8 +21,8 @@
 using namespace std;
 using namespace lux;
 
-# define WEIGHT 320
-# define HEIGHT 180
+# define WEIGHT 1920
+# define HEIGHT 1080
 # define STEP_SIZE 0.01
 # define NEAR 0.1
 # define FAR 10
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 	polyBunny.loadObj(bunnyPath);
 	// generate bunny levelsets
 	cout << "Create levelsets..." << endl;
-	PolyLevelsets bunnyLevelsets(polyBunny, 3, 0.01);
+	PolyLevelsets bunnyLevelsets(true, polyBunny, 3, 0.01);
 	FloatGrid::Ptr bunnyGrid = bunnyLevelsets.getLevelsets();
 	// generate bunny volume
 	cout << "Stamping model..." << endl;
@@ -48,14 +48,16 @@ int main(int argc, char* argv[])
 	BBox bunnyBBox(bunnyLLC, bunnyURC);
 
 	// create bunny color volume and density volume
-	Color whiteColor(0.0, 0.0, 0.0, 0.0);
-	ConstantColor red(whiteColor);
-	ConstantFloat rho(100.0);
-	ColorVolume finalColor(red, bunnyVolume);
+	Color whiteColor(1.0, 0.0, 1.0, 1.0);
+	Color noColor(0.0, 0.0, 0.0, 0.0);
+	ConstantColor bunnyMatColor(whiteColor);
+	ConstantColor bunnyemColor(noColor);
+	ConstantFloat rho(500.0);
+	ColorVolume finalColor(bunnyemColor, bunnyVolume);
 	DensityVolume finalDensity(rho, bunnyVolume);
 
 	// set K
-	float K = 1;
+	float K = 0.8;
 
 	/// ---------------------------------------------------------------------
 
@@ -83,8 +85,8 @@ int main(int argc, char* argv[])
 	Vector backPos(0.0, 0.0, -15.0);
 	// light color
 	Color keyColor(10.0, 0.0, 0.0, 1.0);
-	Color rimColor(0.0, 5.0, 0.0, 1.0);
-	Color backColor(0.0, 0.0, 10.0, 1.0);
+	Color rimColor(5.0, 0.0, 0.0, 1.0);
+	Color backColor(5.0, 0.0, 0.0, 1.0);
 	// set lights
 	LightSource keyLight(keyPos, keyColor);
 	LightSource rimLight(rimPos, rimColor);
@@ -92,7 +94,7 @@ int main(int argc, char* argv[])
 	myLights.push_back(keyLight);
 	myLights.push_back(rimLight);
 	myLights.push_back(backLight);
-	LightVolume lightVolume(myLights, finalDensity, K, STEP_SIZE, 0.1, bunnyBBox);
+	LightVolume lightVolume(myLights, finalDensity, bunnyMatColor, K, STEP_SIZE, 0.1, bunnyBBox);
 
 	// set rendering
 	int frame_id = 0;

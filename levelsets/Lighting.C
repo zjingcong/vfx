@@ -5,9 +5,9 @@
 using namespace lux;
 
 
-// ------------------------- Class SingleScatterVolume -----------------------------------
+// ----------------------------------- Class DSMVolume ------------------------------------
 
-const float SingleScatterVolume::eval(const Vector& x) const
+const float DSMVolume::eval(const Vector& x) const
 {
 	float s_max = (x - light.getPos()).magnitude();
 	Vector normal = (light.getPos() - x).unitvector();
@@ -30,15 +30,15 @@ const float SingleScatterVolume::eval(const Vector& x) const
 
 // --------------------------- Class LightVolume ----------------------------------------
 
-LightVolume::LightVolume(std::vector<LightSource> lits, Volume<float>& f, float k, float delta, float s, BBox& bbox): 
-	lights(lits), densityVolume(f), K(k), step_size(delta), voxelSize(s), volumeBBox(bbox)
+LightVolume::LightVolume(std::vector<LightSource> lits, Volume<float>& f, Volume<Color>& c, float k, float delta, float s, BBox& bbox): 
+	lights(lits), densityVolume(f), matColorVolume(c), K(k), step_size(delta), voxelSize(s), volumeBBox(bbox)
 {
-	singleScatterStamping();
+	DSMStamping();
 }
 
 
 // stamp T on the grid and convert to a volume for each light
-void LightVolume::singleScatterStamping()
+void LightVolume::DSMStamping()
 {
 	if (!lights.empty())
 	{
@@ -46,14 +46,14 @@ void LightVolume::singleScatterStamping()
 		for (int i = 0; i < light_num; ++i)
 		{
 			LightSource lit = lights[i];
-			SingleScatterVolume sc(densityVolume, lit, step_size);
+			DSMVolume sc(densityVolume, lit, step_size);
 			std::cout << "Stamping LightSource " << i << "..." << std::endl;
 			// stamp T on the grid
 			FloatVolumeToGrid scVolume2Grid(sc, voxelSize, volumeBBox);
-			FloatGrid::Ptr singleScatterGrid = scVolume2Grid.getVolumeGrid();
+			FloatGrid::Ptr DSMGrid = scVolume2Grid.getVolumeGrid();
 			// convert the grid to volume
-			FloatGridVolume singleScatterGridVolume(singleScatterGrid);
-			gridVolume.push_back(singleScatterGridVolume);
+			FloatGridVolume DSMGridVolume(DSMGrid);
+			gridVolume.push_back(DSMGridVolume);
 		}
 	}
 }
@@ -70,8 +70,9 @@ const Color LightVolume::eval(const Vector& x) const
 		{
 			LightSource lit = lights[i];
 			// calculate the color for each light
-			Color litColor = lit.getColor();
-			finalColor += (litColor * exp(-K * gridVolume[i].eval(x)));
+			Color litColor = lit.getColor();	// light color
+			Color matColor = matColorVolume.eval(x);	// material color
+			finalColor += (litColor * matColor * exp(-K * gridVolume[i].eval(x)));
 		}
 	}
 

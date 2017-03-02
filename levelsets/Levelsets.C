@@ -13,20 +13,23 @@
 using namespace lux;
 
 
-PolyLevelsets::PolyLevelsets(PolyModel poly, int w, float s, float back)
+PolyLevelsets::PolyLevelsets(bool isvdb, PolyModel poly, int w, float s, float back)
 {
+	isVDB = isvdb;
 	polyModel = poly;
 	halfWidth = w;
 	voxelSize = s;
 	gridBack = back;
 
-	// create a new grid of FloatGrid classified as a "Level Set"
-	myGrid = openvdb::createLevelSet<FloatGrid>(voxelSize, halfWidth);
-	// get levelsets grid's transform
-	xform = myGrid -> transformPtr();
-
-	// set grid background
-	myGrid -> setBackground(gridBack);
+	if (!isVDB)
+	{
+		// create a new grid of FloatGrid classified as a "Level Set"
+		myGrid = openvdb::createLevelSet<FloatGrid>(voxelSize, halfWidth);
+		// get levelsets grid's transform
+		xform = myGrid -> transformPtr();
+		// set grid background
+		myGrid -> setBackground(gridBack);
+	}
 }
 
 
@@ -319,18 +322,27 @@ void PolyLevelsets::createLevelsets()
 }
 
 
-// return the polymodel levelsets
-FloatGrid::Ptr PolyLevelsets::getLevelsets()
+FloatGrid::Ptr PolyLevelsets::VDBcreateLevelsets()
 {
-	// createLevelsets();
-	// createLevelsets_all();
-
 	std::vector<Vec3s> points = polyModel.polyPoints;
 	std::vector<Vec3I> triangles = polyModel.triIndices;
 	Transform::Ptr xform = Transform::createLinearTransform(voxelSize);
 	FloatGrid::Ptr mesh2levelsets = openvdb::tools::meshToLevelSet<FloatGrid>(*xform, points, triangles, halfWidth);
 
 	return mesh2levelsets;
-	// return myGrid;
+}
+
+
+// return the polymodel levelsets
+FloatGrid::Ptr PolyLevelsets::getLevelsets()
+{
+	if (isVDB)
+		{return VDBcreateLevelsets();}
+	else
+	{
+		createLevelsets();
+		// createLevelsets_all();
+		return myGrid;
+	}
 }
 

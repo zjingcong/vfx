@@ -30,12 +30,12 @@ namespace lux
 	};
 
 
-	class SingleScatterVolume: public Volume<float>
+	class DSMVolume: public Volume<float>
 	{
 		public:
-			SingleScatterVolume(Volume<float>& f, LightSource& lit, float delta): 
+			DSMVolume(Volume<float>& f, LightSource& lit, float delta): 
 				densityVolume(f), light(lit), step_size(delta)	{}
-			~SingleScatterVolume()	{}
+			~DSMVolume()	{}
 
 			const float eval(const Vector& x) const;
 
@@ -49,22 +49,23 @@ namespace lux
 	class LightVolume: public Volume<Color>
 	{
 		public: 
-			LightVolume(std::vector<LightSource> lits, Volume<float>& f, float k, float delta, float s, BBox& bbox);
+			LightVolume(std::vector<LightSource> lits, Volume<float>& f, Volume<Color>& c, float k, float delta, float s, BBox& bbox);
 			~LightVolume()	{}
 
 			const Color eval(const Vector& x) const;
 
 		private:
+			std::vector<LightSource> lights;
 			Volume<float>& densityVolume;
+			Volume<Color>& matColorVolume;
 			float K;
 			float step_size;
 			float voxelSize;
 			BBox volumeBBox;
 
-			std::vector<LightSource> lights;
 			std::vector<FloatGridVolume> gridVolume;
 
-			void singleScatterStamping();
+			void DSMStamping();
 	};
 
 }
