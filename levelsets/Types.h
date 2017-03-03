@@ -13,12 +13,16 @@
 # include <openvdb/math/Transform.h>
 # include <openvdb/math/Vec3.h>
 # include <openvdb/math/Vec4.h>
+#include <openvdb/math/Mat4.h>
 # include <openvdb/tree/Tree.h>
 # include <openvdb/util/Util.h>
 
 // typedef a FloatTree and FloatGrid
 
+// One-dimensional scalar types
+typedef double Real;
 typedef int32_t Int32;
+
 typedef openvdb::tree::Tree4<float, 5, 4, 3>::Type FloatTree;
 typedef openvdb::Grid<FloatTree> FloatGrid;
  
@@ -36,6 +40,7 @@ typedef openvdb::math::Vec4<uint32_t> Vec4I;
 typedef openvdb::math::Vec4s Vec4s;
 typedef openvdb::math::Coord Coord;
 typedef openvdb::math::BBox<Vec3s> BBox;
+typedef openvdb::math::Mat4<Real> Mat4R;
 # define INVALID_IDX openvdb::util::INVALID_IDX
  
 // grid stuff
