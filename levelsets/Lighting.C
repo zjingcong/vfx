@@ -11,21 +11,23 @@ using namespace lux;
 
 const float DSMVolume::eval(const Vector& x) const
 {
-	float s_max = (x - light.getPos()).magnitude();
-	Vector normal = (light.getPos() - x).unitvector();
-	int n_max = s_max / step_size;
-	// initialization
 	float T = 0;
-	float s0 = 0;
-	// iteration - multithreading
-	for (int n = 0; n <= n_max; ++n)
-	{
-		float s = s0 + step_size * n;
-		Vector y = x + normal * s;
-		float rho = densityVolume.eval(y);
+	// if (densityVolume.eval(x) > 0)
+	// {
+		float s_max = (x - light.getPos()).magnitude();
+		Vector normal = (light.getPos() - x).unitvector();
+		// initialization
+		float s = 0;
+		// iteration
+		while(s < s_max)
+		{
+			Vector y = x + normal * s;
+			float rho = densityVolume.eval(y);
 
-		T += rho * step_size;
-	}
+			s += step_size;
+			T += rho * step_size;
+		}
+	// }
 
 	return T;
 }

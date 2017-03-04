@@ -5,9 +5,6 @@
 # include <string>
 # include <vector>
 
-# include <openvdb/tools/Interpolation.h>	// delete later
-# include <openvdb/tools/GridTransformer.h>	// delete later
-
 # include "Types.h"	// openvdb type define
 # include "Vector.h"
 # include "PolyModel.h"
@@ -21,17 +18,20 @@
 # include "Lighting.h"
 # include "Structs.h"
 # include "Volume.h"
-# include "MyHumanoid.h"	// load humanoid
+
 # include "MyBunny.h"	// load bunny
+# include "MyTeapot.h"	// load teapot
+# include "MyHybrid.h"	// load hybrid
 
 using namespace std;
 using namespace lux;
 
-# define WEIGHT 320
-# define HEIGHT 180
-# define STEP_SIZE 0.01
+# define WEIGHT 1920
+# define HEIGHT 1080
+# define STEP_SIZE 0.003
+# define LIGHT_STEP_SIZE 0.009
 # define NEAR 0.1
-# define FAR 10
+# define FAR 30
 # define PI 3.14159265
 
 
@@ -62,19 +62,21 @@ Vector vecRotation(Vector v, Vector axis, float a)
 
 int main(int argc, char* argv[])
 {
+	// cmd line parser
 	// usage: ./levelsets frameStart frameNum
 	int frameStart = 0;
 	int frameNum = 120;
 	string model_name;
+	float camera_x, camera_y;
 	string model_tag;
 	if (argc == 4)
 	{	
 		frameStart = atof(argv[1]);
 		frameNum = atof(argv[2]);
 		model_tag = argv[3];
-		if (model_tag == "-b")	{model_name = "bunny";}
-		else if (model_tag == "-t")	{model_name = "teapot";}
-		else if (model_tag == "-h")	{model_name = "hybrid";}
+		if (model_tag == "-b")	{model_name = "bunny"; camera_x = 3.5; camera_y = 0.0;}
+		else if (model_tag == "-t")	{model_name = "teapot"; camera_x = 3.5; camera_y = 0.0;}
+		else if (model_tag == "-h")	{model_name = "hybrid"; camera_x = 4.5; camera_y = 1.0;}
 		else	{printHelp(); exit(0);}
 	}
 	else
@@ -83,89 +85,28 @@ int main(int argc, char* argv[])
 		exit(0);
 	}
 
+	/// -------------------------- load model --------------------------------
 
-/// ---------------- grid transform area ----------------------------------
-/*
-	Transform::Ptr bunnyXform = bunnyGrid -> transformPtr();
-	// bunnyXform -> postTranslate(Vec3s(0.0, 1.0, 0.0));
-	bunnyXform -> postScale(0.5);
-	bunnyGrid -> setTransform(bunnyXform);
-*/
-/// ----------------- grid transform area ---------------------------------
+	if (model_name == "bunny")
+		{loadBunny(finalDensityPtr, finalEmColorPtr, finalMatColorPtr, finalBBox, K);}
+	else if (model_name == "teapot")
+		{loadTeapot(finalDensityPtr, finalEmColorPtr, finalMatColorPtr, finalBBox, K);}
+	else if (model_name == "hybrid")
+		{loadHybrid(finalDensityPtr, finalEmColorPtr, finalMatColorPtr, finalBBox, K);}
 
-	/// ---------------------------------------------------------------------
-
-/*
-	Vec3s humanLLC(-3.0, -6.0, -3.0);
-	Vec3s humanURC(3.0, 3.0, 3.0);
-	BBox humanBBox(humanLLC, humanURC);
-	FloatVolumeToGrid humanVolume2Grid(humanFinalDensity, 0.1, humanBBox);
-	FloatGrid::Ptr humanGrid = humanVolume2Grid.getVolumeGrid();
-	FloatGridVolume finalDensity(humanGrid);
-	ColorVolumeToGrid humanColor2Grid(humanFinalColor, 0.1, humanBBox);
-	Vec4fGrid::Ptr humanColorGrid = humanColor2Grid.getVolumeGrid();
-	ColorGridVolume finalColor(humanColorGrid);
-*/
-
-	/// ---------------------------------------------------------------------
-
-
-	string bunnyPath = "./models/cleanbunny.obj";
-	// load bunny model
-	PolyModel polyBunny;
-	polyBunny.loadObj(bunnyPath);
-	cout << "--------------------------------------------" << endl;
-
-	// generate bunny levelsets
-	cout << "Create levelsets..." << endl;
-	PolyLevelsets bunnyLevelsets(true, polyBunny, 3, 0.005);
-	FloatGrid::Ptr bunnyGrid = bunnyLevelsets.getLevelsets();
-
-	// generate bunny volume
-	cout << "Stamping model..." << endl;
-	VDBLevelsetsVolume bunnyVolume(bunnyGrid);
-
-	// generate bunny BBox
-	Vec3s bunnyLLC(polyBunny.x_min, polyBunny.y_min, polyBunny.z_min);
-	Vec3s bunnyURC(polyBunny.x_max, polyBunny.y_max, polyBunny.z_max);
-	BBox bunnyBBox(bunnyLLC, bunnyURC);
-
-
-	// create bunny color volume and density volume
-	Color matColor(1.0, 1.0, 1.0, 1.0);
-	Color emColor(0.0, 0.0, 0.0, 0.0);
-	ConstantColor bunnyMatColor(matColor);
-	ConstantColor bunnyEmColor(emColor);
-	ConstantFloat rho(500.0);
-	DensityVolume bunnyDensity(rho, bunnyVolume);
-
-	finalDensityPtr = &bunnyDensity;
-	finalEmColorPtr = &bunnyEmColor;
-	finalMatColorPtr = &bunnyMatColor;
-	finalBBox = bunnyBBox;
-
-	float K = 0.8;
-	Vector x(0, 0, 0);
-	cout << finalDensityPtr->eval(x) << endl;
-
-
-	// loadBunny(finalDensityPtr, finalEmColorPtr, finalMatColorPtr, finalBBox, K);
-	// Vector x(0, 0, 0);
-	// cout << finalDensityPtr->eval(x) << endl;
-
-	/// ---------------------------------------------------------------------------------
+	/// ----------------------------- do lights --------------------------------
 
 	// lighting
 	cout << "Set lights..." << endl;
 	std::vector<LightSource> myLights;
 	// light position
-	Vector keyPos(0.0, 15.0, 0.0);
-	Vector rimPos(0.0, -15.0, 0.0);
-	Vector backPos(0.0, 0.0, -15.0);
+	Vector keyPos(0.0, 4.0, 0.0);
+	Vector rimPos(0.0, -4.0, 0.0);
+	Vector backPos(0.0, 0.0, -4.0);
 	// light color
-	Color keyColor(1.5, 1.5, 1.5, 1.0);
-	Color rimColor(0.1, 0.1, 0.1, 1.0);
-	Color backColor(1.0, 0.0, 0.0, 1.0);
+	Color keyColor(0.1, 1.2, 0.53, 1.0);
+	Color rimColor(0.34, 0.74, 0.86, 1.0);
+	Color backColor(0.016, 0.25, 0.9, 1.0);
 	// set lights
 	LightSource keyLight(keyPos, keyColor);
 	LightSource rimLight(rimPos, rimColor);
@@ -173,17 +114,19 @@ int main(int argc, char* argv[])
 	myLights.push_back(keyLight);
 	myLights.push_back(rimLight);
 	myLights.push_back(backLight);
-	LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, STEP_SIZE, 0.1, finalBBox);
-	// LightVolume lightVolume(myLights, bunnyDensity, bunnyMatColor, K, STEP_SIZE, 0.1, bunnyBBox);
-	// set rendering
-	// set camera and image
+	LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, LIGHT_STEP_SIZE, 0.007, finalBBox);
+
+	/// ----------------------------- do rendering ------------------------------
+
+	// set rendering 
+	// set camera and image 
 	cout << "Set image..." << endl;
 	Image myImg;
 	myImg.reset(WEIGHT, HEIGHT);
 	cout << "Set camera..." << endl;
 	Camera myCamera;
-	Vector originEye(0, 0, 4.5);
-	Vector lookAt(0.0, 0.0, 0.0);
+	Vector originEye(0.0, camera_y, camera_x);
+	Vector lookAt(0.0, camera_y, 0.0);
 	Vector up(0.0, 1.0, 0.0);
 	myCamera.setFarPlane(NEAR);
 	myCamera.setFarPlane(FAR);
@@ -207,7 +150,6 @@ int main(int argc, char* argv[])
 		cout << "Start rendering frame " << frame_id << "..." << endl;
 		Renderer myRenderer(myImg, myCamera, STEP_SIZE);
 		myRenderer.render(*finalEmColorPtr, *finalDensityPtr, K, lightVolume, finalBBox, 1);
-		// myRenderer.render(bunnyEmColor, bunnyDensity, K, lightVolume, bunnyBBox, 1);
 		// write into file
 		char file_name[50];
 		sprintf(file_name, "./results/jingcoz_%s_hw2.%04d.exr", model_name.c_str(), frame_id);

@@ -114,7 +114,7 @@ s_min_max Renderer::intersect(BBox bbox, const Vector& np)
 // Na: default value is 1 - no antialiasing
 void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume, float K, Volume<Color>& lightVolume, BBox volumeBBox, int Na = 1)
 {
-	int start_s = clock();
+	// int start_s = clock();
   int width = img.Width();
   int height = img.Height();
 	// multithreading
@@ -173,7 +173,7 @@ void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume, 
       setPixel(img, i, j, colorValue);
     }
   }
-	int stop_s = clock();
-	std::cout << "	 | Elapsed CPU Time: " << (stop_s - start_s) / double(CLOCKS_PER_SEC) * 1000 << "s" << std::endl;
+	// int stop_s = clock();
+	// std::cout << "	 | Elapsed CPU Time: " << (stop_s - start_s) / double(CLOCKS_PER_SEC) * 1000 << "s" << std::endl;
 }
 

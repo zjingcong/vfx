@@ -28,7 +28,7 @@ namespace lux
 			FloatAdd(Volume<float>& f, Volume<float>& g): e1(f), e2(g)	{}
 			~FloatAdd()	{}
 
-			const float eval(const Vector& x) const	{return e1.eval(x) + e2.eval(x);}
+			inline const float eval(const Vector& x) const	{return e1.eval(x) + e2.eval(x);}
 
 		private:
 			Volume<float>& e1;
@@ -43,7 +43,7 @@ namespace lux
 			ColorAdd(Volume<Color>& f, Volume<Color>& g): e1(f), e2(g)	{}
 			~ColorAdd()	{}
 
-			const Color eval(const Vector& x) const	{return e1.eval(x) + e2.eval(x);}
+			inline const Color eval(const Vector& x) const	{return e1.eval(x) + e2.eval(x);}
 
 		private:
 			Volume<Color>& e1;
@@ -59,7 +59,7 @@ namespace lux
 			ImplicitUnion(Volume<float>& f, Volume<float>& g): e1(f), e2(g) {}
 			~ImplicitUnion()	{}
 
-			const float eval(const Vector& x) const	{return myMax(e1.eval(x), e2.eval(x));}
+			inline const float eval(const Vector& x) const	{return myMax(e1.eval(x), e2.eval(x));}
 
 		private:
 			Volume<float>& e1;
@@ -74,7 +74,7 @@ namespace lux
 			ImplicitIntersec(Volume<float>& f, Volume<float>& g): e1(f), e2(g) {}
 			~ImplicitIntersec()	{}
 
-			const float eval(const Vector& x) const	{return myMin(e1.eval(x), e2.eval(x));}
+			inline const float eval(const Vector& x) const	{return myMin(e1.eval(x), e2.eval(x));}
 
 		private:
 			Volume<float>& e1;
@@ -89,7 +89,7 @@ namespace lux
 			ImplicitCutout(Volume<float>& f, Volume<float>& g): e1(f), e2(g) {}
 			~ImplicitCutout()	{}
 
-			const float eval(const Vector& x) const	{return myMin(e1.eval(x), -(e2.eval(x)));}
+			inline const float eval(const Vector& x) const	{return myMin(e1.eval(x), -(e2.eval(x)));}
 
 		private:
 			Volume<float>& e1;
@@ -104,7 +104,7 @@ namespace lux
 			ImplicitBlinnBlend(Volume<float>& f, Volume<float>& g, float s1 = 1.0, float s2 = 1.0, float beta = 2.0): e1(f), e2(g),  s1(s1), s2(s2), beta(beta){}
 			~ImplicitBlinnBlend()	{}
 
-			const float eval(const Vector& x) const	{return exp((e1.eval(x)) / s1) + exp((e2.eval(x)) / s2) - beta;}
+			inline const float eval(const Vector& x) const	{return exp((e1.eval(x)) / s1) + exp((e2.eval(x)) / s2) - beta;}
 
 		private:
 			Volume<float>& e1;
@@ -120,7 +120,7 @@ namespace lux
 			ImplicitMask(Volume<float>& f): e1(f) {}
 			~ImplicitMask()	{}
 
-			const float eval(const Vector& x) const	{return (e1.eval(x) > 0.0) ? 1.0 : 0.0;}
+			inline const float eval(const Vector& x) const	{return (e1.eval(x) > 0.0) ? 1.0 : 0.0;}
 
 		private:
 			Volume<float>& e1;
@@ -134,7 +134,7 @@ namespace lux
 			ImplicitClamp(Volume<float>& f, float a, float b): e1(f), a(a), b(b) {}
 			~ImplicitClamp()	{}
 
-			const float eval(const Vector& x) const	
+			inline const float eval(const Vector& x) const	
 			{
 				float f = e1.eval(x);
 				if (f <= a)	{return a;}

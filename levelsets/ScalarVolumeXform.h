@@ -27,7 +27,7 @@ namespace lux
 			ScalarTranslate(Volume<float>& f, Vector xt): e1(f), xt(xt)	{}
 			~ScalarTranslate() {}
 
-			const float eval(const Vector& x) const	{return e1.eval(x - xt);}
+			inline const float eval(const Vector& x) const	{return e1.eval(x - xt);}
 
 		private:
 			Volume<float>& e1;
@@ -42,7 +42,7 @@ namespace lux
 			ScalarScaling(Volume<float>& f, float lambda): e1(f), lambda(lambda)	{}
 			~ScalarScaling()	{}
 
-			const float eval(const Vector& x) const	{return e1.eval(x / float(lambda));}
+			inline const float eval(const Vector& x) const	{return e1.eval(x / float(lambda));}
 
 		private:
 			Volume<float>& e1;
@@ -58,7 +58,7 @@ namespace lux
 			ScalarRotation(Volume<float>& f, Vector n, float theta): e1(f), axis(n.unitvector()), theta(theta)	{}
 			~ScalarRotation()	{}
 
-			const float eval(const Vector& x) const
+			inline const float eval(const Vector& x) const
 			{
 				Vector Vr;
 				// f'(x) = f(R(n, -theta)x)

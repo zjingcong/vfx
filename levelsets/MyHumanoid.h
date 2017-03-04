@@ -1,3 +1,5 @@
+# ifndef __MYHUMANOID_H__
+# define __MYHUMANOID_H__
 
 # include "Shape.h"
 # include "Vector.h"
@@ -23,9 +25,9 @@ ConstantColor brown(brownColor);
 ConstantColor yellow(yellowColor);
 ConstantColor blue(blueColor);
 
-ConstantFloat consRho_1(1.0);
+ConstantFloat consRho_1(2.0);
 ConstantFloat consRho_2(0.8);
-ConstantFloat consRho_3(0.5);
+ConstantFloat consRho_3(3.0);
 ConstantFloat consRho_4(0.2);
 ConstantFloat consRho_0(10.0);
 
@@ -142,7 +144,7 @@ ScalarScaling flower2(flower1, 0.18);
 ScalarTranslate flower(flower2, Vector(0.0, -4.0, -2.0));
 
 ColorVolume flowerColor(yellow, flower);
-DensityVolume flowerDensity(consRho_3, flower);
+DensityVolume flowerDensity(consRho_1, flower);
 // KVolume flowerK(0.5, flower);
 
 // prodium
@@ -181,4 +183,6 @@ FloatAdd dens3(dens2, flowerDensity);
 FloatAdd dens4(dens3, buttonDensity);
 
 FloatAdd humanFinalDensity(dens4, headalld);
+
+# endif
 

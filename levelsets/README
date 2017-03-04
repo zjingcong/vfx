@@ -1,0 +1,16 @@
+CPSC 8190 ASSIGNMENT 2 Levelsets
+=================================
+Jingcong Zhang
+jingcoz@g.clemson.edu
+2017-03-03
+
+Usage:
+	[Usage] ./levelsets frameStart frameNum [model_tag]
+	[model_tag]: 
+		 -b: bunny
+		 -t: teapot
+		 -h: hybrid
+
+To compile:
+	Use Makefile
+
