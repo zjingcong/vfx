@@ -16,7 +16,6 @@
 # include "PropertyVolume.h"
 # include "Color.h"
 # include "Lighting.h"
-# include "Structs.h"
 # include "Volume.h"
 
 # include "MyBunny.h"	// load bunny

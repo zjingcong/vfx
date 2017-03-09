@@ -3,20 +3,24 @@ CC = g++
 
 CFLAGS		= -g -Wall -O2 -fopenmp
 
-LDFLAGS =  `Magick++-config  --cppflags --cxxflags --ldflags --libs` -L/usr/local/lib -L/group/dpa/local/openvdb/lib -lOpenImageIO -lHalf -ltbb -lopenvdb -Wl,--rpath=/group/dpa/local/openvdb/lib -fopenmp
+DIR_INC = ./include
+DIR_SRC = ./src
+DIR_OBJ = ./obj
 
-INCLUDES = -I ./ `Magick++-config  --cppflags --cxxflags` -I/group/dpa/local/openvdb/include
+LDFLAGS =  -L/usr/local/lib -L/group/dpa/local/openvdb/lib -lOpenImageIO -lHalf -ltbb -lopenvdb -Wl,--rpath=/group/dpa/local/openvdb/lib -fopenmp
+
+INCLUDES = -I ./ -I/group/dpa/local/openvdb/include -I$(DIR_INC)
 
 PROJECT	= levelsets
 
 SOURCES = PolyModel.C Grid.C Matrix.C Camera.C Levelsets.C OIIOFiles.C Image.C Renderer.C Lighting.C levelsetsmain.C
 
-$(PROJECT): $(SOURCES:%.$(C)=%.o)
-	$(CC) $(SOURCES:%.$(C)=%.o) $(INCLUDES) $(LDFLAGS) -o $@
+$(PROJECT): $(SOURCES:%.$(C)=$(DIR_OBJ)/%.o)
+	$(CC) $(SOURCES:%.$(C)=$(DIR_OBJ)/%.o) $(INCLUDES) $(LDFLAGS) -o $@
 
-$(SOURCES:%.$(C)=%.o): %.o: %.$(C)
+$(SOURCES:%.$(C)=$(DIR_OBJ)/%.o): $(DIR_OBJ)/%.o: $(DIR_SRC)/%.$(C)
 	$(CC) -o $@ -c $(CFLAGS) $(INCLUDES) $<
 
 clean:
-	rm -f core.* *.o *~ ${PROJECT}
+	rm -f $(DIR_OBJ)/*.o *~ ${PROJECT}
 
