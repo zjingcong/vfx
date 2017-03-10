@@ -2,7 +2,6 @@
 # include "DoWedges.h"
 
 using namespace std;
-using namespace lux;
 
 
 void printHelp()
@@ -34,6 +33,10 @@ int main(int argc, char* argv[])
     {
         getNoiseParms();
         createNoiseWedges(frameid);
+    }
+    else if (wedge_type == "-p")
+    {
+        createPyroWedges();
     }
 
     return 0;

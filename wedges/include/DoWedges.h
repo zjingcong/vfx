@@ -5,6 +5,7 @@
 # include "omp.h"
 
 # include "NoiseGrid.h"
+# include "Pyroclastic.h"
 # include "Camera.h"
 # include "Color.h"
 # include "Grid.h"
@@ -23,7 +24,8 @@ using namespace lux;
 # define FAR 40
 
 
-// noise wedges
+/// ----------------------------------- noise wedges ---------------------------------------------------------
+
 // fade cannot be even
 void createNoise(Noise_t& parms, float fade, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
                  VolumeColorPtr& finalMatColorPtr, BBox& finalBBox, float& K)
@@ -99,6 +101,100 @@ void createNoiseWedges(int frame_id)
     LightSource rimLight(rimPos, rimColor);
     myLights.push_back(keyLight);
     // myLights.push_back(rimLight);
+    LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, LIGHT_STEP_SIZE, 0.08, finalBBox);
+
+    cout << "Set image..." << endl;
+    Image myImg;
+    myImg.reset(WEIGHT, HEIGHT);
+    cout << "Set camera..." << endl;
+    Camera myCamera;
+    Vector eye(20.0, 0.0, 0.0);
+    Vector view(-1.0, 0.0, 0.0);
+    Vector up(0.0, 1.0, 0.0);
+    myCamera.setFarPlane(NEAR);
+    myCamera.setFarPlane(FAR);
+    myCamera.setEyeViewUp(eye, view, up);
+    cout << "Start rendering..." << endl;
+    Renderer myRenderer(myImg, myCamera, STEP_SIZE);
+    myRenderer.render(*finalEmColorPtr, *finalDensityPtr, K, lightVolume, finalBBox, 1);
+    cout << "Rendering complete." << endl;
+    // write into file
+    char file_name[50];
+    sprintf(file_name, "../output/jingcoz_hw3_%s.%04d.exr", wedge_type.c_str(), frame_id);
+    cout << "Write frame " << frame_id << " into" << file_name << "."<< endl;
+    writeOIIOImage(file_name, myImg);
+}
+
+
+/// ----------------------------------- pyroclastic wedges ---------------------------------------------------
+
+void createPyro(Noise_t& parms, float fade, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
+                VolumeColorPtr& finalMatColorPtr, BBox& finalBBox, float& K)
+{
+
+}
+
+void createPyroWedges()
+{
+    cout << "Pyroclastic Wedges" << endl;
+    string wedge_type = "pyro";
+    int frame_id = 0;
+
+    VolumeFloatPtr finalDensityPtr;
+    VolumeColorPtr finalEmColorPtr;
+    VolumeColorPtr finalMatColorPtr;
+    BBox finalBBox;
+    float K;
+
+    // ---------------------------- test ---------------------------
+
+    K = 2;
+    Vec3s llc(-5.5, -5.5, -5.5);
+    Vec3s urc(5.5, 5.5, 5.5);
+    finalBBox = BBox(llc, urc);
+
+    Noise_t parms;
+    parms.seed = 485758;
+    parms.octaves = 1.0f;
+    parms.frequency = 1.0f;
+    parms.fjump = 2.0f;
+    parms.roughness = 0.5;
+    parms.time = 0.0f;
+
+    FractalSum<PerlinNoiseGustavson> perlin;
+    perlin.setParameters(parms);
+
+    Pyrosphere myPyrosphere(perlin, 2.0);
+
+    static Color matColor(1.0, 1.0, 1.0, 1.0);
+    static Color emColor(0.0, 0.0, 0.0, 0.0);
+    static ConstantFloat rho(2.0);
+    static ConstantColor pyroMatColor(matColor);
+    static ConstantColor pyroEmColor(emColor);
+    static DensityVolume pyroDensity(rho, myPyrosphere);
+
+    finalDensityPtr = &pyroDensity;
+    // finalDensityPtr = &myPyrosphere;
+    finalEmColorPtr = &pyroEmColor;
+    finalMatColorPtr = &pyroMatColor;
+    // finalBBox = perlinBBox;
+
+    // -------------------------------------------------------------
+
+    // lighting
+    cout << "Set lights..." << endl;
+    Lights myLights;
+    // light position
+    Vector keyPos(0.0, 8.0, 0.0);
+    Vector rimPos(0.0, -8.0, 0.0);
+    // light color
+    Color keyColor(2.0, 2.0, 2.0, 1.0);
+    Color rimColor(0.1, 0.1, 0.1, 1.0);
+    // set lights
+    LightSource keyLight(keyPos, keyColor);
+    LightSource rimLight(rimPos, rimColor);
+    myLights.push_back(keyLight);
+    myLights.push_back(rimLight);
     LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, LIGHT_STEP_SIZE, 0.08, finalBBox);
 
     cout << "Set image..." << endl;
