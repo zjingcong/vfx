@@ -17,6 +17,7 @@
 
 #include "Vector.h"
 #include <vector>
+# include <iostream>
 
 namespace lux
 {
@@ -107,6 +108,7 @@ class Noise
 
     virtual void setParameters( const Noise_t& parameters ){}
     virtual void getParameters( Noise_t& parameters ) const {}
+    virtual Noise_t getNoiseParameters() const {}
 };
 
 
@@ -191,11 +193,14 @@ class FractalSum : public Noise
        axis = parameters.axis;
        angle = parameters.angle;
        _noise.setTime( parameters.time );
+
+        noise_params = parameters;
     }
 
    
     void getParameters( Noise_t& parameters ) const
     {
+
        parameters.octaves = octaves;
        parameters.fjump = fjump;
        parameters.roughness = roughness;
@@ -204,6 +209,11 @@ class FractalSum : public Noise
        parameters.offset = offset; 
        parameters.axis = axis;
        parameters.angle = angle;
+    }
+
+    Noise_t getNoiseParameters() const
+    {
+        return noise_params;
     }
  
 
@@ -220,6 +230,8 @@ class FractalSum : public Noise
     float offset;
     Vector axis;
     float angle;
+
+    Noise_t noise_params;
 };
 
 

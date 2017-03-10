@@ -13,7 +13,7 @@ INCLUDES = -I ./ -I/group/dpa/local/openvdb/include -I$(DIR_INC)
 
 PROJECT	= $(DIR_OBJ)/wedges
 
-SOURCES = Grid.C Matrix.C Camera.C OIIOFiles.C Image.C Renderer.C Lighting.C wedges.C
+SOURCES = Grid.C Matrix.C Camera.C OIIOFiles.C Image.C Renderer.C Lighting.C Noise.C PerlinNoise.C wedges.C
 
 $(PROJECT): $(SOURCES:%.$(C)=$(DIR_OBJ)/%.o)
 	$(CC) $(SOURCES:%.$(C)=$(DIR_OBJ)/%.o) $(INCLUDES) $(LDFLAGS) -o $@

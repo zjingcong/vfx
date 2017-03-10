@@ -2,12 +2,6 @@
 # include <ctime>
 
 # include "Renderer.h"
-# include "Vector.h"
-# include "Color.h"
-# include "Image.h"
-# include "Camera.h"
-# include "PropertyVolume.h"
-# include "Volume.h"
 
 
 Color Renderer::raymatch(const Vector& x0, const Vector& np, float s_far_near, Volume<float>& densityVolume, Volume<Color>& colorVolume, float K, Volume<Color>& lightVolume)
