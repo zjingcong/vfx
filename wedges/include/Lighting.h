@@ -68,6 +68,8 @@ namespace lux
 			void DSMStamping();
 	};
 
+	typedef std::vector<LightSource> Lights;
+
 }
 
 # endif

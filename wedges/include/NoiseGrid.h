@@ -17,7 +17,8 @@ class NoiseGrid
         NoiseGrid(Noise& n, float s);
         ~NoiseGrid()    {}
 
-        FloatGrid::Ptr getNoiseGrid();
+        FloatGrid::Ptr getNoiseGrid()   {return myGrid;}
+        BBox getNoiseBBox() {return noiseBBox;}
 
     private:
         Noise& noise;
@@ -25,6 +26,9 @@ class NoiseGrid
 
         FloatGrid::Ptr myGrid;  // gird used for stamping noise
         Transform::Ptr xform;   // get the transform of noise grid
+        BBox noiseBBox;
+
+        void createNoiseGrid();
 };
 
 
@@ -35,24 +39,33 @@ NoiseGrid::NoiseGrid(Noise& n, float s): noise(n), voxelSize(s)
     xform = myGrid -> transformPtr();
     xform = Transform::createLinearTransform(voxelSize);
     myGrid -> setTransform(xform);
+
+    createNoiseGrid();
 }
 
 
-FloatGrid::Ptr NoiseGrid::getNoiseGrid()
+void NoiseGrid::createNoiseGrid()
 {
     // get noise parameters
     Noise_t myPerlinParam = noise.getNoiseParameters();
     float pscale = myPerlinParam.pscale;
-
     float gamma = myPerlinParam.gamma;  // fade power
     float roughness = myPerlinParam.roughness;
     float octaves = myPerlinParam.octaves;
     Vector P = myPerlinParam.P;
+
+    // get noise bounding box
     Vec3s xyz(P.X(), P.Y(), P.Z());
     Coord ijk = xform -> worldToIndexNodeCentered(xyz);
     int radius_n = std::floor(pscale / voxelSize) + 1;
-    float scale = pow( 1.0 + roughness, octaves - 1.0);
+    Coord ijk0(ijk.x() - radius_n, ijk.y() - radius_n, ijk.z() - radius_n);
+    Coord ijk1(ijk.x() + radius_n, ijk.y() + radius_n, ijk.z() + radius_n);
+    Vec3s pos_min = xform -> indexToWorld(ijk0);
+    Vec3s pos_max = xform -> indexToWorld(ijk1);
+    noiseBBox = BBox(pos_min, pos_max);
 
+    float scale = pow( 1.0 + roughness, octaves - 1.0);
+    // float scale = (1 - roughness) / float(1 - pow(roughness, octaves));
     std::cout << "Stamping noise..." << std::endl;
     // get noise grid's accessor
     FloatGrid::Accessor accessor = myGrid -> getAccessor();
@@ -72,6 +85,7 @@ FloatGrid::Ptr NoiseGrid::getNoiseGrid()
                 if (fadefactor > 0)
                 {
                     float value = (noise.eval(myxyz) + 0.5 * scale) / scale;
+                    // float value = (float(noise.eval(myxyz)) * scale / (2)) + 0.5;
 
                     # pragma omp critical
                     {
@@ -83,8 +97,6 @@ FloatGrid::Ptr NoiseGrid::getNoiseGrid()
             }
         }
     }
-
-    return myGrid;
 }
 
 # endif
