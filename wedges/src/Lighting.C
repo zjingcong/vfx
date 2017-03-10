@@ -2,7 +2,7 @@
 # include <ctime>
 
 # include "Lighting.h"
-# include "Grid.h"
+# include "omp.h"
 
 using namespace lux;
 
@@ -12,8 +12,8 @@ using namespace lux;
 const float DSMVolume::eval(const Vector& x) const
 {
 	float T = 0;
-	// if (densityVolume.eval(x) > 0)
-	// {
+	if (densityVolume.eval(x) > 0)	// don't do this when using openvdb levelsets
+	{
 		float s_max = (x - light.getPos()).magnitude();
 		Vector normal = (light.getPos() - x).unitvector();
 		// initialization
@@ -27,7 +27,7 @@ const float DSMVolume::eval(const Vector& x) const
 			s += step_size;
 			T += rho * step_size;
 		}
-	// }
+	}
 
 	return T;
 }

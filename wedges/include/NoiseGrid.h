@@ -3,6 +3,7 @@
 
 # include <iostream>
 # include "math.h"
+# include "omp.h"
 
 # include "Noise.h"
 # include "PerlinNoise.h"
@@ -14,7 +15,7 @@ using namespace lux;
 class NoiseGrid
 {
     public:
-        NoiseGrid(Noise& n, float s);
+        NoiseGrid(Noise& n, float s, float f);
         ~NoiseGrid()    {}
 
         FloatGrid::Ptr getNoiseGrid()   {return myGrid;}
@@ -23,6 +24,7 @@ class NoiseGrid
     private:
         Noise& noise;
         float voxelSize;
+        float fade;
 
         FloatGrid::Ptr myGrid;  // gird used for stamping noise
         Transform::Ptr xform;   // get the transform of noise grid
@@ -32,10 +34,10 @@ class NoiseGrid
 };
 
 
-NoiseGrid::NoiseGrid(Noise& n, float s): noise(n), voxelSize(s)
+NoiseGrid::NoiseGrid(Noise& n, float s, float f): noise(n), voxelSize(s), fade(f)
 {
     // create noise grid with specified voxel size
-    myGrid = FloatGrid::create();
+    myGrid = FloatGrid::create(0.0);
     xform = myGrid -> transformPtr();
     xform = Transform::createLinearTransform(voxelSize);
     myGrid -> setTransform(xform);
@@ -49,7 +51,6 @@ void NoiseGrid::createNoiseGrid()
     // get noise parameters
     Noise_t myPerlinParam = noise.getNoiseParameters();
     float pscale = myPerlinParam.pscale;
-    float gamma = myPerlinParam.gamma;  // fade power
     float roughness = myPerlinParam.roughness;
     float octaves = myPerlinParam.octaves;
     Vector P = myPerlinParam.P;
@@ -64,9 +65,10 @@ void NoiseGrid::createNoiseGrid()
     Vec3s pos_max = xform -> indexToWorld(ijk1);
     noiseBBox = BBox(pos_min, pos_max);
 
-    float scale = pow( 1.0 + roughness, octaves - 1.0);
+    // float scale = pow( 1.0 + roughness, octaves - 1.0);
     // float scale = (1 - roughness) / float(1 - pow(roughness, octaves));
     std::cout << "Stamping noise..." << std::endl;
+    double start_time = omp_get_wtime();
     // get noise grid's accessor
     FloatGrid::Accessor accessor = myGrid -> getAccessor();
     // loop over grid point
@@ -81,22 +83,27 @@ void NoiseGrid::createNoiseGrid()
                 Coord myijk(i, j, k);
                 Vec3s xyzvec = xform -> indexToWorld(myijk);
                 Vector myxyz(xyzvec.x(), xyzvec.y(), xyzvec.z());
-                float fadefactor = pow((1 - float((P - myxyz).magnitude()) / pscale), gamma);
+                float fadefactor = pow((1 - float((P - myxyz).magnitude()) / pscale), fade);
                 if (fadefactor > 0)
                 {
-                    float value = (noise.eval(myxyz) + 0.5 * scale) / scale;
+                    // float value = (noise.eval(myxyz) + 0.5 * scale) / scale;
                     // float value = (float(noise.eval(myxyz)) * scale / (2)) + 0.5;
-
-                    # pragma omp critical
+                    float value = noise.eval(myxyz);
+                    if (value >= 0)
                     {
-                        // stamp the value to the grid
-                        accessor.setValue(myijk, value * fadefactor);
-                        accessor.setValueOn(myijk);
+                        # pragma omp critical
+                        {
+                            // stamp the value to the grid
+                            accessor.setValue(myijk, value * fadefactor);
+                            accessor.setValueOn(myijk);
+                        }
                     }
                 }
             }
         }
     }
+    double exe_time = omp_get_wtime() - start_time;
+    std::cout << "	 | Elapsed Time: " << exe_time << "s" << std::endl;
 }
 
 # endif

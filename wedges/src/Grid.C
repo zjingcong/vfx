@@ -3,6 +3,7 @@
 # include <ctime>
 
 # include "Grid.h"
+# include "omp.h"
 
 using namespace lux;
 
@@ -76,7 +77,7 @@ FloatVolumeToGrid::FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox):
 
 void FloatVolumeToGrid::createVolumeGrid()
 {
-	// int start_s = clock();
+	double start_time = omp_get_wtime();
 	FloatGrid::Accessor accessor = myGrid -> getAccessor();
 	Vec3s llc = volumeBBox.min();
 	Vec3s urc = volumeBBox.max();
@@ -101,8 +102,8 @@ void FloatVolumeToGrid::createVolumeGrid()
 			}
 		}
 	}
-	// int stop_s = clock();
-	// std::cout << "	 | Elapsed CPU Time: " << (stop_s - start_s) / double(CLOCKS_PER_SEC) * 1000 << "s" << std::endl;
+	double exe_time = omp_get_wtime() - start_time;
+	std::cout << "	 | Elapsed Time: " << exe_time << "s" << std::endl;
 }
 
 

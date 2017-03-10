@@ -1,22 +1,23 @@
 
 # include <ctime>
+# include "omp.h"
 
 # include "Renderer.h"
 
 
 Color Renderer::raymatch(const Vector& x0, const Vector& np, float s_far_near, Volume<float>& densityVolume, Volume<Color>& colorVolume, float K, Volume<Color>& lightVolume)
 {	
-  // initialization
-  Vector x = x0;
-  float T = 1.0;
-  Color L;  // L = 0
-  float threshold = pow(10.0, -6.0);
-  float s = 0;
+  	// initialization
+  	Vector x = x0;
+  	float T = 1.0;
+  	Color L;  // L = 0
+  	float threshold = pow(10.0, -6.0);
+  	float s = 0;
 
-  // iteration
-  while (s <= s_far_near && T >= threshold)
-  {
-    x += np * step_size;
+  	// iteration
+  	while (s <= s_far_near && T >= threshold)
+  	{
+    	x += np * step_size;
 		float rho = densityVolume.eval(x);
 		// if rho = 0, skip everything
 		if (rho != 0)
@@ -26,12 +27,12 @@ Color Renderer::raymatch(const Vector& x0, const Vector& np, float s_far_near, V
 			Color color = c_emission + c_light;
 			// Color color = c_light;
 
-		  float delta_T = exp(-rho * step_size * K);
+		  	float delta_T = exp(-rho * step_size * K);
 		 	L += (color / K) * T * (1 - delta_T);
 		 	T *= delta_T;
 		}
 		s += step_size;
-  }
+  	}
 
   return L;
 }
@@ -108,31 +109,31 @@ s_min_max Renderer::intersect(BBox bbox, const Vector& np)
 // Na: default value is 1 - no antialiasing
 void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume, float K, Volume<Color>& lightVolume, BBox volumeBBox, int Na = 1)
 {
-	// int start_s = clock();
-  int width = img.Width();
-  int height = img.Height();
+	double start_time = omp_get_wtime();
+  	int width = img.Width();
+  	int height = img.Height();
 	// multithreading
 	# pragma omp parallel for collapse(2)
-  for (int j = 0; j < height; ++j)
+  	for (int j = 0; j < height; ++j)
 	{
-    for (int i = 0; i < width; ++i)
-    {
+    	for (int i = 0; i < width; ++i)
+    	{
 			Color L;	// L = 0
 			// no antialiasing
 			if (Na == 1)
 			{
 				float u, v;
 				v = j / float(height - 1);
-		    u = i / float(width - 1);
-		    Vector np = camera.view(u, v);
+			    u = i / float(width - 1);
+		    	Vector np = camera.view(u, v);
 
 				s_min_max minmax = intersect(volumeBBox, np);
 				float s_near = minmax.min;
 				float s_far = minmax.max;
-		    float s_far_near = s_far - s_near;
+		    	float s_far_near = s_far - s_near;
 				Vector x0 = camera.eye() + np * s_near;
 
-      	Color Li = raymatch(x0, np, s_far_near, densityVolume, colorVolume, K, lightVolume);
+      		Color Li = raymatch(x0, np, s_far_near, densityVolume, colorVolume, K, lightVolume);
 				L += Li;
 			}
 			else
@@ -142,32 +143,31 @@ void Renderer::render(Volume<Color>& colorVolume, Volume<float>& densityVolume, 
 				{
 					float u, v;
 					v = (j + drand48()) / float(height - 1);
-				  u = (i + drand48()) / float(width - 1);
-				  Vector np = camera.view(u, v);
+					u = (i + drand48()) / float(width - 1);
+				  	Vector np = camera.view(u, v);
 
 					s_min_max minmax = intersect(volumeBBox, np);
 					float s_near = minmax.min;
 					float s_far = minmax.max;
-				  float s_far_near = s_far - s_near;
+					float s_far_near = s_far - s_near;
 					Vector x0 = camera.eye() + np * s_near;
 
-		    	Color Li = raymatch(x0, np, s_far_near, densityVolume, colorVolume, K, lightVolume);
+		    		Color Li = raymatch(x0, np, s_far_near, densityVolume, colorVolume, K, lightVolume);
 					L += Li;
 				}
 			}
 
-			L = L / Na;
-			// set pixel value
-      std::vector<float> colorValue;
-      colorValue.resize(4);
-      colorValue[0] = L.X();
-      colorValue[1] = L.Y();
-      colorValue[2] = L.Z();
-      colorValue[3] = L.W();
-      setPixel(img, i, j, colorValue);
-    }
-  }
-	// int stop_s = clock();
-	// std::cout << "	 | Elapsed CPU Time: " << (stop_s - start_s) / double(CLOCKS_PER_SEC) * 1000 << "s" << std::endl;
+		L = L / Na;
+		// set pixel value
+      	std::vector<float> colorValue;
+      	colorValue.resize(4);
+      	colorValue[0] = L.X();
+      	colorValue[1] = L.Y();
+      	colorValue[2] = L.Z();
+      	colorValue[3] = L.W();
+      	setPixel(img, i, j, colorValue);
+    	}
+  	}
+	double exe_time = omp_get_wtime() - start_time;
+	std::cout << "	 | Elapsed Time: " << exe_time << "s" << std::endl;
 }
-
