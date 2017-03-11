@@ -4,8 +4,8 @@
 
 Pyrosphere::Pyrosphere(Noise &n, float r): noise(n), radius(r)
 {
-    Vec3s min(-3 * r, -3 * r, -3 * r);
-    Vec3s max(3 * r, 3 * r, 3 * r);
+    Vec3s min(-3.5 * r, -3.5 * r, -3.5 * r);
+    Vec3s max(3.5 * r, 3.5 * r, 3.5 * r);
     pyroBBox = BBox(min, max);
 }
 

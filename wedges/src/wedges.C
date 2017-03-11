@@ -33,12 +33,14 @@ int main(int argc, char* argv[])
 
     if (wedge_type == "-n")
     {
-        getNoiseParms();
+        cout << "*********** Noise Wedges *********" << endl;
+        getNoiseParms(output_path);
         createNoiseWedges(frameid, output_path);
     }
     else if (wedge_type == "-p")
     {
-        getPyroParms();
+        cout << "******* Pyroclastic Wedges *******" << endl;
+        getPyroParms(output_path);
         createPyroWedges(frameid, output_path);
     }
 

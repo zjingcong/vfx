@@ -18,10 +18,11 @@ using namespace lux;
 
 # define WEIGHT 960
 # define HEIGHT 540
-# define STEP_SIZE 0.001
-# define LIGHT_STEP_SIZE 0.01
 # define NEAR 0.1
 # define FAR 40
+# define CRAZY_NUM 2.0316578
+
+float step_size;
 
 
 /// ----------------------------------- noise wedges ---------------------------------------------------------
@@ -35,6 +36,7 @@ void createNoise(Noise_t& parms, float fade, VolumeFloatPtr& finalDensityPtr, Vo
 
     float pscale = parms.pscale;
     float voxelSize = float(pscale * 2) / 500;
+    step_size = float(voxelSize) / CRAZY_NUM;   // get step size form grid
 
     static NoiseGrid perlinNoiseGrid(perlin, voxelSize, fade);
     static FloatGrid::Ptr perlinGrid = perlinNoiseGrid.getNoiseGrid();
@@ -44,7 +46,7 @@ void createNoise(Noise_t& parms, float fade, VolumeFloatPtr& finalDensityPtr, Vo
 
     static Color matColor(1.0, 1.0, 1.0, 1.0);
     static Color emColor(0.0, 0.0, 0.0, 0.0);
-    static ConstantFloat rho(1.0);
+    static ConstantFloat rho(0.8);
     static ConstantColor perlinMatColor(matColor);
     static ConstantColor perlinEmColor(emColor);
     static DensityVolume perlinDensity(rho, perlinVolume);
@@ -60,13 +62,16 @@ void createNoise(Noise_t& parms, float fade, VolumeFloatPtr& finalDensityPtr, Vo
 
 void createNoiseWedges(int frame_id, string output_path)
 {
-    cout << "Noise Wedges" << endl;
     cout << "frame_id: " << frame_id << endl;
     string wedge_type = "noise";
+    char file_name[1024];
+    sprintf(file_name, "%s/jingcoz_hw3_%s.%04d.exr", output_path.c_str(), wedge_type.c_str(), frame_id);
+    cout << "Output path: " << file_name << endl;
+
     noiseWedgeParms myNoiseParms = noiseParmsList.at(frame_id);
 
     static Noise_t parms;
-    parms.pscale = 5;
+    parms.pscale = 6;
 
     float fade = myNoiseParms.fade;
     parms.octaves = myNoiseParms.octaves;
@@ -102,26 +107,29 @@ void createNoiseWedges(int frame_id, string output_path)
     LightSource rimLight(rimPos, rimColor);
     myLights.push_back(keyLight);
     // myLights.push_back(rimLight);
-    LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, LIGHT_STEP_SIZE, 0.08, finalBBox);
+    float light_voxelSize = 0.08;
+    float light_step_size = float(light_voxelSize) / CRAZY_NUM;   // get step size form grid
+    cout << "	 | Light voxel size: " << light_voxelSize << endl;
+    cout << "	 | Light step size: " << light_step_size << endl;
+    LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, light_step_size, light_voxelSize, finalBBox);
 
     cout << "Set image..." << endl;
     Image myImg;
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(20.0, 0.0, 0.0);
+    Vector eye(24.0, 0.0, 0.0);
     Vector view(-1.0, 0.0, 0.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);
     myCamera.setFarPlane(FAR);
     myCamera.setEyeViewUp(eye, view, up);
     cout << "Start rendering..." << endl;
-    Renderer myRenderer(myImg, myCamera, STEP_SIZE);
+    cout << "	 | Render step size: " << step_size << endl;
+    Renderer myRenderer(myImg, myCamera, step_size);
     myRenderer.render(*finalEmColorPtr, *finalDensityPtr, K, lightVolume, finalBBox, 1);
     cout << "Rendering complete." << endl;
     // write into file
-    char file_name[50];
-    sprintf(file_name, "%s/jingcoz_hw3_%s.%04d.exr", output_path.c_str(), wedge_type.c_str(), frame_id);
     cout << "Write frame " << frame_id << " into" << file_name << "."<< endl;
     writeOIIOImage(file_name, myImg);
 }
@@ -135,10 +143,13 @@ void createPyro(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr&
     static FractalSum<PerlinNoiseGustavson> perlin;
     perlin.setParameters(parms);
 
+    float pyroshpereRadius = 1.0;
     static Pyrosphere myPyrosphere(perlin, 1.0);
     static BBox pyroBBox = myPyrosphere.getBBox();
 
-    float voxelSize = float(pyroBBox.max().x() - pyroBBox.min().x()) / 600;
+    float voxelSize = float(pyroBBox.max().x() - pyroBBox.min().x()) / 1000;
+    step_size = float(voxelSize) / CRAZY_NUM;   // get step size form grid
+
     // stamp
     cout << "Stamping pyrosphere..." << endl;
     static FloatVolumeToGrid pyroSphereVolume2Grid(myPyrosphere, voxelSize, pyroBBox);
@@ -149,12 +160,12 @@ void createPyro(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr&
 
     static Color matColor(1.0, 1.0, 1.0, 1.0);
     static Color emColor(0.0, 0.0, 0.0, 0.0);
-    static ConstantFloat rho(0.9);
+    static ConstantFloat rho(5.0);
     static ConstantColor pyroMatColor(matColor);
     static ConstantColor pyroEmColor(emColor);
     static DensityVolume pyroDensity(rho, pyroSphereVolume);
 
-    K = 20;
+    K = 5;
     finalDensityPtr = &pyroDensity;
     finalEmColorPtr = &pyroEmColor;
     finalMatColorPtr = &pyroMatColor;
@@ -165,7 +176,6 @@ void createPyro(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr&
 void createPyroWedges(int frame_id, string output_path)
 {
     string wedge_type = "pyro";
-    cout << "Pyroclastic Wedges" << endl;
     cout << "frame_id: " << frame_id << endl;
     char file_name[1024];
     sprintf(file_name, "%s/jingcoz_hw3_%s.%04d.exr", output_path.c_str(), wedge_type.c_str(), frame_id);
@@ -201,28 +211,33 @@ void createPyroWedges(int frame_id, string output_path)
     Vector keyPos(0.0, 4.0, 0.0);
     Vector rimPos(0.0, -4.0, 0.0);
     // light color
-    Color keyColor(12.0, 12.0, 12.0, 1.0);
-    Color rimColor(1.0, 1.0, 1.0, 1.0);
+    Color keyColor(5.0, 5.0, 5.0, 1.0);
+    Color rimColor(0.8, 0.8, 0.8, 1.0);
     // set lights
     LightSource keyLight(keyPos, keyColor);
     LightSource rimLight(rimPos, rimColor);
     myLights.push_back(keyLight);
     myLights.push_back(rimLight);
-    LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, LIGHT_STEP_SIZE, 0.025, finalBBox);
+    float light_voxelSize = 0.024;
+    float light_step_size = float(light_voxelSize) / CRAZY_NUM;   // get step size form grid
+    cout << "	 | Light voxel size: " << light_voxelSize << endl;
+    cout << "	 | Light step size: " << light_step_size << endl;
+    LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, light_step_size, light_voxelSize, finalBBox);
 
     cout << "Set image..." << endl;
     Image myImg;
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(10.0, 0.0, 0.0);
+    Vector eye(8.0, 0.0, 0.0);
     Vector view(-1.0, 0.0, 0.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);
     myCamera.setFarPlane(FAR);
     myCamera.setEyeViewUp(eye, view, up);
     cout << "Start rendering..." << endl;
-    Renderer myRenderer(myImg, myCamera, STEP_SIZE);
+    cout << "	 | Render step size: " << step_size << endl;
+    Renderer myRenderer(myImg, myCamera, step_size);
     myRenderer.render(*finalEmColorPtr, *finalDensityPtr, K, lightVolume, finalBBox, 1);
     cout << "Rendering complete." << endl;
     // write into file
