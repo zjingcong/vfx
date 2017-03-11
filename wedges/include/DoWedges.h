@@ -19,7 +19,7 @@ using namespace lux;
 # define WEIGHT 960
 # define HEIGHT 540
 # define STEP_SIZE 0.001
-# define LIGHT_STEP_SIZE 0.008
+# define LIGHT_STEP_SIZE 0.01
 # define NEAR 0.1
 # define FAR 40
 
@@ -58,9 +58,10 @@ void createNoise(Noise_t& parms, float fade, VolumeFloatPtr& finalDensityPtr, Vo
 }
 
 
-void createNoiseWedges(int frame_id)
+void createNoiseWedges(int frame_id, string output_path)
 {
     cout << "Noise Wedges" << endl;
+    cout << "frame_id: " << frame_id << endl;
     string wedge_type = "noise";
     noiseWedgeParms myNoiseParms = noiseParmsList.at(frame_id);
 
@@ -120,7 +121,7 @@ void createNoiseWedges(int frame_id)
     cout << "Rendering complete." << endl;
     // write into file
     char file_name[50];
-    sprintf(file_name, "../output/jingcoz_hw3_%s.%04d.exr", wedge_type.c_str(), frame_id);
+    sprintf(file_name, "%s/jingcoz_hw3_%s.%04d.exr", output_path.c_str(), wedge_type.c_str(), frame_id);
     cout << "Write frame " << frame_id << " into" << file_name << "."<< endl;
     writeOIIOImage(file_name, myImg);
 }
@@ -137,7 +138,7 @@ void createPyro(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr&
     static Pyrosphere myPyrosphere(perlin, 1.0);
     static BBox pyroBBox = myPyrosphere.getBBox();
 
-    float voxelSize = float(pyroBBox.max().x() - pyroBBox.min().x()) / 500;
+    float voxelSize = float(pyroBBox.max().x() - pyroBBox.min().x()) / 600;
     // stamp
     cout << "Stamping pyrosphere..." << endl;
     static FloatVolumeToGrid pyroSphereVolume2Grid(myPyrosphere, voxelSize, pyroBBox);
@@ -148,12 +149,12 @@ void createPyro(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr&
 
     static Color matColor(1.0, 1.0, 1.0, 1.0);
     static Color emColor(0.0, 0.0, 0.0, 0.0);
-    static ConstantFloat rho(1.0);
+    static ConstantFloat rho(0.9);
     static ConstantColor pyroMatColor(matColor);
     static ConstantColor pyroEmColor(emColor);
     static DensityVolume pyroDensity(rho, pyroSphereVolume);
 
-    K = 25;
+    K = 20;
     finalDensityPtr = &pyroDensity;
     finalEmColorPtr = &pyroEmColor;
     finalMatColorPtr = &pyroMatColor;
@@ -161,10 +162,15 @@ void createPyro(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr&
 }
 
 
-void createPyroWedges(int frame_id)
+void createPyroWedges(int frame_id, string output_path)
 {
-    cout << "Pyroclastic Wedges" << endl;
     string wedge_type = "pyro";
+    cout << "Pyroclastic Wedges" << endl;
+    cout << "frame_id: " << frame_id << endl;
+    char file_name[1024];
+    sprintf(file_name, "%s/jingcoz_hw3_%s.%04d.exr", output_path.c_str(), wedge_type.c_str(), frame_id);
+    cout << "Output path: " << file_name << endl;
+
     pyroWedgeParms myPyroParms = pyroParmsList.at(frame_id);
 
     static Noise_t parms;
@@ -195,14 +201,14 @@ void createPyroWedges(int frame_id)
     Vector keyPos(0.0, 4.0, 0.0);
     Vector rimPos(0.0, -4.0, 0.0);
     // light color
-    Color keyColor(25.0, 25.0, 25.0, 1.0);
+    Color keyColor(12.0, 12.0, 12.0, 1.0);
     Color rimColor(1.0, 1.0, 1.0, 1.0);
     // set lights
     LightSource keyLight(keyPos, keyColor);
     LightSource rimLight(rimPos, rimColor);
     myLights.push_back(keyLight);
     myLights.push_back(rimLight);
-    LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, LIGHT_STEP_SIZE, 0.03, finalBBox);
+    LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, LIGHT_STEP_SIZE, 0.025, finalBBox);
 
     cout << "Set image..." << endl;
     Image myImg;
@@ -220,8 +226,6 @@ void createPyroWedges(int frame_id)
     myRenderer.render(*finalEmColorPtr, *finalDensityPtr, K, lightVolume, finalBBox, 1);
     cout << "Rendering complete." << endl;
     // write into file
-    char file_name[50];
-    sprintf(file_name, "../output/jingcoz_hw3_%s.%04d.exr", wedge_type.c_str(), frame_id);
     cout << "Write frame " << frame_id << " into" << file_name << "."<< endl;
     writeOIIOImage(file_name, myImg);
 }

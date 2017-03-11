@@ -27,15 +27,15 @@ std::vector<pyroWedgeParms> pyroParmsList;
 
 // noise wedge parms
 float noise_octaves_list[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
-float noise_freq_list[5] = {1.0, 1.2343, 2.32432, 3.434345, 5.546};
+float noise_freq_list[5] = {0.82434, 1.2343, 2.32432, 3.434345, 5.546};
 float noise_f_jump_list[5] = {1.5, 1.7, 1.9, 2.1, 2.4};
 float noise_fade_list[4] = {0.5, 0.7, 1.0, 1.5};
 
 
 // pyroclastic wedge parms
 float pyro_octaves_list[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
-float pyro_freq_list[5] = {1.0, 1.2343, 2.32432, 3.434345, 5.546};
-float pyro_f_jump_list[4] = {1.7, 1.9, 2.1, 2.4};
+float pyro_freq_list[5] = {0.82434, 1.2343, 2.32432, 3.434345, 5.546};
+float pyro_f_jump_list[4] = {1.5, 1.9, 2.1, 2.4};
 float pyro_gamma_list[5] = {0.2, 0.7, 1.0, 1.5, 2.0};
 
 
