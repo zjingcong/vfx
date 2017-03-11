@@ -72,11 +72,12 @@ void NoiseGrid::createNoiseGrid()
     // get noise grid's accessor
     FloatGrid::Accessor accessor = myGrid -> getAccessor();
     // loop over grid point
+    # pragma omp parallel for collapse(3)
     for (int i = ijk.x() - radius_n; i <= ijk.x() + radius_n; ++i)
     {
         for (int j = ijk.y() - radius_n; j <= ijk.y() + radius_n; ++j)
         {
-            # pragma omp parallel for
+            // # pragma omp parallel for
             for (int k = ijk.z() - radius_n; k <= ijk.z() + radius_n; ++k)
             {
                 // calculate the fade factor

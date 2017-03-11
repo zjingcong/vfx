@@ -5,36 +5,27 @@
 
 # include "Shape.h"
 # include "Vector.h"
+# include "Noise.h"
+# include "Types.h"
 
 using namespace lux;
 
 
+// pyrosphere volume
 class Pyrosphere: public Volume<float>
 {
     public:
-        Pyrosphere(Noise& n, float r): noise(n), radius(r)  {}
+        Pyrosphere(Noise& n, float r);
         ~Pyrosphere()   {}
 
         const float eval(const Vector& x) const;
+        BBox getBBox()  {return pyroBBox;}
 
     private:
         Noise& noise;
         float radius;
+
+        BBox pyroBBox;
 };
-
-
-const float Pyrosphere::eval(const Vector &x) const
-{
-    // create the sphere volume
-    Sphere sphere(radius);
-    float value;
-    Noise_t myPyroParam = noise.getNoiseParameters();
-    float gamma = myPyroParam.gamma;
-    Vector xyz = x.unitvector() * radius;
-    float noiseValue = pow(fabs(noise.eval(xyz)), gamma);
-    value = sphere.eval(x) + noiseValue;
-
-    return value;
-}
 
 # endif

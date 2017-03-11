@@ -36,7 +36,8 @@ int main(int argc, char* argv[])
     }
     else if (wedge_type == "-p")
     {
-        createPyroWedges();
+        getPyroParms();
+        createPyroWedges(frameid);
     }
 
     return 0;

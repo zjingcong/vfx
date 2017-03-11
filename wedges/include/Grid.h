@@ -63,12 +63,14 @@ namespace lux
 			FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox);
 			~FloatVolumeToGrid()	{}
 
-			FloatGrid::Ptr getVolumeGrid();
+			FloatGrid::Ptr getVolumeGrid()	{return myGrid;}
+			BBox getBBox()	{return gridBBox;}
 
 		private:
 			Volume<float>& myVolume;
 			float voxelSize;
 			BBox volumeBBox;
+			BBox gridBBox;
 
 			FloatGrid::Ptr myGrid;
 			Transform::Ptr transform;

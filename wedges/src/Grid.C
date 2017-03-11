@@ -1,6 +1,4 @@
 # include <openvdb/tools/Interpolation.h>
-# include <iostream>
-# include <ctime>
 
 # include "Grid.h"
 # include "omp.h"
@@ -72,6 +70,8 @@ FloatVolumeToGrid::FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox):
 	// set voxel size
 	transform = Transform::createLinearTransform(voxelSize);
 	myGrid -> setTransform(transform);
+
+	createVolumeGrid();
 }
 
 
@@ -83,7 +83,10 @@ void FloatVolumeToGrid::createVolumeGrid()
 	Vec3s urc = volumeBBox.max();
 	Coord ijk0 = transform -> worldToIndexNodeCentered(llc);
 	Coord ijk1 = transform -> worldToIndexNodeCentered(urc);
-	# pragma omp parallel for
+	int min_i = ijk1.x();	int max_i = ijk0.x();
+	int min_j = ijk1.y();	int max_j = ijk0.y();
+	int min_k = ijk1.z();	int max_k = ijk0.z();
+	# pragma omp parallel for collapse(3)
 	for (int i = ijk0.x(); i <= ijk1.x(); ++i)
 	{
 		for (int j = ijk0.y(); j <= ijk1.y(); ++j)
@@ -95,22 +98,26 @@ void FloatVolumeToGrid::createVolumeGrid()
 				lux::Vector vec(gridPointPos.x(), gridPointPos.y(), gridPointPos.z());
 				float value = myVolume.eval(vec);
 
-				# pragma omp critical
+				if (value >= 0)	// only stamp positive value
 				{
-					accessor.setValue(ijk, value);
+					# pragma omp critical
+					{
+						if (i < min_i)	{min_i = i;}	if (i > max_i)	{max_i = i;}
+						if (j < min_j)	{min_j = j;}	if (j > max_j)	{max_j = j;}
+						if (k < min_k)	{min_k = k;}	if (k > max_k)	{max_k = k;}
+						accessor.setValue(ijk, value);
+					}
 				}
 			}
 		}
 	}
+	Coord min(min_i, min_j, min_k);
+	Coord max(max_i, max_j, max_k);
+	Vec3s min_pos = transform -> indexToWorld(min);
+	Vec3s max_pos = transform -> indexToWorld(max);
+	gridBBox = BBox(min_pos, max_pos);
 	double exe_time = omp_get_wtime() - start_time;
 	std::cout << "	 | Elapsed Time: " << exe_time << "s" << std::endl;
-}
-
-
-FloatGrid::Ptr FloatVolumeToGrid::getVolumeGrid()
-{
-	createVolumeGrid();
-	return myGrid;
 }
 
 // ----------------------------------------------------------------------------------------------

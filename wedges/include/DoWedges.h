@@ -18,8 +18,8 @@ using namespace lux;
 
 # define WEIGHT 960
 # define HEIGHT 540
-# define STEP_SIZE 0.005
-# define LIGHT_STEP_SIZE 0.01
+# define STEP_SIZE 0.001
+# define LIGHT_STEP_SIZE 0.008
 # define NEAR 0.1
 # define FAR 40
 
@@ -128,17 +128,57 @@ void createNoiseWedges(int frame_id)
 
 /// ----------------------------------- pyroclastic wedges ---------------------------------------------------
 
-void createPyro(Noise_t& parms, float fade, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
+void createPyro(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
                 VolumeColorPtr& finalMatColorPtr, BBox& finalBBox, float& K)
 {
+    static FractalSum<PerlinNoiseGustavson> perlin;
+    perlin.setParameters(parms);
 
+    static Pyrosphere myPyrosphere(perlin, 1.0);
+    static BBox pyroBBox = myPyrosphere.getBBox();
+
+    float voxelSize = float(pyroBBox.max().x() - pyroBBox.min().x()) / 500;
+    // stamp
+    cout << "Stamping pyrosphere..." << endl;
+    static FloatVolumeToGrid pyroSphereVolume2Grid(myPyrosphere, voxelSize, pyroBBox);
+    static FloatGrid::Ptr pyroSphereGrid = pyroSphereVolume2Grid.getVolumeGrid();
+    static BBox pyroNewBBox = pyroSphereVolume2Grid.getBBox();
+    // gridded
+    static FloatGridVolume pyroSphereVolume(pyroSphereGrid);
+
+    static Color matColor(1.0, 1.0, 1.0, 1.0);
+    static Color emColor(0.0, 0.0, 0.0, 0.0);
+    static ConstantFloat rho(1.0);
+    static ConstantColor pyroMatColor(matColor);
+    static ConstantColor pyroEmColor(emColor);
+    static DensityVolume pyroDensity(rho, pyroSphereVolume);
+
+    K = 25;
+    finalDensityPtr = &pyroDensity;
+    finalEmColorPtr = &pyroEmColor;
+    finalMatColorPtr = &pyroMatColor;
+    finalBBox = pyroNewBBox;
 }
 
-void createPyroWedges()
+
+void createPyroWedges(int frame_id)
 {
     cout << "Pyroclastic Wedges" << endl;
     string wedge_type = "pyro";
-    int frame_id = 0;
+    pyroWedgeParms myPyroParms = pyroParmsList.at(frame_id);
+
+    static Noise_t parms;
+    parms.gamma = myPyroParms.gamma;
+    parms.fjump = myPyroParms.fjump;
+    parms.frequency = myPyroParms.freq;
+    parms.octaves = myPyroParms.octaves;
+
+    cout << "=========== Pyro Parms ===========" << endl;
+    cout << "octaves: " << parms.octaves << endl;
+    cout << "freq: " << parms.frequency << endl;
+    cout << "fjump: " << parms.fjump << endl;
+    cout << "gamma: " << parms.gamma << endl;
+    cout << "==================================" << endl;
 
     VolumeFloatPtr finalDensityPtr;
     VolumeColorPtr finalEmColorPtr;
@@ -146,63 +186,30 @@ void createPyroWedges()
     BBox finalBBox;
     float K;
 
-    // ---------------------------- test ---------------------------
-
-    K = 2;
-    Vec3s llc(-5.5, -5.5, -5.5);
-    Vec3s urc(5.5, 5.5, 5.5);
-    finalBBox = BBox(llc, urc);
-
-    Noise_t parms;
-    parms.seed = 485758;
-    parms.octaves = 1.0f;
-    parms.frequency = 1.0f;
-    parms.fjump = 2.0f;
-    parms.roughness = 0.5;
-    parms.time = 0.0f;
-
-    FractalSum<PerlinNoiseGustavson> perlin;
-    perlin.setParameters(parms);
-
-    Pyrosphere myPyrosphere(perlin, 2.0);
-
-    static Color matColor(1.0, 1.0, 1.0, 1.0);
-    static Color emColor(0.0, 0.0, 0.0, 0.0);
-    static ConstantFloat rho(2.0);
-    static ConstantColor pyroMatColor(matColor);
-    static ConstantColor pyroEmColor(emColor);
-    static DensityVolume pyroDensity(rho, myPyrosphere);
-
-    finalDensityPtr = &pyroDensity;
-    // finalDensityPtr = &myPyrosphere;
-    finalEmColorPtr = &pyroEmColor;
-    finalMatColorPtr = &pyroMatColor;
-    // finalBBox = perlinBBox;
-
-    // -------------------------------------------------------------
+    createPyro(parms, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, finalBBox, K);
 
     // lighting
     cout << "Set lights..." << endl;
     Lights myLights;
     // light position
-    Vector keyPos(0.0, 8.0, 0.0);
-    Vector rimPos(0.0, -8.0, 0.0);
+    Vector keyPos(0.0, 4.0, 0.0);
+    Vector rimPos(0.0, -4.0, 0.0);
     // light color
-    Color keyColor(2.0, 2.0, 2.0, 1.0);
-    Color rimColor(0.1, 0.1, 0.1, 1.0);
+    Color keyColor(25.0, 25.0, 25.0, 1.0);
+    Color rimColor(1.0, 1.0, 1.0, 1.0);
     // set lights
     LightSource keyLight(keyPos, keyColor);
     LightSource rimLight(rimPos, rimColor);
     myLights.push_back(keyLight);
     myLights.push_back(rimLight);
-    LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, LIGHT_STEP_SIZE, 0.08, finalBBox);
+    LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, LIGHT_STEP_SIZE, 0.03, finalBBox);
 
     cout << "Set image..." << endl;
     Image myImg;
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(20.0, 0.0, 0.0);
+    Vector eye(10.0, 0.0, 0.0);
     Vector view(-1.0, 0.0, 0.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);
