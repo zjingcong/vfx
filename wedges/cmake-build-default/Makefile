@@ -396,6 +396,33 @@ src/Renderer.C.s:
 	$(MAKE) -f CMakeFiles/wedges.dir/build.make CMakeFiles/wedges.dir/src/Renderer.C.s
 .PHONY : src/Renderer.C.s
 
+src/Wisp.o: src/Wisp.C.o
+
+.PHONY : src/Wisp.o
+
+# target to build an object file
+src/Wisp.C.o:
+	$(MAKE) -f CMakeFiles/wedges.dir/build.make CMakeFiles/wedges.dir/src/Wisp.C.o
+.PHONY : src/Wisp.C.o
+
+src/Wisp.i: src/Wisp.C.i
+
+.PHONY : src/Wisp.i
+
+# target to preprocess a source file
+src/Wisp.C.i:
+	$(MAKE) -f CMakeFiles/wedges.dir/build.make CMakeFiles/wedges.dir/src/Wisp.C.i
+.PHONY : src/Wisp.C.i
+
+src/Wisp.s: src/Wisp.C.s
+
+.PHONY : src/Wisp.s
+
+# target to generate assembly for a file
+src/Wisp.C.s:
+	$(MAKE) -f CMakeFiles/wedges.dir/build.make CMakeFiles/wedges.dir/src/Wisp.C.s
+.PHONY : src/Wisp.C.s
+
 src/wedges.o: src/wedges.C.o
 
 .PHONY : src/wedges.o
@@ -462,6 +489,9 @@ help:
 	@echo "... src/Renderer.o"
 	@echo "... src/Renderer.i"
 	@echo "... src/Renderer.s"
+	@echo "... src/Wisp.o"
+	@echo "... src/Wisp.i"
+	@echo "... src/Wisp.s"
 	@echo "... src/wedges.o"
 	@echo "... src/wedges.i"
 	@echo "... src/wedges.s"

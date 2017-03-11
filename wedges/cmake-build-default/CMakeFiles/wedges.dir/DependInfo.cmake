@@ -14,6 +14,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/jingcoz/workspace/clion_projects/wedges/src/PerlinNoise.C" "/home/jingcoz/workspace/clion_projects/wedges/cmake-build-default/CMakeFiles/wedges.dir/src/PerlinNoise.C.o"
   "/home/jingcoz/workspace/clion_projects/wedges/src/Pyroclastic.C" "/home/jingcoz/workspace/clion_projects/wedges/cmake-build-default/CMakeFiles/wedges.dir/src/Pyroclastic.C.o"
   "/home/jingcoz/workspace/clion_projects/wedges/src/Renderer.C" "/home/jingcoz/workspace/clion_projects/wedges/cmake-build-default/CMakeFiles/wedges.dir/src/Renderer.C.o"
+  "/home/jingcoz/workspace/clion_projects/wedges/src/Wisp.C" "/home/jingcoz/workspace/clion_projects/wedges/cmake-build-default/CMakeFiles/wedges.dir/src/Wisp.C.o"
   "/home/jingcoz/workspace/clion_projects/wedges/src/wedges.C" "/home/jingcoz/workspace/clion_projects/wedges/cmake-build-default/CMakeFiles/wedges.dir/src/wedges.C.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

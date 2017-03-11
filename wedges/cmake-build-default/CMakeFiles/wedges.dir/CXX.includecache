@@ -21,6 +21,8 @@ NoiseGrid.h
 ../include/NoiseGrid.h
 Pyroclastic.h
 ../include/Pyroclastic.h
+Wisp.h
+../include/Wisp.h
 Camera.h
 ../include/Camera.h
 Color.h
@@ -215,6 +217,14 @@ boost/shared_ptr.hpp
 -
 cstring
 -
+
+../include/Wisp.h
+Types.h
+../include/Types.h
+Noise.h
+../include/Noise.h
+PerlinNoise.h
+../include/PerlinNoise.h
 
 /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 exception
@@ -949,6 +959,14 @@ omp.h
 /home/jingcoz/workspace/clion_projects/wedges/src/omp.h
 Renderer.h
 /home/jingcoz/workspace/clion_projects/wedges/src/Renderer.h
+
+/home/jingcoz/workspace/clion_projects/wedges/src/Wisp.C
+stdlib.h
+-
+cmath
+-
+Wisp.h
+/home/jingcoz/workspace/clion_projects/wedges/src/Wisp.h
 
 /home/jingcoz/workspace/clion_projects/wedges/src/wedges.C
 DoWedges.h

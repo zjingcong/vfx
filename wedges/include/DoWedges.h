@@ -6,6 +6,7 @@
 
 # include "NoiseGrid.h"
 # include "Pyroclastic.h"
+# include "Wisp.h"
 # include "Camera.h"
 # include "Color.h"
 # include "Grid.h"
@@ -219,6 +220,105 @@ void createPyroWedges(int frame_id, string output_path)
     myLights.push_back(keyLight);
     myLights.push_back(rimLight);
     float light_voxelSize = 0.024;
+    float light_step_size = float(light_voxelSize) / CRAZY_NUM;   // get step size form grid
+    cout << "	 | Light voxel size: " << light_voxelSize << endl;
+    cout << "	 | Light step size: " << light_step_size << endl;
+    LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, light_step_size, light_voxelSize, finalBBox);
+
+    cout << "Set image..." << endl;
+    Image myImg;
+    myImg.reset(WEIGHT, HEIGHT);
+    cout << "Set camera..." << endl;
+    Camera myCamera;
+    Vector eye(8.0, 0.0, 0.0);
+    Vector view(-1.0, 0.0, 0.0);
+    Vector up(0.0, 1.0, 0.0);
+    myCamera.setFarPlane(NEAR);
+    myCamera.setFarPlane(FAR);
+    myCamera.setEyeViewUp(eye, view, up);
+    cout << "Start rendering..." << endl;
+    cout << "	 | Render step size: " << step_size << endl;
+    Renderer myRenderer(myImg, myCamera, step_size);
+    myRenderer.render(*finalEmColorPtr, *finalDensityPtr, K, lightVolume, finalBBox, 1);
+    cout << "Rendering complete." << endl;
+    // write into file
+    cout << "Write frame " << frame_id << " into" << file_name << "."<< endl;
+    writeOIIOImage(file_name, myImg);
+}
+
+
+/// ------------------------------------- wisp wedges -------------------------------------------------------
+
+void createWisp(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
+                VolumeColorPtr& finalMatColorPtr, BBox& finalBBox, float& K)
+{
+    static FractalSum<PerlinNoiseGustavson> FSPN1;
+    static FractalSum<PerlinNoiseGustavson> FSPN2;
+    static Noise_t FSPN2Parms;
+    FSPN1.setParameters(parms);
+    FSPN2.setParameters(FSPN2Parms);
+    static WispParms wispParameters;
+    wispParameters.FSPN2 = &FSPN2;
+
+    static SingleGuideWisp wisp(FSPN1, wispParameters, 0.01, 5000000);
+    static FloatGrid::Ptr wispGrid = wisp.getWispGrid();
+    static FloatGridVolume wispVolume(wispGrid);
+
+    Vec3s min(-1.5, -1.5, -1.5);
+    Vec3s max(1.5, 1.5, 1.5);
+    BBox wispBBox(min, max);
+
+    step_size = 0.001;
+
+    static Color matColor(1.0, 1.0, 1.0, 1.0);
+    static Color emColor(0.0, 0.0, 0.0, 0.0);
+    static ConstantFloat rho(0.8);
+    static ConstantColor wispMatColor(matColor);
+    static ConstantColor wispEmColor(emColor);
+    static DensityVolume wispDensity(rho, wispVolume);
+
+    K = 0.8;
+    // finalDensityPtr = &perlinDensity;
+    finalDensityPtr = &wispVolume;
+    finalEmColorPtr = &wispEmColor;
+    finalMatColorPtr = &wispMatColor;
+    finalBBox = wispBBox;
+}
+
+
+void createWispWedges(int frame_id, string output_path)
+{
+    string wedge_type = "wisp";
+    cout << "frame_id: " << frame_id << endl;
+    char file_name[1024];
+    sprintf(file_name, "%s/jingcoz_hw3_%s.%04d.exr", output_path.c_str(), wedge_type.c_str(), frame_id);
+    cout << "Output path: " << file_name << endl;
+
+    VolumeFloatPtr finalDensityPtr;
+    VolumeColorPtr finalEmColorPtr;
+    VolumeColorPtr finalMatColorPtr;
+    BBox finalBBox;
+    float K;
+
+    Noise_t parms;
+
+    createWisp(parms, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, finalBBox, K);
+
+    // lighting
+    cout << "Set lights..." << endl;
+    Lights myLights;
+    // light position
+    Vector keyPos(0.0, 4.0, 0.0);
+    Vector rimPos(0.0, -4.0, 0.0);
+    // light color
+    Color keyColor(5.0, 5.0, 5.0, 1.0);
+    Color rimColor(0.8, 0.8, 0.8, 1.0);
+    // set lights
+    LightSource keyLight(keyPos, keyColor);
+    LightSource rimLight(rimPos, rimColor);
+    myLights.push_back(keyLight);
+    myLights.push_back(rimLight);
+    float light_voxelSize = 0.08;
     float light_step_size = float(light_voxelSize) / CRAZY_NUM;   // get step size form grid
     cout << "	 | Light voxel size: " << light_voxelSize << endl;
     cout << "	 | Light step size: " << light_step_size << endl;

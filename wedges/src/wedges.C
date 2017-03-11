@@ -43,6 +43,11 @@ int main(int argc, char* argv[])
         getPyroParms(output_path);
         createPyroWedges(frameid, output_path);
     }
+    else if (wedge_type == "-w")
+    {
+        cout << "********** Wisp Wedges ***********" << endl;
+        createWispWedges(frameid, output_path);
+    }
 
     return 0;
 }

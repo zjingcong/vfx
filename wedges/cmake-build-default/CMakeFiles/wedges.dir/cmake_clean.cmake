@@ -9,6 +9,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/wedges.dir/src/PerlinNoise.C.o"
   "CMakeFiles/wedges.dir/src/Pyroclastic.C.o"
   "CMakeFiles/wedges.dir/src/Renderer.C.o"
+  "CMakeFiles/wedges.dir/src/Wisp.C.o"
   "CMakeFiles/wedges.dir/src/wedges.C.o"
   "wedges.pdb"
   "wedges"
