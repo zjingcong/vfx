@@ -249,26 +249,33 @@ void createPyroWedges(int frame_id, string output_path)
 
 /// ------------------------------------- wisp wedges -------------------------------------------------------
 
-void createWisp(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
+void createWisp(wispWedgeParms& wispparms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
                 VolumeColorPtr& finalMatColorPtr, BBox& finalBBox, float& K)
 {
     static FractalSum<PerlinNoiseGustavson> FSPN1;
     static FractalSum<PerlinNoiseGustavson> FSPN2;
+
+    static Noise_t FSPN1Parms;
+    FSPN1Parms.octaves = wispparms.octaves;
+    FSPN1Parms.frequency = wispparms.freq;
+    FSPN1Parms.fjump = wispparms.fjump;
+    // FSPN1Parms.roughness = 0.1;
+
     static Noise_t FSPN2Parms;
-    FSPN1.setParameters(parms);
+    FSPN1.setParameters(FSPN1Parms);
     FSPN2.setParameters(FSPN2Parms);
+
     static WispParms wispParameters;
+    wispParameters.clump = wispparms.clump;
     wispParameters.FSPN2 = &FSPN2;
 
+    cout << "Create wisp grid..." << endl;
     static SingleGuideWisp wisp(FSPN1, wispParameters, 0.01, 5000000);
     static FloatGrid::Ptr wispGrid = wisp.getWispGrid();
+    static BBox wispBBox = wisp.getBBox();
+    cout << "	 | Wisp bounding box: " << wispBBox.min() << " " << wispBBox.max() << endl;
     static FloatGridVolume wispVolume(wispGrid);
-
-    Vec3s min(-1.5, -1.5, -1.5);
-    Vec3s max(1.5, 1.5, 1.5);
-    BBox wispBBox(min, max);
-
-    step_size = 0.001;
+    step_size = 0.003;
 
     static Color matColor(1.0, 1.0, 1.0, 1.0);
     static Color emColor(0.0, 0.0, 0.0, 0.0);
@@ -278,7 +285,7 @@ void createWisp(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr&
     static DensityVolume wispDensity(rho, wispVolume);
 
     K = 0.8;
-    // finalDensityPtr = &perlinDensity;
+    // finalDensityPtr = &wispDensity;
     finalDensityPtr = &wispVolume;
     finalEmColorPtr = &wispEmColor;
     finalMatColorPtr = &wispMatColor;
@@ -294,15 +301,22 @@ void createWispWedges(int frame_id, string output_path)
     sprintf(file_name, "%s/jingcoz_hw3_%s.%04d.exr", output_path.c_str(), wedge_type.c_str(), frame_id);
     cout << "Output path: " << file_name << endl;
 
+    wispWedgeParms myWispParms = wispParmsList.at(frame_id);
+
+    cout << "=========== Wisp Parms ===========" << endl;
+    cout << "octaves: " << myWispParms.octaves << endl;
+    cout << "freq: " << myWispParms.freq << endl;
+    cout << "fjump: " << myWispParms.fjump << endl;
+    cout << "clump: " << myWispParms.clump << endl;
+    cout << "==================================" << endl;
+
     VolumeFloatPtr finalDensityPtr;
     VolumeColorPtr finalEmColorPtr;
     VolumeColorPtr finalMatColorPtr;
     BBox finalBBox;
     float K;
 
-    Noise_t parms;
-
-    createWisp(parms, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, finalBBox, K);
+    createWisp(myWispParms, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, finalBBox, K);
 
     // lighting
     cout << "Set lights..." << endl;

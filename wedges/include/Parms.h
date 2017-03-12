@@ -22,8 +22,18 @@ typedef struct
 } pyroWedgeParms;
 
 
+typedef  struct
+{
+    float octaves;
+    float freq;
+    float fjump;
+    float clump;
+} wispWedgeParms;
+
+
 std::vector<noiseWedgeParms> noiseParmsList;
 std::vector<pyroWedgeParms> pyroParmsList;
+std::vector<wispWedgeParms> wispParmsList;
 
 
 // noise wedge parms
@@ -38,6 +48,13 @@ float pyro_octaves_list[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
 float pyro_freq_list[5] = {0.42434, 1.2343, 2.32432, 3.434345, 5.546};
 float pyro_f_jump_list[4] = {0.7, 1.5, 2.0, 2.6};
 float pyro_gamma_list[5] = {0.33333, 0.7, 1.0, 1.5, 2.0};
+
+
+// wisp wedge parms
+float wisp_octaves_list[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
+float wisp_freq_list[5] = {0.42434, 1.2343, 2.32432, 3.434345, 5.546};
+float wisp_f_jump_list[4] = {0.7, 1.5, 2.0, 2.3};
+float wisp_clump_list[5] = {0.0, 0.12, 0.33333, 0.456, 0.67};
 
 
 void getNoiseParms(string output_path)
@@ -110,6 +127,43 @@ void getPyroParms(string output_path)
         }
     }
     pyroParmsFile.close();
+    std::cout << "Output parms: " << file_name << std::endl;
+}
+
+
+void getWispParms(string output_path)
+{
+    char file_name[1024];
+    sprintf(file_name, "%s/wispParms.log", output_path.c_str());
+    ofstream wispParmsFile(file_name);
+    int id = 0;
+    for (int i = 0; i < 5; i++)
+    {
+        float octaves = wisp_octaves_list[i];
+        for (int j = 0; j < 5; j++)
+        {
+            float freq = wisp_freq_list[j];
+            for (int k = 0; k < 4; k++)
+            {
+                float fjump = wisp_f_jump_list[k];
+                for (int m = 0 ; m < 5; m++)
+                {
+                    float clump = wisp_clump_list[m];
+                    wispWedgeParms para;
+                    para.clump = clump;
+                    para.freq = freq;
+                    para.fjump = fjump;
+                    para.octaves = octaves;
+                    wispParmsList.push_back(para);
+                    wispParmsFile << "frame_id " << id << " | octaves: " << octaves
+                                  << ", freq: " << freq << ", fjump: " << fjump
+                                  << ", clump: " << clump << endl;
+                    id++;
+                }
+            }
+        }
+    }
+    wispParmsFile.close();
     std::cout << "Output parms: " << file_name << std::endl;
 }
 

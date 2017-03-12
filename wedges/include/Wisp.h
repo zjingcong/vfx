@@ -13,10 +13,10 @@ struct WispParms
 {
     WispParms():
         corr(0.0),
-        opacity(1.0),
-        dscale(1.0),
+        opacity(0.08),
+        dscale(2.0),
         clump(0.0),
-        delta_x(0.01)
+        delta_x(5)
         {}
 
     float corr;
@@ -35,7 +35,8 @@ class SingleGuideWisp
         SingleGuideWisp(Noise& n, WispParms& w, float s, int num);
         ~SingleGuideWisp() {}
 
-        FloatGrid::Ptr getWispGrid();
+        FloatGrid::Ptr getWispGrid()    {return myGrid;}
+        BBox getBBox()  {return wispBBox;}
 
     private:
         Noise& guideParticle;   // guide particle
@@ -45,6 +46,7 @@ class SingleGuideWisp
 
         FloatGrid::Ptr myGrid;
         Transform::Ptr xform;
+        BBox wispBBox;
 
         void createDot();
         void burnDot(Vector xw);

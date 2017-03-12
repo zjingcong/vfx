@@ -46,6 +46,7 @@ int main(int argc, char* argv[])
     else if (wedge_type == "-w")
     {
         cout << "********** Wisp Wedges ***********" << endl;
+        getWispParms(output_path);
         createWispWedges(frameid, output_path);
     }
 
