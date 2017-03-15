@@ -45,7 +45,7 @@ float noise_fade_list[4] = {0.5, 0.7, 1.0, 1.5};
 
 // pyroclastic wedge parms
 float pyro_octaves_list[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
-float pyro_freq_list[5] = {0.42434, 1.2343, 2.32432, 3.434345, 5.546};
+float pyro_freq_list[5] = {0.57434, 1.2343, 2.32432, 3.434345, 5.546};
 float pyro_f_jump_list[4] = {0.7, 1.5, 2.0, 2.6};
 float pyro_gamma_list[5] = {0.33333, 0.7, 1.0, 1.5, 2.0};
 
@@ -97,8 +97,9 @@ void getNoiseParms(string output_path)
 void getPyroParms(string output_path)
 {
     char file_name[1024];
-    sprintf(file_name, "%s/pyroParms.log", output_path.c_str());
+    sprintf(file_name, "%s/pyroParms.json", output_path.c_str());
     ofstream pyroParmsFile(file_name);
+    pyroParmsFile << "{" << endl;
     int id = 0;
     for (int i = 0; i < 5; i++)
     {
@@ -118,14 +119,29 @@ void getPyroParms(string output_path)
                     para.fjump = fjump;
                     para.octaves = octaves;
                     pyroParmsList.push_back(para);
-                    pyroParmsFile << "frame_id " << id << " | octaves: " << octaves
-                                  << ", freq: " << freq << ", fjump: " << fjump
-                                  << ", gamma: " << gamma << endl;
+//                    pyroParmsFile << "frame_id " << id << " | octaves: " << octaves
+//                                  << ", freq: " << freq << ", fjump: " << fjump
+//                                  << ", gamma: " << gamma << endl;
+                    char frameidinfo[1024];
+                    sprintf(frameidinfo, "\"frame_id\": \"%04d\"", id);
+                    char octavesinfo[1024];
+                    sprintf(octavesinfo, "\"octaves\": \"%f\"", octaves);
+                    char freqinfo[1024];
+                    sprintf(freqinfo, "\"freq\": \"%f\"", freq);
+                    char fjumpinfo[1024];
+                    sprintf(fjumpinfo, "\"fjump\": \"%f\"", fjump);
+                    char gammainfo[1024];
+                    sprintf(gammainfo, "\"gamma\": \"%f\"", gamma);
+                    char frameinfo[1024];
+                    sprintf(frameinfo, "\"%04d\": {%s, %s, %s, %s, %s}", id, frameidinfo, octavesinfo, freqinfo, fjumpinfo, gammainfo);
+                    pyroParmsFile << frameinfo;
+                    if (id < 499)   {pyroParmsFile << ", " << endl;}
                     id++;
                 }
             }
         }
     }
+    pyroParmsFile << "}" << endl;
     pyroParmsFile.close();
     std::cout << "Output parms: " << file_name << std::endl;
 }

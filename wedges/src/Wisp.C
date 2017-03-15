@@ -87,8 +87,9 @@ void SingleGuideWisp::createDot()
     // move off the sphere
     Noise_t FSPNParms = guideParticle.getNoiseParameters();
     float clump = wisp_parms.clump;
-    double FSPN1scale = pow( 1.0 + FSPNParms.roughness, FSPNParms.octaves - 1.0);
-    double FSPNValue = (guideParticle.eval(xyz) + 0.5 * FSPN1scale) / FSPN1scale;
+//    double FSPN1scale = pow( 1.0 + FSPNParms.roughness, FSPNParms.octaves - 1.0);
+//    double FSPNValue = (guideParticle.eval(xyz) + 0.5 * FSPN1scale) / FSPN1scale;
+    double FSPNValue = guideParticle.eval(xyz);
     double R = pow(fabs(FSPNValue), clump);
     xs *= R;
     ys *= R;
@@ -102,12 +103,15 @@ void SingleGuideWisp::createDot()
     float delta_x = wisp_parms.delta_x;
     Noise* FSPN2 = wisp_parms.FSPN2;
     Noise_t FSPN2Parms = FSPN2->getNoiseParameters();
-    double FSPN2scale = pow(1.0 + FSPN2Parms.roughness, FSPN2Parms.octaves - 1.0);
+    // double FSPN2scale = pow(1.0 + FSPN2Parms.roughness, FSPN2Parms.octaves - 1.0);
     Vector xyzs1(xs + delta_x, ys + delta_x, zs + delta_x);
     Vector xyzs2(xs - delta_x, ys - delta_x, zs - delta_x);
-    double dx = (FSPN2 -> eval(xyzs)) * 2 / FSPN2scale;
-    double dy = (FSPN2 -> eval(xyzs1)) * 2 / FSPN2scale;
-    double dz = (FSPN2 -> eval(xyzs2)) * 2 / FSPN2scale;
+//    double dx = (FSPN2 -> eval(xyzs)) * 2 / FSPN2scale;
+//    double dy = (FSPN2 -> eval(xyzs1)) * 2 / FSPN2scale;
+//    double dz = (FSPN2 -> eval(xyzs2)) * 2 / FSPN2scale;
+    double dx = FSPN2 -> eval(xyzs);
+    double dy = FSPN2 -> eval(xyzs1);
+    double dz = FSPN2 -> eval(xyzs2);
     float dscale = wisp_parms.dscale;
     Vector dxyz(dx, dy, dz);
     Vector D = dxyz * dscale;

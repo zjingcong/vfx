@@ -22,6 +22,10 @@ using namespace lux;
 # define NEAR 0.1
 # define FAR 40
 # define CRAZY_NUM 2.0316578
+# define LIGHT_GRID_NUM 250
+
+# define getMax(x, y) (x > y ? x : y)
+# define getMin(x, y) (x < y ? x : y)
 
 float step_size;
 
@@ -156,17 +160,18 @@ void createPyro(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr&
     static FloatVolumeToGrid pyroSphereVolume2Grid(myPyrosphere, voxelSize, pyroBBox);
     static FloatGrid::Ptr pyroSphereGrid = pyroSphereVolume2Grid.getVolumeGrid();
     static BBox pyroNewBBox = pyroSphereVolume2Grid.getBBox();
+    cout << "	 | Pyro bounding box: " << pyroNewBBox.min() << " " << pyroNewBBox.max() << endl;
     // gridded
     static FloatGridVolume pyroSphereVolume(pyroSphereGrid);
 
     static Color matColor(1.0, 1.0, 1.0, 1.0);
     static Color emColor(0.0, 0.0, 0.0, 0.0);
-    static ConstantFloat rho(5.0);
+    static ConstantFloat rho(7.0);
     static ConstantColor pyroMatColor(matColor);
     static ConstantColor pyroEmColor(emColor);
     static DensityVolume pyroDensity(rho, pyroSphereVolume);
 
-    K = 5;
+    K = 3;
     finalDensityPtr = &pyroDensity;
     finalEmColorPtr = &pyroEmColor;
     finalMatColorPtr = &pyroMatColor;
@@ -212,17 +217,26 @@ void createPyroWedges(int frame_id, string output_path)
     Vector keyPos(0.0, 4.0, 0.0);
     Vector rimPos(0.0, -4.0, 0.0);
     // light color
-    Color keyColor(5.0, 5.0, 5.0, 1.0);
-    Color rimColor(0.8, 0.8, 0.8, 1.0);
+    Color keyColor(2.0, 2.0, 2.0, 1.0);
+    Color rimColor(0.2, 0.2, 0.2, 1.0);
     // set lights
     LightSource keyLight(keyPos, keyColor);
     LightSource rimLight(rimPos, rimColor);
     myLights.push_back(keyLight);
     myLights.push_back(rimLight);
-    float light_voxelSize = 0.024;
+    // get light step size
+    float bboxSize_x = (finalBBox.max().x() - finalBBox.min().x());
+    float bboxSize_y = (finalBBox.max().y() - finalBBox.min().y());
+    float bboxSize_z = (finalBBox.max().z() - finalBBox.min().z());
+    float bboxSize;
+    bboxSize = getMin(bboxSize_x, bboxSize_y);
+    bboxSize = getMin(bboxSize, bboxSize_z);
+    cout << "	 | BBox size: " << bboxSize << endl;
+    float light_voxelSize = float(bboxSize) / LIGHT_GRID_NUM;
     float light_step_size = float(light_voxelSize) / CRAZY_NUM;   // get step size form grid
     cout << "	 | Light voxel size: " << light_voxelSize << endl;
     cout << "	 | Light step size: " << light_step_size << endl;
+    // get final light volume
     LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, light_step_size, light_voxelSize, finalBBox);
 
     cout << "Set image..." << endl;

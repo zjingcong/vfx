@@ -25,19 +25,19 @@ def submitTask():
     dates = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d-%H-%M-%S')
     # generate script
     for (wedge_type, tag) in wedge_type_dict.items():
+        folder_name = "{}-{}".format(wedge_type, dates)
+        script_dir = os.path.join(SCRIPT_ROOT_DIR, folder_name)
+        output_dir = os.path.join(OUTPUT_ROOT_DIR, folder_name)
+        print "Script path: ", script_dir
+        print "Output path: ", output_dir
+        # create script path
+        os.system("mkdir {}".format(script_dir))
+        os.system("chmod 777 {}".format(script_dir))
+        # create output path
+        os.system("mkdir {}".format(output_dir))
+        os.system("chmod 777 {}".format(output_dir))
+        # create scripts
         for frame_id in xrange(start_frame, task_num):
-            folder_name = "{}-{}".format(wedge_type, dates)
-            script_dir = os.path.join(SCRIPT_ROOT_DIR, folder_name)
-            output_dir = os.path.join(OUTPUT_ROOT_DIR, folder_name)
-            print "Script path: ", script_dir
-            print "Output path: ", output_dir
-            # create script path
-            os.system("mkdir {}".format(script_dir))
-            os.system("chmod 777 {}".format(script_dir))
-            # create output path
-            os.system("mkdir {}".format(output_dir))
-            os.system("chmod 777 {}".format(output_dir))
-
             filename = "{}-{:04d}.sh".format(wedge_type, frame_id)
             filepath = os.path.join(script_dir, filename)
             f = open(filepath, 'w')
