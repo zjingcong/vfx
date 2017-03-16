@@ -13,7 +13,7 @@ struct WispParms
 {
     WispParms():
         corr(0.0),
-        opacity(0.08),
+        opacity(0.05),
         dscale(2.0),
         clump(0.0),
         delta_x(5)

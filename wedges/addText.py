@@ -38,7 +38,8 @@ def addText(exrfile, frame_id, single_frame_info, output_dir):
             height += 15
             command = "convert -pointsize 12 -font {font}" \
                       " -fill white -draw \'gravity NorthWest text 20,{h} \"{name}: {value}\" \' " \
-                      "{input} {output}".format(font=FONT, h=height, name=name, value=value, input=outputfile, output=outputfile)
+                      "{input} {output}".format(font=FONT, h=height, name=name, value=float(value),
+                                                input=outputfile, output=outputfile)
             os.system(command)
 
 
@@ -60,6 +61,8 @@ def main():
             if OUTPUT_FOLDER not in dir:
                 # create output folder
                 os.system("mkdir {}".format(output_dir))
+            break
+    print "json file path: ", jsonfile_path
     # get frame info
     frame_info = getInfo(jsonfile_path)
     # add text for each .exr file
@@ -75,7 +78,10 @@ def main():
     while incomplete:
         if threading.activeCount() <= 1:
             incomplete = False
-    print "******Complete******"
+    print "****** Complete ******"
+    print "json file path: ", jsonfile_path
+    print "output file path: ", output_dir
+    print "****** Complete ******"
 
 if __name__ == '__main__':
     main()

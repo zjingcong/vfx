@@ -22,7 +22,9 @@ using namespace lux;
 # define NEAR 0.1
 # define FAR 40
 # define CRAZY_NUM 2.0316578
-# define LIGHT_GRID_NUM 250
+# define LIGHT_GRID_NUM_1 250
+# define LIGHT_GRID_NUM_2 100
+# define LIGHT_GRID_NUM_3 100
 
 # define getMax(x, y) (x > y ? x : y)
 # define getMin(x, y) (x < y ? x : y)
@@ -33,13 +35,15 @@ float step_size;
 /// ----------------------------------- noise wedges ---------------------------------------------------------
 
 // fade cannot be even
-void createNoise(Noise_t& parms, float fade, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
+void createNoise(Noise_t& parms, VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
                  VolumeColorPtr& finalMatColorPtr, BBox& finalBBox, float& K)
 {
     static FractalSum<PerlinNoiseGustavson> perlin;
     perlin.setParameters(parms);
 
     float pscale = parms.pscale;
+    float fade = parms.falloff;
+
     float voxelSize = float(pscale * 2) / 500;
     step_size = float(voxelSize) / CRAZY_NUM;   // get step size form grid
 
@@ -51,14 +55,14 @@ void createNoise(Noise_t& parms, float fade, VolumeFloatPtr& finalDensityPtr, Vo
 
     static Color matColor(1.0, 1.0, 1.0, 1.0);
     static Color emColor(0.0, 0.0, 0.0, 0.0);
-    static ConstantFloat rho(0.8);
+    static ConstantFloat rho(2);
     static ConstantColor perlinMatColor(matColor);
     static ConstantColor perlinEmColor(emColor);
     static DensityVolume perlinDensity(rho, perlinVolume);
 
-    K = 0.8;
-    // finalDensityPtr = &perlinDensity;
-    finalDensityPtr = &perlinVolume;
+    K = 1.5;
+    finalDensityPtr = &perlinDensity;
+    // finalDensityPtr = &perlinVolume;
     finalEmColorPtr = &perlinEmColor;
     finalMatColorPtr = &perlinMatColor;
     finalBBox = perlinBBox;
@@ -76,15 +80,17 @@ void createNoiseWedges(int frame_id, string output_path)
     noiseWedgeParms myNoiseParms = noiseParmsList.at(frame_id);
 
     static Noise_t parms;
-    parms.pscale = 6;
+    parms.pscale = 4.5;
+    parms.roughness = 0.4;
 
-    float fade = myNoiseParms.fade;
+    // float fade = myNoiseParms.fade;
     parms.octaves = myNoiseParms.octaves;
     parms.frequency = myNoiseParms.freq;
     parms.fjump = myNoiseParms.fjump;
+    parms.falloff = myNoiseParms.fade;
 
     cout << "=========== Noise Parms ===========" << endl;
-    cout << "fade: " << fade << endl;
+    cout << "fade: " << parms.falloff << endl;
     cout << "freq: " << parms.frequency << endl;
     cout << "fjump: " << parms.fjump << endl;
     cout << "octaves: " << parms.octaves << endl;
@@ -96,7 +102,7 @@ void createNoiseWedges(int frame_id, string output_path)
     BBox finalBBox;
     float K;
 
-    createNoise(parms, fade, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, finalBBox, K);
+    createNoise(parms, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, finalBBox, K);
 
     // lighting
     cout << "Set lights..." << endl;
@@ -105,14 +111,16 @@ void createNoiseWedges(int frame_id, string output_path)
     Vector keyPos(0.0, 8.0, 0.0);
     Vector rimPos(0.0, -8.0, 0.0);
     // light color
-    Color keyColor(1.0, 1.0, 1.0, 1.0);
-    Color rimColor(0.1, 0.1, 0.1, 1.0);
+    // Color keyColor(1.0, 1.0, 1.0, 1.0);
+    // Color rimColor(0.1, 0.1, 0.1, 1.0);
+    Color keyColor(0.5, 0.05, 0.39, 1.0);
+    Color rimColor(0.04, 0.28, 0.4, 1.0);
     // set lights
     LightSource keyLight(keyPos, keyColor);
     LightSource rimLight(rimPos, rimColor);
     myLights.push_back(keyLight);
-    // myLights.push_back(rimLight);
-    float light_voxelSize = 0.08;
+    myLights.push_back(rimLight);
+    float light_voxelSize = float(parms.pscale) / LIGHT_GRID_NUM_3;
     float light_step_size = float(light_voxelSize) / CRAZY_NUM;   // get step size form grid
     cout << "	 | Light voxel size: " << light_voxelSize << endl;
     cout << "	 | Light step size: " << light_step_size << endl;
@@ -123,7 +131,7 @@ void createNoiseWedges(int frame_id, string output_path)
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(24.0, 0.0, 0.0);
+    Vector eye(22.0, 0.0, 0.0);
     Vector view(-1.0, 0.0, 0.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);
@@ -232,7 +240,7 @@ void createPyroWedges(int frame_id, string output_path)
     bboxSize = getMin(bboxSize_x, bboxSize_y);
     bboxSize = getMin(bboxSize, bboxSize_z);
     cout << "	 | BBox size: " << bboxSize << endl;
-    float light_voxelSize = float(bboxSize) / LIGHT_GRID_NUM;
+    float light_voxelSize = float(bboxSize) / LIGHT_GRID_NUM_1;
     float light_step_size = float(light_voxelSize) / CRAZY_NUM;   // get step size form grid
     cout << "	 | Light voxel size: " << light_voxelSize << endl;
     cout << "	 | Light step size: " << light_step_size << endl;
@@ -270,12 +278,14 @@ void createWisp(wispWedgeParms& wispparms, VolumeFloatPtr& finalDensityPtr, Volu
     static FractalSum<PerlinNoiseGustavson> FSPN2;
 
     static Noise_t FSPN1Parms;
-    FSPN1Parms.octaves = wispparms.octaves;
-    FSPN1Parms.frequency = wispparms.freq;
-    FSPN1Parms.fjump = wispparms.fjump;
-    // FSPN1Parms.roughness = 0.1;
-
     static Noise_t FSPN2Parms;
+    FSPN2Parms.octaves = wispparms.octaves;
+    FSPN2Parms.frequency = wispparms.freq;
+    FSPN2Parms.fjump = wispparms.fjump;
+    FSPN2Parms.roughness = 1.2;
+
+    // FSPN1Parms.frequency = 2.12032;
+
     FSPN1.setParameters(FSPN1Parms);
     FSPN2.setParameters(FSPN2Parms);
 
@@ -283,17 +293,19 @@ void createWisp(wispWedgeParms& wispparms, VolumeFloatPtr& finalDensityPtr, Volu
     wispParameters.clump = wispparms.clump;
     wispParameters.FSPN2 = &FSPN2;
 
+    float voxelSize = 4.5 / 500;
+    step_size = float(voxelSize) / CRAZY_NUM;   // get step size form grid
+
     cout << "Create wisp grid..." << endl;
-    static SingleGuideWisp wisp(FSPN1, wispParameters, 0.01, 5000000);
+    static SingleGuideWisp wisp(FSPN1, wispParameters, voxelSize, 5000000);
     static FloatGrid::Ptr wispGrid = wisp.getWispGrid();
     static BBox wispBBox = wisp.getBBox();
     cout << "	 | Wisp bounding box: " << wispBBox.min() << " " << wispBBox.max() << endl;
     static FloatGridVolume wispVolume(wispGrid);
-    step_size = 0.003;
 
     static Color matColor(1.0, 1.0, 1.0, 1.0);
     static Color emColor(0.0, 0.0, 0.0, 0.0);
-    static ConstantFloat rho(0.8);
+    static ConstantFloat rho(0.6);
     static ConstantColor wispMatColor(matColor);
     static ConstantColor wispEmColor(emColor);
     static DensityVolume wispDensity(rho, wispVolume);
@@ -318,9 +330,9 @@ void createWispWedges(int frame_id, string output_path)
     wispWedgeParms myWispParms = wispParmsList.at(frame_id);
 
     cout << "=========== Wisp Parms ===========" << endl;
-    cout << "octaves: " << myWispParms.octaves << endl;
-    cout << "freq: " << myWispParms.freq << endl;
-    cout << "fjump: " << myWispParms.fjump << endl;
+    cout << "Noise 2 octaves: " << myWispParms.octaves << endl;
+    cout << "Noise 2 freq: " << myWispParms.freq << endl;
+    cout << "Noise 2 fjump: " << myWispParms.fjump << endl;
     cout << "clump: " << myWispParms.clump << endl;
     cout << "==================================" << endl;
 
@@ -339,17 +351,26 @@ void createWispWedges(int frame_id, string output_path)
     Vector keyPos(0.0, 4.0, 0.0);
     Vector rimPos(0.0, -4.0, 0.0);
     // light color
-    Color keyColor(5.0, 5.0, 5.0, 1.0);
-    Color rimColor(0.8, 0.8, 0.8, 1.0);
+    Color keyColor(1.0, 3.9, 5.0, 1.0);
+    Color rimColor(0.21, 0.5, 0.4, 1.0);
     // set lights
     LightSource keyLight(keyPos, keyColor);
     LightSource rimLight(rimPos, rimColor);
     myLights.push_back(keyLight);
     myLights.push_back(rimLight);
-    float light_voxelSize = 0.08;
+    // get light step size
+    float bboxSize_x = (finalBBox.max().x() - finalBBox.min().x());
+    float bboxSize_y = (finalBBox.max().y() - finalBBox.min().y());
+    float bboxSize_z = (finalBBox.max().z() - finalBBox.min().z());
+    float bboxSize;
+    bboxSize = getMin(bboxSize_x, bboxSize_y);
+    bboxSize = getMin(bboxSize, bboxSize_z);
+    cout << "	 | BBox size: " << bboxSize << endl;
+    float light_voxelSize = float(bboxSize) / LIGHT_GRID_NUM_2;
     float light_step_size = float(light_voxelSize) / CRAZY_NUM;   // get step size form grid
     cout << "	 | Light voxel size: " << light_voxelSize << endl;
     cout << "	 | Light step size: " << light_step_size << endl;
+
     LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, light_step_size, light_voxelSize, finalBBox);
 
     cout << "Set image..." << endl;
@@ -357,7 +378,7 @@ void createWispWedges(int frame_id, string output_path)
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(8.0, 0.0, 0.0);
+    Vector eye(17.0, 0.0, 0.0);
     Vector view(-1.0, 0.0, 0.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);
