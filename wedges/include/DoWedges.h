@@ -22,9 +22,9 @@ using namespace lux;
 # define NEAR 0.1
 # define FAR 40
 # define CRAZY_NUM 2.0316578
-# define LIGHT_GRID_NUM_1 250
-# define LIGHT_GRID_NUM_2 100
-# define LIGHT_GRID_NUM_3 100
+# define LIGHT_GRID_NUM_1 250   // pyro
+# define LIGHT_GRID_NUM_2 200   // wisp
+# define LIGHT_GRID_NUM_3 100   // noise
 
 # define getMax(x, y) (x > y ? x : y)
 # define getMin(x, y) (x < y ? x : y)
@@ -225,8 +225,10 @@ void createPyroWedges(int frame_id, string output_path)
     Vector keyPos(0.0, 4.0, 0.0);
     Vector rimPos(0.0, -4.0, 0.0);
     // light color
-    Color keyColor(2.0, 2.0, 2.0, 1.0);
-    Color rimColor(0.2, 0.2, 0.2, 1.0);
+    // Color keyColor(2.0, 2.0, 2.0, 1.0);
+    // Color rimColor(0.2, 0.2, 0.2, 1.0);
+    Color keyColor(0.5, 0.05, 0.39, 1.0);
+    Color rimColor(0.02, 0.14, 0.2, 1.0);
     // set lights
     LightSource keyLight(keyPos, keyColor);
     LightSource rimLight(rimPos, rimColor);
@@ -282,9 +284,8 @@ void createWisp(wispWedgeParms& wispparms, VolumeFloatPtr& finalDensityPtr, Volu
     FSPN2Parms.octaves = wispparms.octaves;
     FSPN2Parms.frequency = wispparms.freq;
     FSPN2Parms.fjump = wispparms.fjump;
-    FSPN2Parms.roughness = 1.2;
 
-    // FSPN1Parms.frequency = 2.12032;
+    FSPN1Parms.frequency = 2.12032;
 
     FSPN1.setParameters(FSPN1Parms);
     FSPN2.setParameters(FSPN2Parms);
@@ -305,12 +306,12 @@ void createWisp(wispWedgeParms& wispparms, VolumeFloatPtr& finalDensityPtr, Volu
 
     static Color matColor(1.0, 1.0, 1.0, 1.0);
     static Color emColor(0.0, 0.0, 0.0, 0.0);
-    static ConstantFloat rho(0.6);
+    static ConstantFloat rho(0.8);
     static ConstantColor wispMatColor(matColor);
     static ConstantColor wispEmColor(emColor);
     static DensityVolume wispDensity(rho, wispVolume);
 
-    K = 0.8;
+    K = 0.6;
     // finalDensityPtr = &wispDensity;
     finalDensityPtr = &wispVolume;
     finalEmColorPtr = &wispEmColor;
@@ -352,7 +353,7 @@ void createWispWedges(int frame_id, string output_path)
     Vector rimPos(0.0, -4.0, 0.0);
     // light color
     Color keyColor(1.0, 3.9, 5.0, 1.0);
-    Color rimColor(0.21, 0.5, 0.4, 1.0);
+    Color rimColor(0.12, 0.5, 0.3, 1.0);
     // set lights
     LightSource keyLight(keyPos, keyColor);
     LightSource rimLight(rimPos, rimColor);
@@ -378,7 +379,7 @@ void createWispWedges(int frame_id, string output_path)
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(17.0, 0.0, 0.0);
+    Vector eye(13.0, 0.0, 0.0);
     Vector view(-1.0, 0.0, 0.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);

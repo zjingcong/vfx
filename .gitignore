@@ -34,4 +34,8 @@ ites
 
 # clion
 *.xml
+*.iml
 *.cbp
+
+# python
+*.swp

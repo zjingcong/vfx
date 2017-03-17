@@ -51,10 +51,10 @@ float pyro_gamma_list[5] = {0.33333, 0.7, 1.0, 1.5, 2.0};
 
 
 // wisp wedge parms
-float wisp_octaves_list[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
-float wisp_freq_list[5] = {0.62434, 1.0343, 2.32432, 3.434345, 4.546};
-float wisp_f_jump_list[4] = {0.5, 1.5, 2.0, 2.5};
-float wisp_clump_list[5] = {0.0, 0.09, 0.23333, 0.656, 1.2};
+float wisp_octaves_list[5] = {0.4, 0.9, 1.4, 1.9, 2.4};
+float wisp_freq_list[5] = {0.57434, 1.5343, 3.02432, 4.334345, 5.546};
+float wisp_f_jump_list[4] = {1.0, 1.5, 2.0, 2.5};
+float wisp_clump_list[5] = {1.0, 0.556, 0.23333, 0.123, 0.0};
 
 
 void getNoiseParms(string output_path)
@@ -82,9 +82,6 @@ void getNoiseParms(string output_path)
                     para.fjump = fjump;
                     para.octaves = octaves;
                     noiseParmsList.push_back(para);
-//                    noiseParmsFile << "frame_id " << id << " | fade: " << fade
-//                                   << ", freq: " << freq << ", fjump: " << fjump
-//                                   << ", octaves: " << octaves << endl;
                     char frameidinfo[1024];
                     sprintf(frameidinfo, "\"frame_id\": \"%04d\"", id);
                     char octavesinfo[1024];
@@ -167,27 +164,24 @@ void getWispParms(string output_path)
     ofstream wispParmsFile(file_name);
     wispParmsFile << "{" << endl;
     int id = 0;
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 4; i++)
     {
-        float freq = wisp_freq_list[i];
-        for (int j = 0; j < 4; j++)
+        float fjump = wisp_f_jump_list[i];
+        for (int j = 0; j < 5; j++)
         {
-            float fjump = wisp_f_jump_list[j];
+            float clump = wisp_clump_list[j];
             for (int k = 0; k < 5; k++)
             {
-                float clump = wisp_clump_list[k];
+                float octaves = wisp_octaves_list[k];
                 for (int m = 0 ; m < 5; m++)
                 {
-                    float octaves = wisp_octaves_list[m];
+                    float freq = wisp_freq_list[m];
                     wispWedgeParms para;
                     para.clump = clump;
                     para.freq = freq;
                     para.fjump = fjump;
                     para.octaves = octaves;
                     wispParmsList.push_back(para);
-//                    wispParmsFile << "frame_id " << id << " | octaves: " << octaves
-//                                  << ", freq: " << freq << ", fjump: " << fjump
-//                                  << ", clump: " << clump << endl;
                     char frameidinfo[1024];
                     sprintf(frameidinfo, "\"frame_id\": \"%04d\"", id);
                     char octavesinfo[1024];
