@@ -6,8 +6,8 @@ import time
 import datetime
 
 # queue name
-QUEUE = "brie"
-# QUEUE = "velveeta"
+# QUEUE = "brie"
+QUEUE = "velveeta"
 # directory
 SCRIPT_ROOT_DIR = "/DPA/wookie/zjingcong/script/"
 EXE_DIR = "/DPA/wookie/zjingcong/wedges/cmake-build-default/wedges"
