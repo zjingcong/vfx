@@ -1,7 +1,7 @@
 # Wedges
-Jingcong Zhang
-2017-03-17
-----------------
+
+>Jingcong Zhang		2017-03-17
+
 This program is to generate noise/pyrosphere/wisp wedges by modifying parms:
 - noise: octaves, freq, fjump, fade
 - pyrosphere: octaves, freq, fjump, gamma
@@ -24,9 +24,8 @@ $ ./wedges type_tag frame_id [output_dir]
 ```
 [type_tag]
 
-	-p: pyro
+  -p: pyro
 
-	-n: noise
+  -n: noise
 
-	-w: wisp
-
+  -w: wisp
