@@ -15,7 +15,7 @@ using namespace lux;
 class Pyrosphere: public Volume<float>
 {
     public:
-        Pyrosphere(Noise& n, float r);
+        Pyrosphere(Noise& n);
         ~Pyrosphere()   {}
 
         const float eval(const Vector& x) const;
@@ -23,8 +23,8 @@ class Pyrosphere: public Volume<float>
 
     private:
         Noise& noise;
-        float radius;
 
+        Noise_t myPyroParam;
         BBox pyroBBox;
 };
 

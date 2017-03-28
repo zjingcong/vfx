@@ -2,8 +2,10 @@
 # include "Pyroclastic.h"
 
 
-Pyrosphere::Pyrosphere(Noise &n, float r): noise(n), radius(r)
+Pyrosphere::Pyrosphere(Noise &n): noise(n)
 {
+    myPyroParam = noise.getNoiseParameters();
+    float r = myPyroParam.pscale;
     Vec3s min(-3.5 * r, -3.5 * r, -3.5 * r);
     Vec3s max(3.5 * r, 3.5 * r, 3.5 * r);
     pyroBBox = BBox(min, max);
@@ -12,10 +14,10 @@ Pyrosphere::Pyrosphere(Noise &n, float r): noise(n), radius(r)
 
 const float Pyrosphere::eval(const Vector &x) const
 {
-    // create the sphere volume
-    Sphere sphere(radius);
     float value;
-    Noise_t myPyroParam = noise.getNoiseParameters();
+    // create the sphere volume
+    float radius = myPyroParam.pscale;
+    Sphere sphere(radius);
     float gamma = myPyroParam.gamma;
     Vector xyz = x.unitvector() * radius;
     float noiseValue = pow(fabs(noise.eval(xyz)), gamma);

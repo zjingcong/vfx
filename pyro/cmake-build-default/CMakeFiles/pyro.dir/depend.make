@@ -240,6 +240,7 @@ CMakeFiles/pyro.dir/src/pyro.C.o: ../include/PerlinNoise.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/PropertyVolume.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/Pyroclastic.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/Renderer.h
+CMakeFiles/pyro.dir/src/pyro.C.o: ../include/ScalarVolumeXform.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/Shape.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/Types.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/Vector.h
@@ -267,6 +268,7 @@ CMakeFiles/pyro.dir/src/pyro.C.o: /group/dpa/local/openvdb/include/openvdb/math/
 CMakeFiles/pyro.dir/src/pyro.C.o: /group/dpa/local/openvdb/include/openvdb/math/Vec4.h
 CMakeFiles/pyro.dir/src/pyro.C.o: /group/dpa/local/openvdb/include/openvdb/metadata/MetaMap.h
 CMakeFiles/pyro.dir/src/pyro.C.o: /group/dpa/local/openvdb/include/openvdb/metadata/Metadata.h
+CMakeFiles/pyro.dir/src/pyro.C.o: /group/dpa/local/openvdb/include/openvdb/tools/Composite.h
 CMakeFiles/pyro.dir/src/pyro.C.o: /group/dpa/local/openvdb/include/openvdb/tools/ValueTransformer.h
 CMakeFiles/pyro.dir/src/pyro.C.o: /group/dpa/local/openvdb/include/openvdb/tree/InternalNode.h
 CMakeFiles/pyro.dir/src/pyro.C.o: /group/dpa/local/openvdb/include/openvdb/tree/Iterator.h

@@ -15,8 +15,12 @@ Vector.h
 ../include/DoPyros.h
 iostream
 -
+vector
+-
 omp.h
 ../include/omp.h
+openvdb/tools/Composite.h
+-
 Noise.h
 ../include/Noise.h
 PerlinNoise.h
@@ -33,6 +37,12 @@ Renderer.h
 ../include/Renderer.h
 OIIOFiles.h
 ../include/OIIOFiles.h
+ScalarVolumeXform.h
+../include/ScalarVolumeXform.h
+Operations.h
+../include/Operations.h
+Vector.h
+../include/Vector.h
 
 ../include/Grid.h
 Volume.h
@@ -83,6 +93,8 @@ vector
 -
 
 ../include/Operations.h
+vector
+-
 Volume.h
 ../include/Volume.h
 Vector.h
@@ -141,6 +153,14 @@ math.h
 ../include/math.h
 vector
 -
+
+../include/ScalarVolumeXform.h
+Volume.h
+../include/Volume.h
+Vector.h
+../include/Vector.h
+math.h
+../include/math.h
 
 ../include/Shape.h
 Volume.h
@@ -524,6 +544,22 @@ openvdb/Exceptions.h
 boost/shared_ptr.hpp
 -
 boost/cstdint.hpp
+-
+
+/group/dpa/local/openvdb/include/openvdb/tools/Composite.h
+openvdb/Platform.h
+-
+openvdb/Exceptions.h
+-
+openvdb/Types.h
+-
+openvdb/Grid.h
+-
+openvdb/math/Math.h
+-
+ValueTransformer.h
+/group/dpa/local/openvdb/include/openvdb/tools/ValueTransformer.h
+boost/utility/enable_if.hpp
 -
 
 /group/dpa/local/openvdb/include/openvdb/tools/Interpolation.h

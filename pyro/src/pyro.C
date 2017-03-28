@@ -23,10 +23,13 @@ int main(int argc, char* argv[])
     }
     else {printHelp();  exit(0);}
 
-    for (int i = 0; i < 4; ++i)
-    {
-        createPyroWedges(frameid + i, output_path);
-    }
+//    for (int i = 0; i < 1; ++i)
+//    {
+//        createPyroWedges(frameid + i, output_path);
+//    }
+
+    int i = 0;
+    createPyroWedges(frameid + i, output_path);
 
     return 0;
 }

@@ -9,6 +9,8 @@
 #ifndef __LUX_IMPLICITFUNCOPS_H__
 #define __LUX_IMPLICITFUNCOPS_H__
 
+# include <vector>
+
 # include "Volume.h"
 # include "Vector.h"
 # include "math.h"
@@ -64,6 +66,29 @@ namespace lux
 		private:
 			Volume<float>& e1;
 			Volume<float>& e2;
+	};
+
+
+	class ImplicitUnionList: public Volume<float>
+	{
+		public:
+			ImplicitUnionList(std::vector<VolumeFloatPtr> vl): volumeList(vl)
+				{std::cout << "volumeListSize: " << volumeList.size() << std::endl;}
+			~ImplicitUnionList()	{}
+
+			inline const float eval(const Vector& x) const
+			{
+				float tmpMax = volumeList.front()->eval(x);
+				for (VolumeFloatPtr v: volumeList)
+				{
+					tmpMax = myMax(tmpMax, v->eval(x));
+				}
+
+				return tmpMax;
+			}
+
+		private:
+			std::vector<VolumeFloatPtr> volumeList;
 	};
 
 
