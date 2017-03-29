@@ -33,9 +33,6 @@ using namespace lux;
 
 float step_size;
 
-Noise_t noise_array[36];
-Vector vector_array[36];
-
 
 vector<Vector> createTransVecs()
 {
@@ -43,37 +40,28 @@ vector<Vector> createTransVecs()
     float interval_scale = 3.0;
     // generate the square in clockwise order
     // up: 10 pyroclasts
-    int id = 0;
     for (int i = 0; i < 10; ++i)
     {
         Vector tmp(-4.5 + i, 0, 4.5);
         transVecs.push_back(tmp * interval_scale);
-        vector_array[id] = tmp * interval_scale;
-        id++;
     }
     // right: 9 pyroclasts
     for (int i = 1; i < 10; ++i)
     {
         Vector tmp(4.5, 0, 4.5 - i);
         transVecs.push_back(tmp * interval_scale);
-        vector_array[id] = tmp * interval_scale;
-        id++;
     }
     // bottom: 9 pyroclasts
     for (int i = 1; i < 10; ++i)
     {
         Vector tmp(4.5 - i, 0, -4.5);
         transVecs.push_back(tmp * interval_scale);
-        vector_array[id] = tmp * interval_scale;
-        id++;
     }
     // left: 8 pyroclasts
     for (int i = 1; i < 9; ++i)
     {
         Vector tmp(-4.5, 0, -4.5 + i);
         transVecs.push_back(tmp * interval_scale);
-        vector_array[id] = tmp * interval_scale;
-        id++;
     }
 
     return transVecs;
@@ -94,7 +82,6 @@ vector<Noise_t> createNoiseParmsVecs(int frame_id)
         parms.pscale = 1.0;
 
         noiseParmsVecs.push_back(parms);
-        noise_array[i] = parms;
     }
 
     return noiseParmsVecs;
@@ -120,72 +107,48 @@ void createPyroWedges(int frame_id, string output_path)
     int i = 0;
 
     ConstantFloat init(0.0);
-    // VolumeFloatPtr pyroVolumePtr;
     BBox pyroBBox;
     vector<VolumeFloatPtr> pyroVolumePtrs;
     vector<BBox> bboxs;
 
-    VolumeFloatPtr pyroVolumeArray[36];
-
-    Noise_t parms = noiseParmsVecs.at(0);
-    // Noise_t parms = noise_array[i];
-    FractalSum<PerlinNoiseGustavson> perlin;
-    perlin.setParameters(parms);
-
     for (int i = 0; i < 36; i++)
     {
         Vector transVec = transVecs.at(i);
-        // Vector transVec = vector_array[i];
         Vec3s transVec3s(transVec.X(), transVec.Y(), transVec.Z());
 
-        cout << "translate: " << transVec3s << endl;
+        Noise_t *parms = new Noise_t;
+        *parms = noiseParmsVecs.at(i);
+        FractalSum<PerlinNoiseGustavson> *perlin = new FractalSum<PerlinNoiseGustavson>;
+        perlin->setParameters(*parms);
 
-//        Noise_t parms = noiseParmsVecs.at(0);
-//        // Noise_t parms = noise_array[i];
-//        FractalSum<PerlinNoiseGustavson> perlin;
-//        perlin.setParameters(parms);
-
-        Pyrosphere pyrosphereOrigin(perlin);
-        BBox pyrosphereBBox = pyrosphereOrigin.getBBox();
-
-        cout << "pyrosphereBBox: " << pyrosphereBBox.min() << pyrosphereBBox.max() << endl;
+        Pyrosphere pyrosphereOrigin(*perlin);
+        BBox pyrosphereBBoxOrigin = pyrosphereOrigin.getBBox();
         // translate
-        ScalarTranslate pyrosphereTrans(pyrosphereOrigin, transVec);
-        pyrosphereBBox.translate(transVec3s);
-        cout << "pyrosphereBBoxTrans: " << pyrosphereBBox.min() << pyrosphereBBox.max() << endl;
-        bboxs.push_back(pyrosphereBBox);
-//        // union
-//        if (i == 0)  {pyroBBox = pyrosphereBBox;}
-//        else {pyroBBox.expand(pyrosphereBBox);}
-        // ImplicitUnion myPyrosphere(init, pyrosphereTrans);
-        pyroVolumePtrs.push_back(&pyrosphereTrans);
-        pyroVolumeArray[i] = &pyrosphereTrans;
+        VolumeFloatPtr pyrosphereTrans = new ScalarTranslate(pyrosphereOrigin, transVec);
+        pyrosphereBBoxOrigin.translate(transVec3s);
+        bboxs.push_back(pyrosphereBBoxOrigin);
+        // union
+        if (i == 0)  {pyroBBox = pyrosphereBBoxOrigin;}
+        else {pyroBBox.expand(pyrosphereBBoxOrigin);}
+        pyroVolumePtrs.push_back(pyrosphereTrans);
     }
 
-    VolumeFloatPtr pyroVolumePtr = pyroVolumePtrs[0];
-    pyroBBox = bboxs.at(0);
-    // cout << "testtesttest" << pyroBBox.max() << pyroBBox.min() << endl;
-    // ImplicitUnionList pyroVolumeUnion(pyroVolumePtrs);
-
-//    Vec3s mi(-15, -3, 5);
-//    Vec3s ma(-5, 3, 20);
-//    BBox testBBox(mi, ma);
-//    pyroBBox = testBBox;
-    cout << "testtesttest" << pyroBBox.max() << pyroBBox.min() << endl;
-//    ImplicitUnion pyroVolumeUnion(*pyroVolumePtrs.at(7), *pyroVolumePtrs.at(9));
-//    VolumeFloatPtr pyroVolumePtr = &pyroVolumeUnion;
-//
-//    ImplicitUnion pyroVolumeUnion(pyrosphereTrans0, pyrosphereTrans1);
-//    pyroVolumePtr = &pyroVolumeUnion;
+    // VolumeFloatPtr pyroVolumePtr = pyroVolumePtrs.at(0);
+    ImplicitUnion pyro(*pyroVolumePtrs.at(0), *pyroVolumePtrs.at(10));
+    VolumeFloatPtr pyroVolumePtr = &pyro;
+    // pyroBBox = bboxs.at(0);
 
     // get grid voxelSize
     float voxelSize = float(pyroBBox.max().x() - pyroBBox.min().x()) / 50;
     step_size = float(voxelSize) / CRAZY_NUM;   // get step size form grid
     // stamp
     cout << "Stamping pyrosphere..." << endl;
+    cout << "\t | Grid voxel size: " << voxelSize << endl;
     FloatVolumeToGrid pyrosVolume2Grid(*pyroVolumePtr, voxelSize, pyroBBox);
     FloatGrid::Ptr pyrosGrid = pyrosVolume2Grid.getVolumeGrid();
     BBox pyroNewBBox = pyrosVolume2Grid.getBBox();
+    // release memory
+    for (VolumeFloatPtr v: pyroVolumePtrs)  { delete v; }
     // gridded
     FloatGridVolume pyrosVolume(pyrosGrid);
 
@@ -226,6 +189,7 @@ void createPyroWedges(int frame_id, string output_path)
     bboxSize = getMin(bboxSize, bboxSize_z);
     cout << "	 | BBox size: " << bboxSize << endl;
     float light_voxelSize = float(bboxSize) / LIGHT_GRID_NUM;
+    light_voxelSize = 0.042;
     float light_step_size = float(light_voxelSize) / CRAZY_NUM;   // get step size form grid
     cout << "	 | Light voxel size: " << light_voxelSize << endl;
     cout << "	 | Light step size: " << light_step_size << endl;
