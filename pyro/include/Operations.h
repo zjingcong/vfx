@@ -69,11 +69,11 @@ namespace lux
 	};
 
 
+    // union a list of VolumeFloatPtr
 	class ImplicitUnionList: public Volume<float>
 	{
 		public:
-			ImplicitUnionList(std::vector<VolumeFloatPtr> vl): volumeList(vl)
-				{std::cout << "volumeListSize: " << volumeList.size() << std::endl;}
+			ImplicitUnionList(std::vector<VolumeFloatPtr> vl): volumeList(vl)   {}
 			~ImplicitUnionList()	{}
 
 			inline const float eval(const Vector& x) const

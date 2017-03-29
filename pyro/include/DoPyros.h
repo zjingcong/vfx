@@ -26,7 +26,8 @@ using namespace lux;
 # define NEAR 0.1
 # define FAR 500
 # define CRAZY_NUM 2.0316578
-# define LIGHT_GRID_NUM 50   // pyro
+# define GRID_NUM 25
+# define LIGHT_GRID_NUM 20   // pyro
 
 # define getMax(x, y) (x > y ? x : y)
 # define getMin(x, y) (x < y ? x : y)
@@ -84,6 +85,11 @@ vector<Noise_t> createNoiseParmsVecs(int frame_id)
         noiseParmsVecs.push_back(parms);
     }
 
+    for (Noise_t n: noiseParmsVecs)
+    {
+        n.gamma = 1.0;
+    }
+
     return noiseParmsVecs;
 }
 
@@ -96,11 +102,9 @@ void createPyroWedges(int frame_id, string output_path)
     sprintf(file_name, "%s/jingcoz_hw4.%04d.exr", output_path.c_str(), frame_id);
     cout << "Output path: " << file_name << endl;
 
+    // get parms for pyrolist
     vector<Vector> transVecs = createTransVecs();
     vector<Noise_t> noiseParmsVecs = createNoiseParmsVecs(frame_id);
-
-    cout << "transVecsSize: " << transVecs.size() << endl;
-    cout << "noiseParmsVecsSize: " << noiseParmsVecs.size() << endl;
 
     /// ----------------------------------- Pyroclasts Setup ---------------------------------------------
 
@@ -111,6 +115,7 @@ void createPyroWedges(int frame_id, string output_path)
     vector<VolumeFloatPtr> pyroVolumePtrs;
     vector<BBox> bboxs;
 
+    // generate 36 pyrospheres
     for (int i = 0; i < 36; i++)
     {
         Vector transVec = transVecs.at(i);
@@ -133,17 +138,16 @@ void createPyroWedges(int frame_id, string output_path)
         pyroVolumePtrs.push_back(pyrosphereTrans);
     }
 
-    // VolumeFloatPtr pyroVolumePtr = pyroVolumePtrs.at(0);
-    ImplicitUnion pyro(*pyroVolumePtrs.at(0), *pyroVolumePtrs.at(10));
+    // union pyroclasts
+    ImplicitUnionList pyro(pyroVolumePtrs);
     VolumeFloatPtr pyroVolumePtr = &pyro;
-    // pyroBBox = bboxs.at(0);
 
     // get grid voxelSize
-    float voxelSize = float(pyroBBox.max().x() - pyroBBox.min().x()) / 50;
+    float voxelSize = float(pyroBBox.max().y() - pyroBBox.min().y()) / GRID_NUM;
     step_size = float(voxelSize) / CRAZY_NUM;   // get step size form grid
     // stamp
     cout << "Stamping pyrosphere..." << endl;
-    cout << "\t | Grid voxel size: " << voxelSize << endl;
+    cout << "	 | Grid voxel size: " << voxelSize << endl;
     FloatVolumeToGrid pyrosVolume2Grid(*pyroVolumePtr, voxelSize, pyroBBox);
     FloatGrid::Ptr pyrosGrid = pyrosVolume2Grid.getVolumeGrid();
     BBox pyroNewBBox = pyrosVolume2Grid.getBBox();
@@ -152,14 +156,13 @@ void createPyroWedges(int frame_id, string output_path)
     // gridded
     FloatGridVolume pyrosVolume(pyrosGrid);
 
-    // set color and density
+    // set color, opacity and density
     Color matColor(1.0, 1.0, 1.0, 1.0);
     Color emColor(0.4, 0.0, 0.0, 0.0);
     ConstantFloat rho(7.0);
     ConstantColor pyroMatColor(matColor);
     ConstantColor pyroEmColor(emColor);
     DensityVolume pyroDensity(rho, pyrosVolume);
-
     float K = 3;
     BBox finalBBox = pyroNewBBox;
     cout << "	 | Pyro bounding box: " << finalBBox.min() << " " << finalBBox.max() << endl;
@@ -170,8 +173,8 @@ void createPyroWedges(int frame_id, string output_path)
     cout << "Set lights..." << endl;
     Lights myLights;
     // light position
-    Vector keyPos(0.0, 6.0, 0.0);
-    Vector rimPos(0.0, -6.0, 0.0);
+    Vector keyPos(10.0, 10.0, 0.0);
+    Vector rimPos(-10.0, -10.0, 0.0);
     // light color
     Color keyColor(2.0, 2.0, 2.0, 1.0);
     Color rimColor(0.2, 0.2, 0.2, 1.0);
@@ -189,7 +192,6 @@ void createPyroWedges(int frame_id, string output_path)
     bboxSize = getMin(bboxSize, bboxSize_z);
     cout << "	 | BBox size: " << bboxSize << endl;
     float light_voxelSize = float(bboxSize) / LIGHT_GRID_NUM;
-    light_voxelSize = 0.042;
     float light_step_size = float(light_voxelSize) / CRAZY_NUM;   // get step size form grid
     cout << "	 | Light voxel size: " << light_voxelSize << endl;
     cout << "	 | Light step size: " << light_step_size << endl;
@@ -201,7 +203,7 @@ void createPyroWedges(int frame_id, string output_path)
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(80.0, 80.0, 0.0);
+    Vector eye(70.0, 70.0, 0.0);
     Vector view(-1.0, -1.0, 0.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);
