@@ -141,8 +141,8 @@ void createPyroWedges(int frame_id, string output_path)
         else {pyroBBox.expand(pyrosphereBBoxOrigin);}
         pyroVolumePtrs.push_back(pyrosphereTrans);
         // set color for each pyro
-        Color emColor(0.4, 0.0, 0.0, 0.0);
-        VolumeColorPtr pyrosphereEm = new ConstantColor(emColor);
+        // Color emColor(0.4, 0.0, 0.0, 0.0);
+        VolumeColorPtr pyrosphereEm = new ConstantColor(colorVecs.at(i));
         VolumeColorPtr pyrosphereEmVolume = new ColorVolume(*pyrosphereEm, *pyrosphereTrans);
         pyroEmVolumePtrs.push_back(pyrosphereEmVolume);
     }
@@ -172,12 +172,10 @@ void createPyroWedges(int frame_id, string output_path)
     FloatGridVolume pyrosVolume(pyrosGrid);
     ColorGridVolume pyroEmColor(pyroEmGrid);
 
-    // set color, opacity and density
+    // set matcolor, opacity and density
     Color matColor(1.0, 1.0, 1.0, 1.0);
-    // Color emColor(0.4, 0.0, 0.0, 0.0);
     ConstantColor pyroMatColor(matColor);
-    // ConstantColor pyroEmColor(emColor);
-    ConstantFloat rho(7.0);
+    ConstantFloat rho(5.0);
     DensityVolume pyroDensity(rho, pyrosVolume);
     float K = 3;
     BBox finalBBox = pyroNewBBox;

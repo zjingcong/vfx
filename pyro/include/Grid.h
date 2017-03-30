@@ -60,7 +60,9 @@ namespace lux
 	class FloatVolumeToGrid
 	{
 		public:
-			FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox);
+            // tag = 0: density stamping
+            // tag = 1: light stamping
+			FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox, int tag = 0);
 			~FloatVolumeToGrid()	{}
 
 			FloatGrid::Ptr getVolumeGrid()	{return myGrid;}
@@ -71,6 +73,7 @@ namespace lux
 			float voxelSize;
 			BBox volumeBBox;
 			BBox gridBBox;
+            int tag;
 
 			FloatGrid::Ptr myGrid;
 			Transform::Ptr transform;

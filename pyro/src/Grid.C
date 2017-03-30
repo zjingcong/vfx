@@ -60,8 +60,10 @@ const Color ColorGridVolume::eval(const Vector& x) const
 
 // ---------------------------- Class FloatVolumeToGrid -----------------------------------------
 
-FloatVolumeToGrid::FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox): 
-	myVolume(f), voxelSize(s), volumeBBox(bbox)
+// tag = 0: density stamping
+// tag = 1: light stamping
+FloatVolumeToGrid::FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox, int tag):
+	myVolume(f), voxelSize(s), volumeBBox(bbox), tag(tag)
 {
 	// create the float grid
 	myGrid = FloatGrid::create(0.0);
@@ -98,7 +100,38 @@ void FloatVolumeToGrid::createVolumeGrid()
 				lux::Vector vec(gridPointPos.x(), gridPointPos.y(), gridPointPos.z());
 				float value = myVolume.eval(vec);
 
-				if (value >= 0)	// only stamp positive value
+				bool stamping = false;
+				if (tag == 1)
+				{
+					if (value <= 0)
+					{
+						for (int ii = i - 1; ii <= i + 1; ++ii)
+						{
+							for (int jj = j - 1; jj <= j + 1; ++jj)
+							{
+								for (int kk = k - 1; kk <= k + 1; ++kk)
+								{
+									Vec3s neiPos = transform->indexToWorld(ijk);
+									lux::Vector neiVec(neiPos.x(), neiPos.y(), neiPos.z());
+									float neiValue = myVolume.eval(neiVec);
+									if (neiValue > 0)
+									{
+										stamping = true;
+										goto endLoop;	// end for loop
+									}
+								}
+							}
+						}
+						endLoop: ;
+					}
+					else {stamping = true;}
+				}
+				else if (tag == 0)
+				{
+					if (value > 0)	{stamping = true;}	// only stamp positive value
+				}
+
+				if (stamping)
 				{
 					# pragma omp critical
 					{

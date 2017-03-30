@@ -62,10 +62,14 @@ namespace lux
 
             inline  const Color eval(const Vector& x) const
             {
+                Color zero;
                 Color colorValue;
                 for (VolumeColorPtr cp: colorList)
                 {
-                    colorValue += cp->eval(x);
+                    Color previous = colorValue;
+                    Color current = cp->eval(x);
+                    colorValue = previous + current;
+                    if (previous != zero && current != zero)    {colorValue = colorValue * 0.5;}
                 }
 
                 return colorValue;

@@ -111,6 +111,8 @@ vector
 -
 Vector.h
 ../include/Vector.h
+Color.h
+../include/Color.h
 
 ../include/PerlinNoise.h
 Vector.h

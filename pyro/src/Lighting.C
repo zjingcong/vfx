@@ -53,7 +53,7 @@ void LightVolume::DSMStamping()
 			LightSource lit = lights[i];
 			DSMVolume sc(densityVolume, lit, step_size);
 			// stamp T on the grid
-			FloatVolumeToGrid scVolume2Grid(sc, voxelSize, volumeBBox);
+			FloatVolumeToGrid scVolume2Grid(sc, voxelSize, volumeBBox, 1);
 			FloatGrid::Ptr DSMGrid = scVolume2Grid.getVolumeGrid();
 			// convert the grid to volume
 			FloatGridVolume DSMGridVolume(DSMGrid);
