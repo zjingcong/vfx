@@ -140,16 +140,17 @@ ColorVolumeToGrid::ColorVolumeToGrid(Volume<Color>& f, float s, BBox& bbox):
 
 void ColorVolumeToGrid::createVolumeGrid()
 {
+	double start_time = omp_get_wtime();
 	Vec4fGrid::Accessor accessor = myGrid -> getAccessor();
 	Vec3s llc = volumeBBox.min();
 	Vec3s urc = volumeBBox.max();
 	Coord ijk0 = transform -> worldToIndexNodeCentered(llc);
 	Coord ijk1 = transform -> worldToIndexNodeCentered(urc);
+	# pragma omp parallel for collapse(3)
 	for (int i = ijk0.x(); i <= ijk1.x(); ++i)
 	{
 		for (int j = ijk0.y(); j <= ijk1.y(); ++j)
 		{
-			# pragma omp parallel for
 			for (int k = ijk0.z(); k <= ijk1.z(); ++k)
 			{
 				Coord ijk(i, j, k);
@@ -165,6 +166,8 @@ void ColorVolumeToGrid::createVolumeGrid()
 			}
 		}
 	}
+	double exe_time = omp_get_wtime() - start_time;
+	std::cout << "	 | Elapsed Time: " << exe_time << "s" << std::endl;
 }
 
 

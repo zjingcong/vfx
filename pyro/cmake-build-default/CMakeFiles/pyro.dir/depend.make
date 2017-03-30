@@ -236,6 +236,7 @@ CMakeFiles/pyro.dir/src/pyro.C.o: ../include/Matrix.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/Noise.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/OIIOFiles.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/Operations.h
+CMakeFiles/pyro.dir/src/pyro.C.o: ../include/Parms.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/PerlinNoise.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/PropertyVolume.h
 CMakeFiles/pyro.dir/src/pyro.C.o: ../include/Pyroclastic.h

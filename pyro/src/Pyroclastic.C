@@ -6,8 +6,8 @@ Pyrosphere::Pyrosphere(Noise &n): noise(n)
 {
     myPyroParam = noise.getNoiseParameters();
     float r = myPyroParam.pscale;
-    Vec3s min(-3.5 * r, -3.5 * r, -3.5 * r);
-    Vec3s max(3.5 * r, 3.5 * r, 3.5 * r);
+    Vec3s min(-4 * r, -4 * r, -4 * r);
+    Vec3s max(4 * r, 4 * r, 4 * r);
     pyroBBox = BBox(min, max);
 }
 

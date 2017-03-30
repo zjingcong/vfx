@@ -43,6 +43,8 @@ Operations.h
 ../include/Operations.h
 Vector.h
 ../include/Vector.h
+Parms.h
+../include/Parms.h
 
 ../include/Grid.h
 Volume.h
@@ -103,6 +105,12 @@ math.h
 ../include/math.h
 Color.h
 ../include/Color.h
+
+../include/Parms.h
+vector
+-
+Vector.h
+../include/Vector.h
 
 ../include/PerlinNoise.h
 Vector.h

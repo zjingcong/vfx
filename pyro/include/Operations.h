@@ -23,7 +23,7 @@
 namespace lux
 {
 
-	// ============================Float Ops============================================
+	// ============================ Float Ops ============================================
 	class FloatAdd: public Volume<float>
 	{
 		public:
@@ -38,7 +38,7 @@ namespace lux
 	};
 
 
-	// ============================Color Ops============================================
+	// ============================ Color Ops ============================================
 	class ColorAdd: public Volume<Color>
 	{
 		public:
@@ -53,7 +53,30 @@ namespace lux
 	};
 
 
-	// ============================ CSG Ops============================================= 
+    // union a list of VolumeColorPtr
+    class ColorAddList: public Volume<Color>
+    {
+        public:
+            ColorAddList(std::vector<VolumeColorPtr> vc): colorList(vc)  {}
+            ~ColorAddList()   {}
+
+            inline  const Color eval(const Vector& x) const
+            {
+                Color colorValue;
+                for (VolumeColorPtr cp: colorList)
+                {
+                    colorValue += cp->eval(x);
+                }
+
+                return colorValue;
+            }
+
+        private:
+            std::vector<VolumeColorPtr> colorList;
+    };
+
+
+	// ============================ CSG Ops =============================================
 	// union
 	class ImplicitUnion: public Volume<float>
 	{

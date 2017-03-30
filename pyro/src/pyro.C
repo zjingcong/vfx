@@ -23,13 +23,14 @@ int main(int argc, char* argv[])
     }
     else {printHelp();  exit(0);}
 
-//    for (int i = 0; i < 1; ++i)
+//    for (int i = 0; i < 35; ++i)
 //    {
+//        getPyroChainParms();
 //        createPyroWedges(frameid + i, output_path);
 //    }
 
-    int i = 0;
-    createPyroWedges(frameid + i, output_path);
+    getPyroChainParms();
+    createPyroWedges(frameid, output_path);
 
     return 0;
 }

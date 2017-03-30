@@ -17,6 +17,7 @@
 # include "ScalarVolumeXform.h"
 # include "Operations.h"
 # include "Vector.h"
+# include "Parms.h"
 
 using namespace std;
 using namespace lux;
@@ -26,7 +27,7 @@ using namespace lux;
 # define NEAR 0.1
 # define FAR 500
 # define CRAZY_NUM 2.0316578
-# define GRID_NUM 25
+# define GRID_NUM 50
 # define LIGHT_GRID_NUM 20   // pyro
 
 # define getMax(x, y) (x > y ? x : y)
@@ -38,27 +39,27 @@ float step_size;
 vector<Vector> createTransVecs()
 {
     vector<Vector> transVecs;
-    float interval_scale = 3.0;
+    float interval_scale = 1.0;
     // generate the square in clockwise order
-    // up: 10 pyroclasts
+    // up: 10 pyroclasts(0-9)
     for (int i = 0; i < 10; ++i)
     {
         Vector tmp(-4.5 + i, 0, 4.5);
         transVecs.push_back(tmp * interval_scale);
     }
-    // right: 9 pyroclasts
+    // right: 9 pyroclasts(10-18)
     for (int i = 1; i < 10; ++i)
     {
         Vector tmp(4.5, 0, 4.5 - i);
         transVecs.push_back(tmp * interval_scale);
     }
-    // bottom: 9 pyroclasts
+    // bottom: 9 pyroclasts(18-26)
     for (int i = 1; i < 10; ++i)
     {
         Vector tmp(4.5 - i, 0, -4.5);
         transVecs.push_back(tmp * interval_scale);
     }
-    // left: 8 pyroclasts
+    // left: 8 pyroclasts(26-35)
     for (int i = 1; i < 9; ++i)
     {
         Vector tmp(-4.5, 0, -4.5 + i);
@@ -69,25 +70,31 @@ vector<Vector> createTransVecs()
 }
 
 
-vector<Noise_t> createNoiseParmsVecs(int frame_id)
+Vector getNoiseTrans(int frame_id, int pyro_id)
 {
-    vector<Noise_t> noiseParmsVecs;
+    float trans_scale = 0.1;
+    float trans = frame_id * trans_scale;
+    if (pyro_id <= 9)   return Vector(trans, 0, 0);
+    else if (pyro_id <= 18) return Vector(0, 0, -trans);
+    else if (pyro_id <= 26) return Vector(-trans, 0, 0);
+    else    return Vector(0, 0, trans);
+}
+
+
+vector<Noise_t*> createNoiseParmsVecs(int frame_id)
+{
+    vector<Noise_t*> noiseParmsVecs;
     for (int i = 0; i < 36; ++i)
     {
-        Noise_t parms;
-        parms.translate = Vector(0.0, 0.0, frame_id);
-        parms.frequency = 0.57434;
-        parms.fjump = 2.6;
-        parms.octaves = 4.0;
-        parms.gamma = 0.33333;
-        parms.pscale = 1.0;
+        Noise_t *parms = new Noise_t;
+        parms->translate = getNoiseTrans(frame_id, i);
+        parms->octaves = 4.5;
+        parms->gamma = 0.43333;
+        parms->fjump = fjumpVecs.at(i);
+        parms->pscale = pscaleVecs.at(i);
+        parms->frequency = freqVecs.at(i);
 
         noiseParmsVecs.push_back(parms);
-    }
-
-    for (Noise_t n: noiseParmsVecs)
-    {
-        n.gamma = 1.0;
     }
 
     return noiseParmsVecs;
@@ -104,7 +111,7 @@ void createPyroWedges(int frame_id, string output_path)
 
     // get parms for pyrolist
     vector<Vector> transVecs = createTransVecs();
-    vector<Noise_t> noiseParmsVecs = createNoiseParmsVecs(frame_id);
+    vector<Noise_t*> noiseParmsVecs = createNoiseParmsVecs(frame_id);
 
     /// ----------------------------------- Pyroclasts Setup ---------------------------------------------
 
@@ -113,7 +120,7 @@ void createPyroWedges(int frame_id, string output_path)
     ConstantFloat init(0.0);
     BBox pyroBBox;
     vector<VolumeFloatPtr> pyroVolumePtrs;
-    vector<BBox> bboxs;
+    vector<VolumeColorPtr> pyroEmVolumePtrs;
 
     // generate 36 pyrospheres
     for (int i = 0; i < 36; i++)
@@ -121,47 +128,56 @@ void createPyroWedges(int frame_id, string output_path)
         Vector transVec = transVecs.at(i);
         Vec3s transVec3s(transVec.X(), transVec.Y(), transVec.Z());
 
-        Noise_t *parms = new Noise_t;
-        *parms = noiseParmsVecs.at(i);
         FractalSum<PerlinNoiseGustavson> *perlin = new FractalSum<PerlinNoiseGustavson>;
-        perlin->setParameters(*parms);
+        perlin->setParameters(*noiseParmsVecs.at(i));
 
-        Pyrosphere pyrosphereOrigin(*perlin);
-        BBox pyrosphereBBoxOrigin = pyrosphereOrigin.getBBox();
+        Pyrosphere* pyrosphereOrigin = new Pyrosphere(*perlin);
+        BBox pyrosphereBBoxOrigin = pyrosphereOrigin->getBBox();
         // translate
-        VolumeFloatPtr pyrosphereTrans = new ScalarTranslate(pyrosphereOrigin, transVec);
+        VolumeFloatPtr pyrosphereTrans = new ScalarTranslate(*pyrosphereOrigin, transVec);
         pyrosphereBBoxOrigin.translate(transVec3s);
-        bboxs.push_back(pyrosphereBBoxOrigin);
-        // union
+        // union bbox
         if (i == 0)  {pyroBBox = pyrosphereBBoxOrigin;}
         else {pyroBBox.expand(pyrosphereBBoxOrigin);}
         pyroVolumePtrs.push_back(pyrosphereTrans);
+        // set color for each pyro
+        Color emColor(0.4, 0.0, 0.0, 0.0);
+        VolumeColorPtr pyrosphereEm = new ConstantColor(emColor);
+        VolumeColorPtr pyrosphereEmVolume = new ColorVolume(*pyrosphereEm, *pyrosphereTrans);
+        pyroEmVolumePtrs.push_back(pyrosphereEmVolume);
     }
 
     // union pyroclasts
     ImplicitUnionList pyro(pyroVolumePtrs);
     VolumeFloatPtr pyroVolumePtr = &pyro;
+    // add colors
+    ColorAddList pyroEmColorAdd(pyroEmVolumePtrs);
 
     // get grid voxelSize
     float voxelSize = float(pyroBBox.max().y() - pyroBBox.min().y()) / GRID_NUM;
     step_size = float(voxelSize) / CRAZY_NUM;   // get step size form grid
     // stamp
-    cout << "Stamping pyrosphere..." << endl;
+    cout << "Stamping..." << endl;
     cout << "	 | Grid voxel size: " << voxelSize << endl;
+    cout << "Stamping pyro density..." << endl;
     FloatVolumeToGrid pyrosVolume2Grid(*pyroVolumePtr, voxelSize, pyroBBox);
     FloatGrid::Ptr pyrosGrid = pyrosVolume2Grid.getVolumeGrid();
     BBox pyroNewBBox = pyrosVolume2Grid.getBBox();
+    cout << "Stamping pyro emcolor..." << endl;
+    ColorVolumeToGrid pyroEm2Grid(pyroEmColorAdd, voxelSize, pyroNewBBox);
+    Vec4fGrid::Ptr pyroEmGrid = pyroEm2Grid.getVolumeGrid();
     // release memory
     for (VolumeFloatPtr v: pyroVolumePtrs)  { delete v; }
     // gridded
     FloatGridVolume pyrosVolume(pyrosGrid);
+    ColorGridVolume pyroEmColor(pyroEmGrid);
 
     // set color, opacity and density
     Color matColor(1.0, 1.0, 1.0, 1.0);
-    Color emColor(0.4, 0.0, 0.0, 0.0);
-    ConstantFloat rho(7.0);
+    // Color emColor(0.4, 0.0, 0.0, 0.0);
     ConstantColor pyroMatColor(matColor);
-    ConstantColor pyroEmColor(emColor);
+    // ConstantColor pyroEmColor(emColor);
+    ConstantFloat rho(7.0);
     DensityVolume pyroDensity(rho, pyrosVolume);
     float K = 3;
     BBox finalBBox = pyroNewBBox;
@@ -173,11 +189,11 @@ void createPyroWedges(int frame_id, string output_path)
     cout << "Set lights..." << endl;
     Lights myLights;
     // light position
-    Vector keyPos(10.0, 10.0, 0.0);
-    Vector rimPos(-10.0, -10.0, 0.0);
+    Vector keyPos(0.0, 5.5, 0.0);
+    Vector rimPos(0.0, -15.0, 0.0);
     // light color
-    Color keyColor(2.0, 2.0, 2.0, 1.0);
-    Color rimColor(0.2, 0.2, 0.2, 1.0);
+    Color keyColor(0.6, 0.6, 0.6, 1.0);
+    Color rimColor(0.08, 0.08, 0.08, 1.0);
     // set lights
     LightSource keyLight(keyPos, keyColor);
     LightSource rimLight(rimPos, rimColor);
@@ -203,7 +219,7 @@ void createPyroWedges(int frame_id, string output_path)
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(70.0, 70.0, 0.0);
+    Vector eye(15.0, 15.0, 0.0);
     Vector view(-1.0, -1.0, 0.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);
