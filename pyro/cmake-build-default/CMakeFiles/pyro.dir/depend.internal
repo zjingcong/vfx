@@ -270,7 +270,6 @@ CMakeFiles/pyro.dir/src/pyro.C.o
  /group/dpa/local/openvdb/include/openvdb/math/Vec4.h
  /group/dpa/local/openvdb/include/openvdb/metadata/MetaMap.h
  /group/dpa/local/openvdb/include/openvdb/metadata/Metadata.h
- /group/dpa/local/openvdb/include/openvdb/tools/Composite.h
  /group/dpa/local/openvdb/include/openvdb/tools/ValueTransformer.h
  /group/dpa/local/openvdb/include/openvdb/tree/InternalNode.h
  /group/dpa/local/openvdb/include/openvdb/tree/Iterator.h

@@ -4,7 +4,7 @@
 # include <iostream>
 # include <vector>
 # include "omp.h"
-# include <openvdb/tools/Composite.h>
+# include <cmath>
 
 # include "Noise.h"
 # include "PerlinNoise.h"
@@ -29,6 +29,8 @@ using namespace lux;
 # define CRAZY_NUM 2.0316578
 # define GRID_NUM 50
 # define LIGHT_GRID_NUM 20   // pyro
+# define NSPEED 0.1
+# define WSPEED 0.1
 
 # define getMax(x, y) (x > y ? x : y)
 # define getMin(x, y) (x < y ? x : y)
@@ -72,7 +74,7 @@ vector<Vector> createTransVecs()
 
 Vector getNoiseTrans(int frame_id, int pyro_id)
 {
-    float trans_scale = 0.1;
+    float trans_scale = NSPEED;
     float trans = frame_id * trans_scale;
     if (pyro_id <= 9)   return Vector(trans, 0, 0);
     else if (pyro_id <= 18) return Vector(0, 0, -trans);
@@ -101,6 +103,41 @@ vector<Noise_t*> createNoiseParmsVecs(int frame_id)
 }
 
 
+void createWave(int frame_id, vector<Noise_t*> noiseParmsVecs)
+{
+//    int T = 5;  // half wave length
+//    float amp_scale = 6.0;
+//    for (int i = frame_id - T / 2; i <= frame_id + T / 2; ++i)
+//    {
+//        int pyroId;
+//        pyroId = (i + 36) % 36;
+//        float amp = amp_scale * cos(float(i) * M_PI / float(T));
+//        noiseParmsVecs.at(pyroId)->amplitude = amp;
+//    }
+    int T = 9;
+    float amp_scale = 6.0;
+    float trans_scale = WSPEED;
+    for (int i = 0; i < 36; ++i)
+    {
+        float x = i - frame_id * trans_scale;
+        float xx = 2 * M_PI / float(T) * x;
+        if (xx <= M_PI)
+        {
+            float amp = amp_scale * sin(xx);
+            amp = (amp > 0) ? amp : 1;
+            noiseParmsVecs.at(i)->amplitude = amp;
+//            cout << "wave id: " << i << endl;
+        }
+    }
+
+//    int j = 0;
+//    for (Noise_t* n: noiseParmsVecs)
+//    {
+//        cout << "noise id: " << j << " amp: " << n->amplitude << endl;
+//    }
+}
+
+
 void createPyroWedges(int frame_id, string output_path)
 {
     /// ----------------------------------- Initialization ---------------------------------------------
@@ -112,6 +149,7 @@ void createPyroWedges(int frame_id, string output_path)
     // get parms for pyrolist
     vector<Vector> transVecs = createTransVecs();
     vector<Noise_t*> noiseParmsVecs = createNoiseParmsVecs(frame_id);
+    createWave(frame_id, noiseParmsVecs);
 
     /// ----------------------------------- Pyroclasts Setup ---------------------------------------------
 
@@ -175,7 +213,7 @@ void createPyroWedges(int frame_id, string output_path)
     // set matcolor, opacity and density
     Color matColor(1.0, 1.0, 1.0, 1.0);
     ConstantColor pyroMatColor(matColor);
-    ConstantFloat rho(5.0);
+    ConstantFloat rho(7.0);
     DensityVolume pyroDensity(rho, pyrosVolume);
     float K = 3;
     BBox finalBBox = pyroNewBBox;
@@ -187,16 +225,16 @@ void createPyroWedges(int frame_id, string output_path)
     cout << "Set lights..." << endl;
     Lights myLights;
     // light position
-    Vector keyPos(0.0, 5.5, 0.0);
-    Vector rimPos(0.0, -15.0, 0.0);
+    Vector keyPos(0.0, 4.0, 0.0);
+    Vector backPos(0.0, -10.0, -10.0);
     // light color
-    Color keyColor(0.6, 0.6, 0.6, 1.0);
-    Color rimColor(0.08, 0.08, 0.08, 1.0);
+    Color keyColor(0.8, 0.8, 0.8, 1.0);
+    Color backColor(0.06, 0.06, 0.06, 1.0);
     // set lights
     LightSource keyLight(keyPos, keyColor);
-    LightSource rimLight(rimPos, rimColor);
+    LightSource backLight(backPos, backColor);
     myLights.push_back(keyLight);
-    myLights.push_back(rimLight);
+    myLights.push_back(backLight);
     // get light step size
     float bboxSize_x = (finalBBox.max().x() - finalBBox.min().x());
     float bboxSize_y = (finalBBox.max().y() - finalBBox.min().y());
@@ -217,8 +255,8 @@ void createPyroWedges(int frame_id, string output_path)
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(15.0, 15.0, 0.0);
-    Vector view(-1.0, -1.0, 0.0);
+    Vector eye(15.0, 15.0, -15.0);
+    Vector view(-1.0, -1.0, 1.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);
     myCamera.setFarPlane(FAR);

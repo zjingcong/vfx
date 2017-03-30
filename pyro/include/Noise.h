@@ -131,7 +131,8 @@ class FractalSum : public Noise
        translate  (Vector(0,0,0)),
        offset     (0.0),
        axis       (Vector(0,0,1)),
-       angle      (0.0)
+       angle      (0.0),
+       amp   (1.0)
     {}
 
    ~FractalSum(){}
@@ -139,7 +140,7 @@ class FractalSum : public Noise
     const float eval( const float x ) const
     {
        float exponent = 1;
-       float amplitude = 1;
+       float amplitude = amp;
        float accum = 0;
        int ioct = (int)octaves;
        for( int oc=0;oc<ioct;oc++ )
@@ -158,7 +159,7 @@ class FractalSum : public Noise
     const float eval( const Vector& x ) const
     {
        float exponent = 1;
-       float amplitude = 1;
+       float amplitude = amp;
        float accum = 0;
        int ioct = (int)octaves;
        Vector X = (x - translate);
@@ -191,6 +192,7 @@ class FractalSum : public Noise
        offset = parameters.offset; 
        axis = parameters.axis;
        angle = parameters.angle;
+        amp = parameters.amplitude;
        _noise.setTime( parameters.time );
 
         noise_params = parameters;
@@ -230,6 +232,7 @@ class FractalSum : public Noise
     Vector axis;
     float angle;
 
+    float amp;
     Noise_t noise_params;
 };
 

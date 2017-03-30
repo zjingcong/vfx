@@ -6,7 +6,7 @@ import time
 import datetime
 
 # directory
-QUEUE = "brie"
+QUEUE = "velveeta"
 SCRIPT_ROOT_DIR = "/DPA/wookie/zjingcong/script/"
 EXE_DIR = "/DPA/wookie/zjingcong/pyro/cmake-build-default/pyro"
 OUTPUT_ROOT_DIR = "/DPA/wookie/zjingcong/output"
