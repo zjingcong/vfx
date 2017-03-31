@@ -22,15 +22,28 @@
 using namespace std;
 using namespace lux;
 
-# define WEIGHT 960
-# define HEIGHT 540
+# define WEIGHT 1920
+# define HEIGHT 1080
+# define GRID_NUM 130
+# define COLOR_GRID_NUM 70
+# define LIGHT_GRID_NUM 80
+
+// test parms
+//# define WEIGHT 960
+//# define HEIGHT 540
+//# define GRID_NUM 50
+//# define COLOR_GRID_NUM 20
+//# define LIGHT_GRID_NUM 40
+
 # define NEAR 0.1
 # define FAR 500
 # define CRAZY_NUM 2.0316578
-# define GRID_NUM 50
-# define LIGHT_GRID_NUM 20   // pyro
-# define NSPEED 0.1
-# define WSPEED 0.1
+# define NSPEED 0.05
+# define WSPEED 0.2
+# define KAPPA 1.0
+# define RHO 16.0
+# define WAVE_AMP 8.5
+# define T 7.5
 
 # define getMax(x, y) (x > y ? x : y)
 # define getMin(x, y) (x < y ? x : y)
@@ -41,7 +54,7 @@ float step_size;
 vector<Vector> createTransVecs()
 {
     vector<Vector> transVecs;
-    float interval_scale = 1.0;
+    float interval_scale = 0.9;
     // generate the square in clockwise order
     // up: 10 pyroclasts(0-9)
     for (int i = 0; i < 10; ++i)
@@ -91,10 +104,10 @@ vector<Noise_t*> createNoiseParmsVecs(int frame_id)
         Noise_t *parms = new Noise_t;
         parms->translate = getNoiseTrans(frame_id, i);
         parms->octaves = 4.5;
-        parms->gamma = 0.43333;
+        parms->gamma = 0.333;
+        parms->frequency = 0.4735;
         parms->fjump = fjumpVecs.at(i);
         parms->pscale = pscaleVecs.at(i);
-        parms->frequency = freqVecs.at(i);
 
         noiseParmsVecs.push_back(parms);
     }
@@ -103,38 +116,33 @@ vector<Noise_t*> createNoiseParmsVecs(int frame_id)
 }
 
 
-void createWave(int frame_id, vector<Noise_t*> noiseParmsVecs)
+float waveFunc(float x)
 {
-//    int T = 5;  // half wave length
-//    float amp_scale = 6.0;
-//    for (int i = frame_id - T / 2; i <= frame_id + T / 2; ++i)
-//    {
-//        int pyroId;
-//        pyroId = (i + 36) % 36;
-//        float amp = amp_scale * cos(float(i) * M_PI / float(T));
-//        noiseParmsVecs.at(pyroId)->amplitude = amp;
-//    }
-    int T = 9;
-    float amp_scale = 6.0;
-    float trans_scale = WSPEED;
-    for (int i = 0; i < 36; ++i)
+    float value = 0;
+    float n = x / (2 * M_PI);
+    if (n <= 0)
     {
-        float x = i - frame_id * trans_scale;
-        float xx = 2 * M_PI / float(T) * x;
-        if (xx <= M_PI)
-        {
-            float amp = amp_scale * sin(xx);
-            amp = (amp > 0) ? amp : 1;
-            noiseParmsVecs.at(i)->amplitude = amp;
-//            cout << "wave id: " << i << endl;
-        }
+        float amp_scale = WAVE_AMP;
+        value = (-cos(x) + 1) / 2.0 * amp_scale;
     }
 
-//    int j = 0;
-//    for (Noise_t* n: noiseParmsVecs)
-//    {
-//        cout << "noise id: " << j << " amp: " << n->amplitude << endl;
-//    }
+    value += 1;
+
+    return value;
+}
+
+
+void createWave(int frame_id, vector<Noise_t*> noiseParmsVecs)
+{
+    for (int i = 0; i < 36; ++i)
+    {
+        float wave_length = T;
+        float speed = WSPEED;
+        float xx = (2.0 * M_PI / float(wave_length)) * (i - speed * frame_id);
+
+        float amp = waveFunc(xx);
+        noiseParmsVecs.at(i)->amplitude = amp;
+    }
 }
 
 
@@ -151,7 +159,7 @@ void createPyroWedges(int frame_id, string output_path)
     vector<Noise_t*> noiseParmsVecs = createNoiseParmsVecs(frame_id);
     createWave(frame_id, noiseParmsVecs);
 
-    /// ----------------------------------- Pyroclasts Setup ---------------------------------------------
+    /// ----------------------------------- Pyroclasts Setup -------------------------------------------
 
     int i = 0;
 
@@ -179,7 +187,6 @@ void createPyroWedges(int frame_id, string output_path)
         else {pyroBBox.expand(pyrosphereBBoxOrigin);}
         pyroVolumePtrs.push_back(pyrosphereTrans);
         // set color for each pyro
-        // Color emColor(0.4, 0.0, 0.0, 0.0);
         VolumeColorPtr pyrosphereEm = new ConstantColor(colorVecs.at(i));
         VolumeColorPtr pyrosphereEmVolume = new ColorVolume(*pyrosphereEm, *pyrosphereTrans);
         pyroEmVolumePtrs.push_back(pyrosphereEmVolume);
@@ -202,7 +209,9 @@ void createPyroWedges(int frame_id, string output_path)
     FloatGrid::Ptr pyrosGrid = pyrosVolume2Grid.getVolumeGrid();
     BBox pyroNewBBox = pyrosVolume2Grid.getBBox();
     cout << "Stamping pyro emcolor..." << endl;
-    ColorVolumeToGrid pyroEm2Grid(pyroEmColorAdd, voxelSize, pyroNewBBox);
+    float colorVoxelSize = float(pyroNewBBox.max().y() - pyroNewBBox.min().y()) / COLOR_GRID_NUM;
+    cout << "	 | Grid color voxel size: " << colorVoxelSize << endl;
+    ColorVolumeToGrid pyroEm2Grid(pyroEmColorAdd, colorVoxelSize, pyroNewBBox);
     Vec4fGrid::Ptr pyroEmGrid = pyroEm2Grid.getVolumeGrid();
     // release memory
     for (VolumeFloatPtr v: pyroVolumePtrs)  { delete v; }
@@ -213,28 +222,28 @@ void createPyroWedges(int frame_id, string output_path)
     // set matcolor, opacity and density
     Color matColor(1.0, 1.0, 1.0, 1.0);
     ConstantColor pyroMatColor(matColor);
-    ConstantFloat rho(7.0);
+    ConstantFloat rho(RHO);
     DensityVolume pyroDensity(rho, pyrosVolume);
-    float K = 3;
+    float K = KAPPA;
     BBox finalBBox = pyroNewBBox;
     cout << "	 | Pyro bounding box: " << finalBBox.min() << " " << finalBBox.max() << endl;
 
-    /// ---------------------------------- Lighting & Rendering -----------------------------------------
+    /// ---------------------------------- Lighting & Rendering ------------------------------------
 
     // lighting
     cout << "Set lights..." << endl;
     Lights myLights;
     // light position
-    Vector keyPos(0.0, 4.0, 0.0);
-    Vector backPos(0.0, -10.0, -10.0);
+    Vector keyPos(-5.0, 6.0, -5.0);
+    Vector rimPos(10.0, -10.0, 10.0);
     // light color
-    Color keyColor(0.8, 0.8, 0.8, 1.0);
-    Color backColor(0.06, 0.06, 0.06, 1.0);
+    Color keyColor(0.2, 0.2, 0.2, 1.0);
+    Color rimColor(0.04, 0.04, 0.04, 1.0);
     // set lights
     LightSource keyLight(keyPos, keyColor);
-    LightSource backLight(backPos, backColor);
+    LightSource rimLight(rimPos, rimColor);
     myLights.push_back(keyLight);
-    myLights.push_back(backLight);
+    myLights.push_back(rimLight);
     // get light step size
     float bboxSize_x = (finalBBox.max().x() - finalBBox.min().x());
     float bboxSize_y = (finalBBox.max().y() - finalBBox.min().y());

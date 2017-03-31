@@ -7,9 +7,9 @@ import datetime
 
 # directory
 QUEUE = "velveeta"
-SCRIPT_ROOT_DIR = "/DPA/wookie/zjingcong/script/"
-EXE_DIR = "/DPA/wookie/zjingcong/pyro/cmake-build-default/pyro"
-OUTPUT_ROOT_DIR = "/DPA/wookie/zjingcong/output"
+SCRIPT_ROOT_DIR = "/DPA/jedi/zjingcong/script/"
+EXE_DIR = "/DPA/jedi/zjingcong/pyro/cmake-build-default/pyro"
+OUTPUT_ROOT_DIR = "/DPA/jedi/zjingcong/output"
 FOLDER_HEAD = 'pyroChain'
 
 
@@ -54,7 +54,7 @@ def submitTask():
             if script_path.endswith('.sh'):
                 frameid = int(script_path.split('/')[-1].split('-')[1].split('.')[0])
                 print "Submit task for frame {:04d} from script {}...".format(frameid, script_path)
-                # os.system("cqsubmittask {queue} {script}".format(queue=QUEUE, script=script_path))
+                os.system("cqsubmittask {queue} {script}".format(queue=QUEUE, script=script_path))
                 num += 1
 
     print "Submission complete."

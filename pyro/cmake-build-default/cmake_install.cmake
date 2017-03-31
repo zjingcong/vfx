@@ -1,4 +1,4 @@
-# Install script for directory: /home/jingcoz/workspace/clion_projects/pyro
+# Install script for directory: /DPA/jedi/zjingcong/pyro
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/jingcoz/workspace/clion_projects/pyro/cmake-build-default/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/DPA/jedi/zjingcong/pyro/cmake-build-default/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

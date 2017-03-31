@@ -20,7 +20,7 @@ const float Pyrosphere::eval(const Vector &x) const
     Sphere sphere(radius);
     float gamma = myPyroParam.gamma;
     Vector xyz = x.unitvector() * radius;
-    float noiseValue = pow(fabs(noise.eval(xyz)), gamma);
+    float noiseValue = float(pow(fabs(noise.getAmp() * noise.eval(xyz)), gamma));
     value = sphere.eval(x) + noiseValue;
 
     return value;
