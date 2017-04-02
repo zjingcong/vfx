@@ -57,10 +57,10 @@ RM = /home/jingcoz/clion-2016.3.3/bin/cmake/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /DPA/jedi/zjingcong/pyro
+CMAKE_SOURCE_DIR = /home/jingcoz/workspace/clion_projects/pyro
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /DPA/jedi/zjingcong/pyro/cmake-build-default
+CMAKE_BINARY_DIR = /home/jingcoz/workspace/clion_projects/pyro/cmake-build-default
 
 #=============================================================================
 # Target rules for target CMakeFiles/pyro.dir
@@ -69,7 +69,7 @@ CMAKE_BINARY_DIR = /DPA/jedi/zjingcong/pyro/cmake-build-default
 CMakeFiles/pyro.dir/all:
 	$(MAKE) -f CMakeFiles/pyro.dir/build.make CMakeFiles/pyro.dir/depend
 	$(MAKE) -f CMakeFiles/pyro.dir/build.make CMakeFiles/pyro.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/DPA/jedi/zjingcong/pyro/cmake-build-default/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12 "Built target pyro"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/jingcoz/workspace/clion_projects/pyro/cmake-build-default/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12 "Built target pyro"
 .PHONY : CMakeFiles/pyro.dir/all
 
 # Include target in all.
@@ -79,9 +79,9 @@ all: CMakeFiles/pyro.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/pyro.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /DPA/jedi/zjingcong/pyro/cmake-build-default/CMakeFiles 12
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jingcoz/workspace/clion_projects/pyro/cmake-build-default/CMakeFiles 12
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/pyro.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /DPA/jedi/zjingcong/pyro/cmake-build-default/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jingcoz/workspace/clion_projects/pyro/cmake-build-default/CMakeFiles 0
 .PHONY : CMakeFiles/pyro.dir/rule
 
 # Convenience name for target.

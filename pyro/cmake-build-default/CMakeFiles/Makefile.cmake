@@ -7,12 +7,6 @@ set(CMAKE_DEPENDS_GENERATOR "Unix Makefiles")
 # The top level Makefile was generated from the following files:
 set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
-  "../CMakeLists.txt"
-  "CMakeFiles/3.6.3/CMakeCCompiler.cmake"
-  "CMakeFiles/3.6.3/CMakeCXXCompiler.cmake"
-  "CMakeFiles/3.6.3/CMakeSystem.cmake"
-  "CMakeFiles/feature_tests.c"
-  "CMakeFiles/feature_tests.cxx"
   "/home/jingcoz/clion-2016.3.3/bin/cmake/share/cmake-3.6/Modules/CMakeCCompiler.cmake.in"
   "/home/jingcoz/clion-2016.3.3/bin/cmake/share/cmake-3.6/Modules/CMakeCCompilerABI.c"
   "/home/jingcoz/clion-2016.3.3/bin/cmake/share/cmake-3.6/Modules/CMakeCInformation.cmake"
@@ -94,6 +88,12 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/home/jingcoz/clion-2016.3.3/bin/cmake/share/cmake-3.6/Modules/Platform/Linux.cmake"
   "/home/jingcoz/clion-2016.3.3/bin/cmake/share/cmake-3.6/Modules/Platform/UnixPaths.cmake"
   "/home/jingcoz/clion-2016.3.3/bin/cmake/share/cmake-3.6/Modules/ProcessorCount.cmake"
+  "../CMakeLists.txt"
+  "CMakeFiles/3.6.3/CMakeCCompiler.cmake"
+  "CMakeFiles/3.6.3/CMakeCXXCompiler.cmake"
+  "CMakeFiles/3.6.3/CMakeSystem.cmake"
+  "CMakeFiles/feature_tests.c"
+  "CMakeFiles/feature_tests.cxx"
   )
 
 # The corresponding makefile is:

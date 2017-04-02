@@ -161,8 +161,6 @@ void createPyroWedges(int frame_id, string output_path)
 
     /// ----------------------------------- Pyroclasts Setup -------------------------------------------
 
-    int i = 0;
-
     ConstantFloat init(0.0);
     BBox pyroBBox;
     vector<VolumeFloatPtr> pyroVolumePtrs;
@@ -182,10 +180,10 @@ void createPyroWedges(int frame_id, string output_path)
         // translate
         VolumeFloatPtr pyrosphereTrans = new ScalarTranslate(*pyrosphereOrigin, transVec);
         pyrosphereBBoxOrigin.translate(transVec3s);
+        pyroVolumePtrs.push_back(pyrosphereTrans);
         // union bbox
         if (i == 0)  {pyroBBox = pyrosphereBBoxOrigin;}
         else {pyroBBox.expand(pyrosphereBBoxOrigin);}
-        pyroVolumePtrs.push_back(pyrosphereTrans);
         // set color for each pyro
         VolumeColorPtr pyrosphereEm = new ConstantColor(colorVecs.at(i));
         VolumeColorPtr pyrosphereEmVolume = new ColorVolume(*pyrosphereEm, *pyrosphereTrans);

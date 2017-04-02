@@ -6,5 +6,5 @@ CXX_FLAGS =  --std=c++11 -Ofast -fopenmp   -std=gnu++11
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/DPA/jedi/zjingcong/pyro/include -I/group/dpa/local/openvdb/include 
+CXX_INCLUDES = -I/home/jingcoz/workspace/clion_projects/pyro/include -I/group/dpa/local/openvdb/include 
 
