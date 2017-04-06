@@ -6,12 +6,14 @@ CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Color.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/DoAdvection.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Grid.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Image.h
+CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Levelsets.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Lighting.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Matrix.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Noise.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/OIIOFiles.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Operations.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/PerlinNoise.h
+CMakeFiles/cumulo.dir/cumulo.C.o: ../include/PolyModel.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/PropertyVolume.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Pyroclastic.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Renderer.h
@@ -118,10 +120,14 @@ CMakeFiles/cumulo.dir/src/Grid.C.o: ../src/Grid.C
 CMakeFiles/cumulo.dir/src/Image.C.o: ../include/Image.h
 CMakeFiles/cumulo.dir/src/Image.C.o: ../src/Image.C
 
+CMakeFiles/cumulo.dir/src/Levelsets.C.o: ../include/Color.h
+CMakeFiles/cumulo.dir/src/Levelsets.C.o: ../include/Grid.h
 CMakeFiles/cumulo.dir/src/Levelsets.C.o: ../include/Levelsets.h
+CMakeFiles/cumulo.dir/src/Levelsets.C.o: ../include/Matrix.h
 CMakeFiles/cumulo.dir/src/Levelsets.C.o: ../include/PolyModel.h
 CMakeFiles/cumulo.dir/src/Levelsets.C.o: ../include/Types.h
 CMakeFiles/cumulo.dir/src/Levelsets.C.o: ../include/Vector.h
+CMakeFiles/cumulo.dir/src/Levelsets.C.o: ../include/Volume.h
 CMakeFiles/cumulo.dir/src/Levelsets.C.o: /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 CMakeFiles/cumulo.dir/src/Levelsets.C.o: /group/dpa/local/openvdb/include/openvdb/Grid.h
 CMakeFiles/cumulo.dir/src/Levelsets.C.o: /group/dpa/local/openvdb/include/openvdb/Platform.h

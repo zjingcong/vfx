@@ -21,6 +21,8 @@ omp.h
 ../include/omp.h
 cmath
 -
+Types.h
+../include/Types.h
 Noise.h
 ../include/Noise.h
 PerlinNoise.h
@@ -43,6 +45,10 @@ Operations.h
 ../include/Operations.h
 Vector.h
 ../include/Vector.h
+PolyModel.h
+../include/PolyModel.h
+Levelsets.h
+../include/Levelsets.h
 
 ../include/Grid.h
 Volume.h
@@ -61,6 +67,8 @@ vector
 ../include/Levelsets.h
 set
 -
+Grid.h
+../include/Grid.h
 PolyModel.h
 ../include/PolyModel.h
 Types.h
@@ -1021,14 +1029,10 @@ vector
 -
 iostream
 -
-math.h
-/home/jingcoz/workspace/clion_projects/advect/src/math.h
 openvdb/tools/MeshToVolume.h
 -
 Levelsets.h
 /home/jingcoz/workspace/clion_projects/advect/src/Levelsets.h
-Vector.h
-/home/jingcoz/workspace/clion_projects/advect/src/Vector.h
 
 /home/jingcoz/workspace/clion_projects/advect/src/Lighting.C
 ctime

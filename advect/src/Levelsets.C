@@ -1,11 +1,8 @@
 # include <vector>
 # include <iostream>
-# include "math.h"
-
 # include <openvdb/tools/MeshToVolume.h>
 
 # include "Levelsets.h"
-# include "Vector.h"
 
 # define myMax(x, y) (x > y ? x : y)
 # define myMin(x, y) (x < y ? x : y)
@@ -13,22 +10,18 @@
 using namespace lux;
 
 
-PolyLevelsets::PolyLevelsets(bool isvdb, PolyModel poly, int w, float s, float back)
+PolyLevelsets::PolyLevelsets(bool isvdb, PolyModel poly, float s, int w):
+        isVDB(isvdb), polyModel(poly), voxelSize(s), halfWidth(w)
 {
-	isVDB = isvdb;
-	polyModel = poly;
-	halfWidth = w;
-	voxelSize = s;
-	gridBack = back;
-
 	if (!isVDB)
 	{
+        backgroundValue = -1000;
 		// create a new grid of FloatGrid classified as a "Level Set"
 		myGrid = openvdb::createLevelSet<FloatGrid>(voxelSize, halfWidth);
 		// get levelsets grid's transform
 		xform = myGrid -> transformPtr();
 		// set grid background
-		myGrid -> setBackground(gridBack);
+		myGrid -> setBackground(backgroundValue);
 	}
 }
 
@@ -107,7 +100,7 @@ void PolyLevelsets::createFaceLevelsets(Face face)
 				// if the previous grid point value is not assigned, then save the distance
 				// else if the distance is smaller than previous grid point value, 
 				// then refresh the grid point value
-				if (accessor.getValue(gridPointCoord) == gridBack)
+				if (accessor.getValue(gridPointCoord) == backgroundValue)
 				{
 					accessor.setValue(gridPointCoord, signDis);
 					accessor.setValueOn(gridPointCoord);
@@ -184,7 +177,7 @@ void PolyLevelsets::createLevelsets_all()
 						{
 							Coord neighborCoord(in, jn, kn);
 							// if the neighbor is unassigned, add the neighbor to new positive set
-							if (accessor.getValue(neighborCoord) == gridBack)
+							if (accessor.getValue(neighborCoord) == backgroundValue)
 							{
 								unassigned_num++;
 								newpositiveCoordSet.insert(neighborCoord);
@@ -198,7 +191,7 @@ void PolyLevelsets::createLevelsets_all()
 		// set all new positive points value
 		for (std::set<Coord>::iterator it = newpositiveCoordSet.begin();
 		     it != newpositiveCoordSet.end(); ++it)
-			{accessor.setValue(*it, -gridBack);}
+			{accessor.setValue(*it, -backgroundValue);}
 
 		newpositiveCoordSet.clear();
 		// set the flag to stop while loop
@@ -290,7 +283,7 @@ void PolyLevelsets::createLevelsets()
 					{
 						Coord neighborCoord(in, jn, kn);
 						// if the neighbor is unassigned, add the neighbor to new positive set
-						if (accessor.getValue(neighborCoord) == gridBack)
+						if (accessor.getValue(neighborCoord) == backgroundValue)
 						{
 							unassigned_num++;
 							newpositiveCoordSet.insert(neighborCoord);
@@ -305,7 +298,7 @@ void PolyLevelsets::createLevelsets()
 		     it != newpositiveCoordSet.end(); ++it)
 		{
 			// set positive value
-			accessor.setValue(*it, -gridBack);
+			accessor.setValue(*it, -backgroundValue);
 			new_positive_num++;
 		}
 
@@ -326,8 +319,8 @@ FloatGrid::Ptr PolyLevelsets::VDBcreateLevelsets()
 {
 	std::vector<Vec3s> points = polyModel.polyPoints;
 	std::vector<Vec3I> triangles = polyModel.triIndices;
-	Transform::Ptr xform = Transform::createLinearTransform(voxelSize);
-	FloatGrid::Ptr mesh2levelsets = openvdb::tools::meshToLevelSet<FloatGrid>(*xform, points, triangles, halfWidth);
+	Transform::Ptr lXform = Transform::createLinearTransform(voxelSize);
+	FloatGrid::Ptr mesh2levelsets = openvdb::tools::meshToLevelSet<FloatGrid>(*lXform, points, triangles, halfWidth);
 
 	return mesh2levelsets;
 }
@@ -337,11 +330,43 @@ FloatGrid::Ptr PolyLevelsets::VDBcreateLevelsets()
 FloatGrid::Ptr PolyLevelsets::getLevelsets()
 {
 	if (isVDB)
-		{return VDBcreateLevelsets();}
+	{
+		FloatGrid::Ptr mesh2levelsets = VDBcreateLevelsets();
+        Transform::Ptr transform = mesh2levelsets->transformPtr();
+		// get background value
+        backgroundValue = mesh2levelsets->background();
+        // get bounding box
+        int min_i = 100000000;	int max_i = -100000000;
+        int min_j = 100000000;	int max_j = -100000000;
+        int min_k = 100000000;	int max_k = -100000000;
+        for (FloatGrid::ValueOnIter iter = mesh2levelsets->beginValueOn(); iter; ++iter)
+        {
+            Coord ijk = iter.getCoord();
+            int i = ijk.x();
+            int j = ijk.y();
+            int k = ijk.z();
+            if (i < min_i)	{min_i = i;}	if (i > max_i)	{max_i = i;}
+            if (j < min_j)	{min_j = j;}	if (j > max_j)	{max_j = j;}
+            if (k < min_k)	{min_k = k;}	if (k > max_k)	{max_k = k;}
+        }
+        Coord min(min_i, min_j, min_k);
+        Coord max(max_i, max_j, max_k);
+        Vec3s min_pos = transform -> indexToWorld(min);
+        Vec3s max_pos = transform -> indexToWorld(max);
+        levelsetsBBox = BBox(min_pos, max_pos);
+        // get levelsets with value ranging from 0 to positive background value
+        cout << "Convert VDB levelsets..." << endl;
+        VDBLevelsetsVolume levelsetsVolume(mesh2levelsets, backgroundValue);
+		FloatVolumeToGrid levelsetsVolume2Grid(levelsetsVolume, voxelSize, levelsetsBBox);
+		FloatGrid::Ptr levelsetsGrid = levelsetsVolume2Grid.getVolumeGrid();
+
+        return levelsetsGrid;
+	}
 	else
 	{
 		createLevelsets();
 		// createLevelsets_all();
+
 		return myGrid;
 	}
 }

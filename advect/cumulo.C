@@ -23,5 +23,8 @@ int main(int argc, char* argv[])
     }
     else {printHelp();  exit(0);}
 
+    int frame_id = 0;
+    createBunnyCumulo(frame_id, output_path);
+
     return 0;
 }

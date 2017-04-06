@@ -16,13 +16,14 @@ namespace lux
 	class VDBLevelsetsVolume: public Volume<float>
 	{
 		public:
-			VDBLevelsetsVolume(FloatGrid::Ptr grid): myFloatGrid(grid)	{}
+			VDBLevelsetsVolume(FloatGrid::Ptr grid, float bv): myFloatGrid(grid), background(bv)	{}
 			~VDBLevelsetsVolume()	{}
 
 			const float eval(const Vector& x) const;
 
 		private:
 			FloatGrid::Ptr myFloatGrid;
+			float background;
 	};
 
 

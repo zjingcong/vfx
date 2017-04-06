@@ -7,12 +7,14 @@ CMakeFiles/cumulo.dir/cumulo.C.o
  ../include/DoAdvection.h
  ../include/Grid.h
  ../include/Image.h
+ ../include/Levelsets.h
  ../include/Lighting.h
  ../include/Matrix.h
  ../include/Noise.h
  ../include/OIIOFiles.h
  ../include/Operations.h
  ../include/PerlinNoise.h
+ ../include/PolyModel.h
  ../include/PropertyVolume.h
  ../include/Pyroclastic.h
  ../include/Renderer.h
@@ -119,10 +121,14 @@ CMakeFiles/cumulo.dir/src/Image.C.o
  ../include/Image.h
  /home/jingcoz/workspace/clion_projects/advect/src/Image.C
 CMakeFiles/cumulo.dir/src/Levelsets.C.o
+ ../include/Color.h
+ ../include/Grid.h
  ../include/Levelsets.h
+ ../include/Matrix.h
  ../include/PolyModel.h
  ../include/Types.h
  ../include/Vector.h
+ ../include/Volume.h
  /group/dpa/local/openvdb/include/openvdb/Exceptions.h
  /group/dpa/local/openvdb/include/openvdb/Grid.h
  /group/dpa/local/openvdb/include/openvdb/Platform.h

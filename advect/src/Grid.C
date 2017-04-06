@@ -16,7 +16,7 @@ const float VDBLevelsetsVolume::eval(const Vector& x) const
 	openvdb::tools::GridSampler<FloatGrid, openvdb::tools::BoxSampler> sampler(*myFloatGrid);
 	float gridValue;
 	// openvdb use negative values as levelsets inside and positive values as levelsets outside
-	gridValue = -sampler.wsSample(xyz);	// world space sample
+	gridValue = -sampler.wsSample(xyz) + background;	// world space sample
 
 	return gridValue;
 }
