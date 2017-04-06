@@ -1,0 +1,4 @@
+/home/jingcoz/workspace/clion_projects/advect/cmake-build-default/CMakeFiles/edit_cache.dir
+/home/jingcoz/workspace/clion_projects/advect/cmake-build-default/CMakeFiles/rebuild_cache.dir
+/home/jingcoz/workspace/clion_projects/advect/cmake-build-default/CMakeFiles/cumulo.dir
+/home/jingcoz/workspace/clion_projects/advect/cmake-build-default/CMakeFiles/ears.dir
