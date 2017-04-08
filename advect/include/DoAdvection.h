@@ -21,16 +21,19 @@
 # include "Vector.h"
 # include "PolyModel.h"
 # include "Levelsets.h"
+# include "VDBTool.h"
 
 using namespace std;
 using namespace lux;
 
+// levelsets
+# define VOXEL_SIZE 0.003
+# define HALF_NW 80
+
 # define WEIGHT 960
 # define HEIGHT 540
 # define LIGHT_GRID_NUM 50
-# define VOXEL_SIZE 0.003
 # define GRID_VOXEL_SIZE 0.008
-# define HALF_NW 80
 
 # define CRAZY_NUM 2.0316578
 # define NEAR 0.1
@@ -42,37 +45,26 @@ using namespace lux;
 # define getMin(x, y) (x < y ? x : y)
 
 string levelsetsPath = "../tmp/bunny_levelsets.vdb";
-string gridName = "bunny_levelsets";
+string levelsetsGridName = "bunny_levelsets";
+string pyroPath = "../tmp/bunny_pyro.vdb";
+string pyroGridName = "bunny_pyro";
 
 float step_size;
 
 
-void loadBunny(VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
-               VolumeColorPtr& finalMatColorPtr, BBox& finalBBox, float& K)
+FloatGrid::Ptr loadBunnyPyro(int frame_id, BBox& bbox)
 {
     /// ----------------------------------- Load Levelsets --------------------------------------------
 
-    cout << "Load bunny levelsets .vdb file..." << endl;
-    double start_time = omp_get_wtime();
-    openvdb::initialize();
-    openvdb::io::File fileR(levelsetsPath);
-    fileR.open();
-    openvdb::GridBase::Ptr base;
-    for (openvdb::io::File::NameIterator iter = fileR.beginName(); iter != fileR.endName(); ++iter)
-    {
-        if (iter.gridName() == gridName)    {base = fileR.readGrid(iter.gridName());}
-    }
-    fileR.close();
-    openvdb::uninitialize();
-    double exe_time = omp_get_wtime() - start_time;
-    cout << "	 | Elapsed Time: " << exe_time << "s" << endl;
-
-    cout << "Generate bunny levelsets..." << endl;
-    FloatGrid::Ptr bunnyGrid = openvdb::gridPtrCast<FloatGrid>(base);
+    // load bunny levelsets from .vdb file
+    FloatGrid::Ptr bunnyGrid = readVDBGrid(levelsetsPath, levelsetsGridName);
     BBox bunnyLevelsetsBBox = getGridBBox(bunnyGrid);
     cout << "\t | Bunny Levelsets BBox: " << bunnyLevelsetsBBox.min() << " " << bunnyLevelsetsBBox.max() << endl;
 
     /// ----------------------------------- Create Pyroclasts --------------------------------------------
+
+    float maxNoiseAmp = bunnyGrid->background();    // background = halfwidth * voxelSize
+    float noiseAmp = maxNoiseAmp * frame_id / float(59);
 
     cout << "Create perlin noise..." << endl;
     Noise_t parms;
@@ -80,7 +72,7 @@ void loadBunny(VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
     parms.frequency = 9.57434;
     parms.fjump = 2.6;
     parms.octaves = 0.5;
-    parms.amplitude = 0.3;
+    parms.amplitude = noiseAmp;
     static FractalSum<PerlinNoiseGustavson> perlin;
     perlin.setParameters(parms);
 
@@ -91,22 +83,30 @@ void loadBunny(VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
     static FloatGrid::Ptr bunnyPyroGrid = bunnyPyroV2Grid.getVolumeGrid();
     BBox bunnyPyroBBox = bunnyPyroV2Grid.getBBox();
     cout << "\t | bunnyPyroV2Grid bbox: " << bunnyPyroBBox.min() << bunnyPyroBBox.max() << endl;
-    static FloatGridVolume bunnyPyro(bunnyPyroGrid);
 
+    bbox = bunnyPyroBBox;
+
+    return bunnyPyroGrid;
+}
+
+
+void assignVolumeProperty(FloatGrid::Ptr grid,
+                          VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
+                          VolumeColorPtr& finalMatColorPtr, float& K)
+{
+    VolumeFloatPtr volume = new FloatGridVolume(grid);
     // create bunny color volume and density volume
     static Color matColor(1.0, 1.0, 1.0, 1.0);
     static Color emColor(0.0, 0.0, 0.0, 0.0);
     static ConstantColor bunnyMatColor(matColor);
     static ConstantColor bunnyEmColor(emColor);
     static ConstantFloat rho(100.0);
-    static DensityVolume bunnyDensity(rho, bunnyPyro);
-
+    static DensityVolume bunnyDensity(rho, *volume);
     // set K
     K = 0.8;
     finalDensityPtr = &bunnyDensity;
     finalEmColorPtr = &bunnyEmColor;
     finalMatColorPtr = &bunnyMatColor;
-    finalBBox = bunnyLevelsetsBBox;
 }
 
 
@@ -118,6 +118,7 @@ void createBunnyCumulo(int frame_id, string output_path)
     char file_name[1024];
     sprintf(file_name, "%s/jingcoz_hw5_cumulo.%04d.exr", output_path.c_str(), frame_id);
     cout << "Output path: " << file_name << endl;
+    cout << "--------------------------------------------" << endl;
 
     /// ----------------------------------- Cumulo Setup ----------------------------------------------
 
@@ -126,13 +127,17 @@ void createBunnyCumulo(int frame_id, string output_path)
     VolumeColorPtr finalMatColorPtr;
     BBox finalBBox;
     float K;
-    loadBunny(finalDensityPtr, finalEmColorPtr, finalMatColorPtr, finalBBox, K);
+
+    // first 60 frames: do pyroclasts
+    // remaining 60 frames: do advection
+    FloatGrid::Ptr bunnyCumuloGrid = loadBunnyPyro(frame_id, finalBBox);
+    // assign color, opacity, density to volume
+    assignVolumeProperty(bunnyCumuloGrid, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, K);
 
     /// ---------------------------------- Lighting & Rendering ---------------------------------------
 
     step_size = GRID_VOXEL_SIZE / CRAZY_NUM;
 
-    cout << "--------------------------------------------" << endl;
     // lighting
     cout << "Set lights..." << endl;
     Lights myLights;
