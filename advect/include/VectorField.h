@@ -1,6 +1,10 @@
 # ifndef __VECTORFIELD_H__
 # define __VECTORFIELD_H__
 
+# include <openvdb/math/FiniteDifference.h>
+# include <openvdb/math/Operators.h>
+# include <openvdb/tools/Interpolation.h>
+
 # include "Types.h"
 # include "Volume.h"
 # include "Vector.h"
@@ -11,6 +15,7 @@
 
 using namespace lux;
 
+static int gradErrorNum = 0;
 
 // identity
 class Identity: public Volume<Vector>
@@ -19,29 +24,6 @@ class Identity: public Volume<Vector>
         Identity()  {}
         ~Identity() {}
         inline const Vector eval(const Vector& x) const {return x;}
-};
-
-
-// closest point transform
-class LevelsetsCPT: public Volume<Vector>
-{
-    public:
-        LevelsetsCPT(FloatGridVolume& e): sdf(e) {}
-        ~LevelsetsCPT()  {}
-
-        const Vector eval(const Vector& x) const
-        {
-            float value = sdf.eval(x);
-            Vector grad = sdf.grad(x);
-
-//            if (grad.magnitude() < 0.7)
-//            {std::cout << "grad: " << grad.magnitude() << " value: " << value << " x: " << x.X() << " " << x.Y() << " " << x.Z() << std::endl;}
-
-            return x - value * grad;
-        }
-
-    private:
-        FloatGridVolume& sdf; // signed distance function
 };
 
 # endif

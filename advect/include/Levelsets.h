@@ -10,16 +10,20 @@
 namespace lux
 {
 
+    typedef FloatGrid::Ptr VDBLevelsetsPtr;
+
 	class PolyLevelsets
 	{
 		public:
 			// gridBack should be negative
 			// default gridBack is -1000
-			PolyLevelsets(bool isvdb, PolyModel poly, float s, int w = 3);
+			PolyLevelsets(PolyModel poly, float s, int w = 3): polyModel(poly), voxelSize(s), halfWidth(w) {}
 			~PolyLevelsets()	{}
 			
 			FloatGrid::Ptr getLevelsets();
-            BBox getBBox()  {return levelsetsBBox;}
+            VDBLevelsetsPtr getVDBLevelsets();
+
+			BBox getBBox()  {return levelsetsBBox;}
 
 		private:
 			bool isVDB;
@@ -29,12 +33,7 @@ namespace lux
 
             float backgroundValue;
             BBox levelsetsBBox;
-			FloatGrid::Ptr myGrid;	// levelsets grid
-			Transform::Ptr xform;	// levelsets grid's transform
 
-			void createFaceLevelsets(Face face);
-			void createLevelsets();
-			void createLevelsets_all();
 			FloatGrid::Ptr VDBcreateLevelsets();    // use openvdb meshToLevelSet to generate levelsets
 	};
 

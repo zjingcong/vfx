@@ -1,4 +1,3 @@
-# include <openvdb/tools/Interpolation.h>
 
 # include "Grid.h"
 # include "omp.h"
@@ -24,55 +23,18 @@ const float VDBLevelsetsVolume::eval(const Vector& x) const
 
 // ---------------------------- Class FloatGridVolume -------------------------------------------
 
-FloatGridVolume::FloatGridVolume(FloatGrid::Ptr g): grid(g)
-{
-    Vec3s voxel = grid->voxelSize();
-    float voxeltmp = getMin(voxel.x(), voxel.y());
-    voxelSize = getMin(voxel.z(), voxeltmp);
-}
+FloatGridVolume::FloatGridVolume(FloatGrid::Ptr g): grid(g) {}
 
 
 const float FloatGridVolume::eval(const Vector& x) const
 {
-	Vec3s xyz(x.X(), x.Y(), x.Z());	// world space
+	Vec3s xyz(float(x.X()), float(x.Y()), float(x.Z()));	// world space
 	// construct a float grid box sampler to perform trilinear interpolation
 	openvdb::tools::GridSampler<FloatGrid, openvdb::tools::BoxSampler> sampler(*grid);
 	float gridValue;
 	gridValue = sampler.wsSample(xyz);	// world space sample
 
 	return gridValue;
-}
-
-
-const Vector FloatGridVolume::grad(const Vector& x) const
-{
-//    Transform::Ptr transform = grid->transformPtr();
-//    FloatGrid::Accessor accessor = grid->getAccessor();
-//
-//    Vec3s pos(float(x.X()), float(x.Y()), float(x.Z()));
-//    Coord ijk = transform->worldToIndexNodeCentered(pos);
-//    int i = ijk.x();
-//    int j = ijk.y();
-//    int k = ijk.z();
-//
-//    double grad_x = (accessor.getValue(Coord(i + 1, j, k)) - accessor.getValue(Coord(i - 1, j, k))) / (2.0 * voxelSize);
-//    double grad_y = (accessor.getValue(Coord(i, j + 1, k)) - accessor.getValue(Coord(i, j - 1, k))) / (2.0 * voxelSize);
-//    double grad_z = (accessor.getValue(Coord(i, j, k + 1)) - accessor.getValue(Coord(i, j, k - 1))) / (2.0 * voxelSize);
-//
-//    Vector grad(grad_x, grad_y, grad_z);
-
-    // using vdb to calculate gradient
-    FloatGrid::ConstAccessor acc = grid->getConstAccessor();
-    Transform::Ptr transform = grid->transformPtr();
-    UniformScaleMap::Ptr map = transform->map<UniformScaleMap>();
-    openvdb::math::Gradient<UniformScaleMap, openvdb::math::CD_2ND> gradOp;
-    Vec3s pos(float(x.X()), float(x.Y()), float(x.Z()));
-    Coord ijk(transform->worldToIndexNodeCentered(pos));
-    // get the gradient value
-    Vec3s gradVec3s = gradOp.result((*map), acc, ijk);
-    Vector grad(gradVec3s.x(), gradVec3s.y(), gradVec3s.z());
-
-	return grad;
 }
 
 // ----------------------------------------------------------------------------------------------

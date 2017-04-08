@@ -26,10 +26,10 @@ using namespace lux;
 
 # define WEIGHT 960
 # define HEIGHT 540
-# define GRID_NUM 50
-# define LIGHT_GRID_NUM 80
+# define LIGHT_GRID_NUM 50
 # define VOXEL_SIZE 0.003
-# define HALF_NW 3
+# define GRID_VOXEL_SIZE 0.008
+# define HALF_NW 80
 
 # define CRAZY_NUM 2.0316578
 # define NEAR 0.1
@@ -54,17 +54,11 @@ void loadBunny(VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
 
     // generate bunny levelsets
     cout << "Create levelsets..." << endl;
-    cout << "\t | Half Narrow Band: " << VOXEL_SIZE * 80 << endl;
-    static PolyLevelsets bunnyLevelsets(true, polyBunny, VOXEL_SIZE, 80);
-    static FloatGrid::Ptr bunnyGrid = bunnyLevelsets.getLevelsets();
+    cout << "\t | Half Narrow Band: " << VOXEL_SIZE * HALF_NW << endl;
+    static PolyLevelsets bunnyLevelsets(polyBunny, VOXEL_SIZE, HALF_NW);
+    static VDBLevelsetsPtr bunnyGrid = bunnyLevelsets.getVDBLevelsets();
     BBox bunnyLevelsetsBBox = bunnyLevelsets.getBBox();
     cout << "\t | Bunny Levelsets BBox: " << bunnyLevelsetsBBox.min() << " " << bunnyLevelsetsBBox.max() << endl;
-
-    // generate bunny volume
-    cout << "Generate bunny levelsets volume..." << endl;
-    static FloatGridVolume bunnyVolume(bunnyGrid);
-
-    // ------------------------------- test area -------------------------------------
 
     cout << "Create perlin noise..." << endl;
     Noise_t parms;
@@ -72,22 +66,18 @@ void loadBunny(VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
     parms.frequency = 9.57434;
     parms.fjump = 2.6;
     parms.octaves = 0.5;
-    parms.amplitude = 1;
+    parms.amplitude = 0.3;
     static FractalSum<PerlinNoiseGustavson> perlin;
     perlin.setParameters(parms);
 
-    float background = bunnyGrid->background();
-    cout << "\t | Bunny Levelsets Background: " << background << endl;
-    cout << "Create pyroclastic bunny..." << endl;
-    static PyroLevelsets bunnyPyroVolume(bunnyVolume, perlin, background);
+    static PyroVDBLevelsets bunnyPyroVolume(bunnyGrid, perlin);
+
     cout << "Stamping pyroclastic bunny..." << endl;
-    static FloatVolumeToGrid bunnyPyroV2Grid(bunnyPyroVolume, 0.008, bunnyLevelsetsBBox);
+    static FloatVolumeToGrid bunnyPyroV2Grid(bunnyPyroVolume, GRID_VOXEL_SIZE, bunnyLevelsetsBBox);
     static FloatGrid::Ptr bunnyPyroGrid = bunnyPyroV2Grid.getVolumeGrid();
     BBox bunnyPyroBBox = bunnyPyroV2Grid.getBBox();
     cout << "\t | bunnyPyroV2Grid bbox: " << bunnyPyroBBox.min() << bunnyPyroBBox.max() << endl;
     static FloatGridVolume bunnyPyro(bunnyPyroGrid);
-
-    // -------------------------------------------------------------------------------
 
     // create bunny color volume and density volume
     static Color matColor(1.0, 1.0, 1.0, 1.0);
@@ -102,7 +92,7 @@ void loadBunny(VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
     finalDensityPtr = &bunnyDensity;
     finalEmColorPtr = &bunnyEmColor;
     finalMatColorPtr = &bunnyMatColor;
-    finalBBox = bunnyPyroBBox;
+    finalBBox = bunnyLevelsetsBBox;
 }
 
 
@@ -126,7 +116,7 @@ void createBunnyCumulo(int frame_id, string output_path)
 
     /// ---------------------------------- Lighting & Rendering ---------------------------------------
 
-    step_size = VOXEL_SIZE / CRAZY_NUM;
+    step_size = GRID_VOXEL_SIZE / CRAZY_NUM;
 
     cout << "--------------------------------------------" << endl;
     // lighting

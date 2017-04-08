@@ -28,6 +28,10 @@ typedef openvdb::Grid<FloatTree> FloatGrid;
 // typedef a Vec4 grid (for color and other useful things)
 typedef openvdb::tree::Tree4<openvdb::math::Vec4s, 5, 4, 3>::Type Vec4fTree;
 typedef openvdb::Grid<Vec4fTree> Vec4fGrid;
+
+// typedef a Vec3 grid (for vector field)
+typedef openvdb::tree::Tree4<openvdb::math::Vec3s, 5, 4, 3>::Type Vec3fTree;
+typedef openvdb::Grid<Vec3fTree> Vec3fGrid;
  
 // typedef math objects
 typedef openvdb::math::Vec3s Vec3s;

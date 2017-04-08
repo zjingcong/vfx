@@ -2,7 +2,10 @@
 # define __PYROCLASTIC_H__
 
 # include <cmath>
+# include "math.h"
 # include <vector>
+# include <openvdb/math/FiniteDifference.h>
+# include <openvdb/math/Operators.h>
 
 # include "Types.h"
 # include "Shape.h"
@@ -10,6 +13,7 @@
 # include "Noise.h"
 # include "Grid.h"
 # include "VectorField.h"
+# include "Levelsets.h"
 
 using namespace lux;
 
@@ -32,23 +36,21 @@ class Pyrosphere: public Volume<float>
 };
 
 
-// PyroLevelsets volume
-class PyroLevelsets: public Volume<float>
+// generate pyroclast volume from openVDB levelsets
+class PyroVDBLevelsets: public Volume<float>
 {
     public:
-        PyroLevelsets(FloatGridVolume& e, Noise& n, float bg);
-        ~PyroLevelsets()    {delete cptFieldPtr;}
+        PyroVDBLevelsets(VDBLevelsetsPtr l, Noise& n);
+        ~PyroVDBLevelsets() {delete levelsetsVolumePtr;}
 
         const float eval(const Vector& x) const;
 
     private:
-        FloatGridVolume& levelsetsVolume; // levelsets
+        VDBLevelsetsPtr levelsetsGrid;
         Noise& noise;
-        float background;
 
+        VolumeFloatPtr levelsetsVolumePtr;
         Noise_t noiseParm;
-        VolumeVectorPtr cptFieldPtr;
-        FloatGrid::Ptr levelsetsGrid;
 };
 
 # endif

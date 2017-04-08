@@ -1,8 +1,7 @@
 # ifndef __LUX_GRID_H__
 # define __LUX_GRID_H__
 
-# include <openvdb/math/FiniteDifference.h>
-# include <openvdb/math/Operators.h>
+# include <openvdb/tools/Interpolation.h>
 
 # include "Volume.h"
 # include "Types.h"
@@ -44,15 +43,12 @@ namespace lux
 			~FloatGridVolume()	{}
 
 			const float eval(const Vector& x) const;
-			const Vector grad(const Vector& x) const;
-
             FloatGrid::Ptr getGrid()    {return grid;}
 
 		private:
 			FloatGrid::Ptr grid;
-
-            float voxelSize;
     };
+	typedef FloatGridVolume* FloatGridVolumePtr;
 
 
 	// convert a Vec4f grid to a color volume
