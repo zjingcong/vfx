@@ -1,6 +1,9 @@
 # ifndef __LUX_GRID_H__
 # define __LUX_GRID_H__
 
+# include <openvdb/math/FiniteDifference.h>
+# include <openvdb/math/Operators.h>
+
 # include "Volume.h"
 # include "Types.h"
 # include "Vector.h"
@@ -49,7 +52,7 @@ namespace lux
 			FloatGrid::Ptr grid;
 
             float voxelSize;
-	};
+    };
 
 
 	// convert a Vec4f grid to a color volume

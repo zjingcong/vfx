@@ -58,25 +58,27 @@ const float PyroLevelsets::eval(const Vector &x) const
         int i = ijk.x();
         int j = ijk.y();
         int k = ijk.z();
-        for (int ii = i - 1; ii <= i + 1; ++ii)
+        std::vector<Coord> coordList;
+        coordList.push_back(ijk);
+        coordList.push_back(Coord(i - 1, j, k));
+        coordList.push_back(Coord(i + 1, j, k));
+        coordList.push_back(Coord(i, j + 1, k));
+        coordList.push_back(Coord(i, j - 1, k));
+        coordList.push_back(Coord(i, j, k + 1));
+        coordList.push_back(Coord(i, j, k - 1));
+        for (Coord iijjkk: coordList)
         {
-            for (int jj = j - 1; jj <= j + 1; ++jj)
+            float neiValue = accessor.getValue(iijjkk); // neighbors value
+            if (neiValue <= background || neiValue >= -background)
             {
-                for (int kk = k - 1; kk <= k + 1; ++kk)
-                {
-                    Coord iijjkk(ii, jj, kk);
-                    float neiValue =  accessor.getValue(iijjkk); // neighbors value
-                    if (neiValue <= background || neiValue >= -background)
-                    {
-                        doCPT = false;
-                        goto endLoop;
-                    }
-                }
+                doCPT = false;
+                goto endLoop;
             }
         }
         endLoop: ;
     }
 
+    // get the final value
     if (doCPT)
     {
         float gamma = noiseParm.gamma;

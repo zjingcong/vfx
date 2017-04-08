@@ -349,15 +349,12 @@ FloatGrid::Ptr PolyLevelsets::getLevelsets()
             if (i < min_i)	{min_i = i;}	if (i > max_i)	{max_i = i;}
             if (j < min_j)	{min_j = j;}	if (j > max_j)	{max_j = j;}
             if (k < min_k)	{min_k = k;}	if (k > max_k)	{max_k = k;}
-
-            // if (*iter > 0)  cout << transform->indexToWorld(ijk) << endl;
         }
         Coord min(min_i, min_j, min_k);
         Coord max(max_i, max_j, max_k);
         Vec3s min_pos = transform -> indexToWorld(min);
         Vec3s max_pos = transform -> indexToWorld(max);
         levelsetsBBox = BBox(min_pos, max_pos);
-        // get levelsets with value ranging from 0 to positive background value
         cout << "Convert VDB levelsets..." << endl;
         VDBLevelsetsVolume levelsetsVolume(mesh2levelsets);
 		FloatVolumeToGrid levelsetsVolume2Grid(levelsetsVolume, voxelSize, levelsetsBBox);

@@ -2,6 +2,7 @@
 # define __PYROCLASTIC_H__
 
 # include <cmath>
+# include <vector>
 
 # include "Types.h"
 # include "Shape.h"

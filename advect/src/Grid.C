@@ -10,13 +10,12 @@ using namespace lux;
 
 const float VDBLevelsetsVolume::eval(const Vector& x) const
 {
-	// FloatGrid::Accessor accessor = myFloatGrid.getAccessor();
-	Vec3s xyz(x.X(), x.Y(), x.Z());	// world space
-	// construct a float grid box sampler to perform trilinear interpolation
-	openvdb::tools::GridSampler<FloatGrid, openvdb::tools::BoxSampler> sampler(*myFloatGrid);
-	float gridValue;
-	// openvdb use negative values as levelsets inside and positive values as levelsets outside
-	gridValue = -sampler.wsSample(xyz);	// world space sample
+    Vec3s xyz(float(x.X()), float(x.Y()), float(x.Z()));	// world space
+    // construct a float grid box sampler to perform trilinear interpolation
+    openvdb::tools::GridSampler<FloatGrid, openvdb::tools::BoxSampler> sampler(*myFloatGrid);
+    float gridValue;
+    // openvdb use negative values as levelsets inside and positive values as levelsets outside
+    gridValue = -sampler.wsSample(xyz);	// world space sample
 
 	return gridValue;
 }
@@ -47,20 +46,31 @@ const float FloatGridVolume::eval(const Vector& x) const
 
 const Vector FloatGridVolume::grad(const Vector& x) const
 {
+//    Transform::Ptr transform = grid->transformPtr();
+//    FloatGrid::Accessor accessor = grid->getAccessor();
+//
+//    Vec3s pos(float(x.X()), float(x.Y()), float(x.Z()));
+//    Coord ijk = transform->worldToIndexNodeCentered(pos);
+//    int i = ijk.x();
+//    int j = ijk.y();
+//    int k = ijk.z();
+//
+//    double grad_x = (accessor.getValue(Coord(i + 1, j, k)) - accessor.getValue(Coord(i - 1, j, k))) / (2.0 * voxelSize);
+//    double grad_y = (accessor.getValue(Coord(i, j + 1, k)) - accessor.getValue(Coord(i, j - 1, k))) / (2.0 * voxelSize);
+//    double grad_z = (accessor.getValue(Coord(i, j, k + 1)) - accessor.getValue(Coord(i, j, k - 1))) / (2.0 * voxelSize);
+//
+//    Vector grad(grad_x, grad_y, grad_z);
+
+    // using vdb to calculate gradient
+    FloatGrid::ConstAccessor acc = grid->getConstAccessor();
     Transform::Ptr transform = grid->transformPtr();
-    FloatGrid::Accessor accessor = grid->getAccessor();
-
+    UniformScaleMap::Ptr map = transform->map<UniformScaleMap>();
+    openvdb::math::Gradient<UniformScaleMap, openvdb::math::CD_2ND> gradOp;
     Vec3s pos(float(x.X()), float(x.Y()), float(x.Z()));
-    Coord ijk = transform->worldToIndexNodeCentered(pos);
-    int i = ijk.x();
-    int j = ijk.y();
-    int k = ijk.z();
-
-    double grad_x = (accessor.getValue(Coord(i + 1, j, k)) - accessor.getValue(Coord(i - 1, j, k))) / (2.0 * voxelSize);
-    double grad_y = (accessor.getValue(Coord(i, j + 1, k)) - accessor.getValue(Coord(i, j - 1, k))) / (2.0 * voxelSize);
-    double grad_z = (accessor.getValue(Coord(i, j, k + 1)) - accessor.getValue(Coord(i, j, k - 1))) / (2.0 * voxelSize);
-
-    Vector grad(grad_x, grad_y, grad_z);
+    Coord ijk(transform->worldToIndexNodeCentered(pos));
+    // get the gradient value
+    Vec3s gradVec3s = gradOp.result((*map), acc, ijk);
+    Vector grad(gradVec3s.x(), gradVec3s.y(), gradVec3s.z());
 
 	return grad;
 }

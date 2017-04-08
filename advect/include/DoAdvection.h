@@ -28,7 +28,7 @@ using namespace lux;
 # define HEIGHT 540
 # define GRID_NUM 50
 # define LIGHT_GRID_NUM 80
-# define VOXEL_SIZE 0.004
+# define VOXEL_SIZE 0.003
 # define HALF_NW 3
 
 # define CRAZY_NUM 2.0316578
@@ -54,8 +54,8 @@ void loadBunny(VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
 
     // generate bunny levelsets
     cout << "Create levelsets..." << endl;
-    cout << "\t | Half Narrow Band: " << VOXEL_SIZE * 50 << endl;
-    static PolyLevelsets bunnyLevelsets(true, polyBunny, VOXEL_SIZE, 50);
+    cout << "\t | Half Narrow Band: " << VOXEL_SIZE * 80 << endl;
+    static PolyLevelsets bunnyLevelsets(true, polyBunny, VOXEL_SIZE, 80);
     static FloatGrid::Ptr bunnyGrid = bunnyLevelsets.getLevelsets();
     BBox bunnyLevelsetsBBox = bunnyLevelsets.getBBox();
     cout << "\t | Bunny Levelsets BBox: " << bunnyLevelsetsBBox.min() << " " << bunnyLevelsetsBBox.max() << endl;
@@ -68,11 +68,11 @@ void loadBunny(VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
 
     cout << "Create perlin noise..." << endl;
     Noise_t parms;
-    parms.gamma = 1.333;
-    parms.frequency = 5.57434;
+    parms.gamma = 1.5;
+    parms.frequency = 9.57434;
     parms.fjump = 2.6;
-    parms.octaves = 1.0;
-    // parms.amplitude = 0.1;
+    parms.octaves = 0.5;
+    parms.amplitude = 1;
     static FractalSum<PerlinNoiseGustavson> perlin;
     perlin.setParameters(parms);
 

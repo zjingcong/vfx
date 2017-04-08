@@ -34,6 +34,9 @@ class LevelsetsCPT: public Volume<Vector>
             float value = sdf.eval(x);
             Vector grad = sdf.grad(x);
 
+//            if (grad.magnitude() < 0.7)
+//            {std::cout << "grad: " << grad.magnitude() << " value: " << value << " x: " << x.X() << " " << x.Y() << " " << x.Z() << std::endl;}
+
             return x - value * grad;
         }
 
