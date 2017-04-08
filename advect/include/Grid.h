@@ -116,4 +116,8 @@ namespace lux
 
 }
 
+
+// tools
+BBox getGridBBox(FloatGrid::Ptr grid);
+
 # endif

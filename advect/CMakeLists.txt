@@ -15,6 +15,10 @@ include_directories(include)
 file(GLOB SOURCE_FILES src/*.C)
 link_directories(/group/dpa/local/openvdb/lib)
 
+add_executable(bunny bunny.C ${SOURCE_FILES})
+target_link_libraries(bunny Half tbb openvdb OpenImageIO)
+target_include_directories(bunny PUBLIC /group/dpa/local/openvdb/include)
+
 add_executable(ears ears.C ${SOURCE_FILES})
 target_link_libraries(ears Half tbb openvdb OpenImageIO)
 target_include_directories(ears PUBLIC /group/dpa/local/openvdb/include)

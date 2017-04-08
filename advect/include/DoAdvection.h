@@ -5,6 +5,7 @@
 # include <vector>
 # include "omp.h"
 # include <cmath>
+# include <openvdb/openvdb.h>
 
 # include "Types.h"
 # include "Noise.h"
@@ -40,25 +41,38 @@ using namespace lux;
 # define getMax(x, y) (x > y ? x : y)
 # define getMin(x, y) (x < y ? x : y)
 
+string levelsetsPath = "../tmp/bunny_levelsets.vdb";
+string gridName = "bunny_levelsets";
+
 float step_size;
 
 
 void loadBunny(VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
                VolumeColorPtr& finalMatColorPtr, BBox& finalBBox, float& K)
 {
-    string bunnyPath = "../models/cleanbunny.obj";
-    // load bunny model
-    static PolyModel polyBunny;
-    polyBunny.loadObj(bunnyPath);
-    cout << "--------------------------------------------" << endl;
+    /// ----------------------------------- Load Levelsets --------------------------------------------
 
-    // generate bunny levelsets
-    cout << "Create levelsets..." << endl;
-    cout << "\t | Half Narrow Band: " << VOXEL_SIZE * HALF_NW << endl;
-    static PolyLevelsets bunnyLevelsets(polyBunny, VOXEL_SIZE, HALF_NW);
-    static VDBLevelsetsPtr bunnyGrid = bunnyLevelsets.getVDBLevelsets();
-    BBox bunnyLevelsetsBBox = bunnyLevelsets.getBBox();
+    cout << "Load bunny levelsets .vdb file..." << endl;
+    double start_time = omp_get_wtime();
+    openvdb::initialize();
+    openvdb::io::File fileR(levelsetsPath);
+    fileR.open();
+    openvdb::GridBase::Ptr base;
+    for (openvdb::io::File::NameIterator iter = fileR.beginName(); iter != fileR.endName(); ++iter)
+    {
+        if (iter.gridName() == gridName)    {base = fileR.readGrid(iter.gridName());}
+    }
+    fileR.close();
+    openvdb::uninitialize();
+    double exe_time = omp_get_wtime() - start_time;
+    cout << "	 | Elapsed Time: " << exe_time << "s" << endl;
+
+    cout << "Generate bunny levelsets..." << endl;
+    FloatGrid::Ptr bunnyGrid = openvdb::gridPtrCast<FloatGrid>(base);
+    BBox bunnyLevelsetsBBox = getGridBBox(bunnyGrid);
     cout << "\t | Bunny Levelsets BBox: " << bunnyLevelsetsBBox.min() << " " << bunnyLevelsetsBBox.max() << endl;
+
+    /// ----------------------------------- Create Pyroclasts --------------------------------------------
 
     cout << "Create perlin noise..." << endl;
     Noise_t parms;

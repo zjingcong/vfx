@@ -23,7 +23,7 @@ namespace lux
 			FloatGrid::Ptr getLevelsets();
             VDBLevelsetsPtr getVDBLevelsets();
 
-			BBox getBBox()  {return levelsetsBBox;}
+			BBox getBBox();
 
 		private:
 			bool isVDB;
@@ -31,6 +31,7 @@ namespace lux
 			float voxelSize;
             int halfWidth;
 
+			FloatGrid::Ptr VDBLevelsetsGrid;
             float backgroundValue;
             BBox levelsetsBBox;
 
