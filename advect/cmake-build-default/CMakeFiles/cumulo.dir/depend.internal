@@ -22,6 +22,7 @@ CMakeFiles/cumulo.dir/cumulo.C.o
  ../include/Shape.h
  ../include/Types.h
  ../include/Vector.h
+ ../include/VectorField.h
  ../include/Volume.h
  /group/dpa/local/openvdb/include/openvdb/Exceptions.h
  /group/dpa/local/openvdb/include/openvdb/Grid.h
@@ -296,6 +297,7 @@ CMakeFiles/cumulo.dir/src/Pyroclastic.C.o
  ../include/Shape.h
  ../include/Types.h
  ../include/Vector.h
+ ../include/VectorField.h
  ../include/Volume.h
  /group/dpa/local/openvdb/include/openvdb/Exceptions.h
  /group/dpa/local/openvdb/include/openvdb/Grid.h

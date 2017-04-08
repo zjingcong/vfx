@@ -46,14 +46,14 @@ void LightVolume::DSMStamping()
 {
 	if (!lights.empty())
 	{
-		int light_num = lights.size();
+		int light_num = int(lights.size());
 		for (int i = 0; i < light_num; ++i)
 		{
 			std::cout << "Stamping LightSource " << i << "..." << std::endl;
 			LightSource lit = lights[i];
 			DSMVolume sc(densityVolume, lit, step_size);
 			// stamp T on the grid
-			FloatVolumeToGrid scVolume2Grid(sc, voxelSize, volumeBBox, 1);
+			FloatVolumeToGrid scVolume2Grid(sc, voxelSize, volumeBBox, LIGHT_STAMP);
 			FloatGrid::Ptr DSMGrid = scVolume2Grid.getVolumeGrid();
 			// convert the grid to volume
 			FloatGridVolume DSMGridVolume(DSMGrid);

@@ -6,6 +6,13 @@
 # include "Vector.h"
 # include "Color.h"
 
+# define getMax(x, y) (x > y ? x : y)
+# define getMin(x, y) (x < y ? x : y)
+
+
+# define LIGHT_STAMP 1
+# define DENSITY_STAMP 0
+
 
 namespace lux
 {
@@ -16,14 +23,13 @@ namespace lux
 	class VDBLevelsetsVolume: public Volume<float>
 	{
 		public:
-			VDBLevelsetsVolume(FloatGrid::Ptr grid, float bv): myFloatGrid(grid), background(bv)	{}
+			VDBLevelsetsVolume(FloatGrid::Ptr grid): myFloatGrid(grid)	{}
 			~VDBLevelsetsVolume()	{}
 
 			const float eval(const Vector& x) const;
 
 		private:
 			FloatGrid::Ptr myFloatGrid;
-			float background;
 	};
 
 
@@ -31,13 +37,18 @@ namespace lux
 	class FloatGridVolume: public Volume<float>
 	{
 		public:
-			FloatGridVolume(FloatGrid::Ptr grid): myFloatGrid(grid)	{}
+			FloatGridVolume(FloatGrid::Ptr g);
 			~FloatGridVolume()	{}
 
 			const float eval(const Vector& x) const;
+			const Vector grad(const Vector& x) const;
+
+            FloatGrid::Ptr getGrid()    {return grid;}
 
 		private:
-			FloatGrid::Ptr myFloatGrid;
+			FloatGrid::Ptr grid;
+
+            float voxelSize;
 	};
 
 
@@ -63,23 +74,24 @@ namespace lux
 		public:
             // tag = 0: density stamping
             // tag = 1: light stamping
-			FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox, int tag = 0);
+			FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox, int tag = DENSITY_STAMP);
 			~FloatVolumeToGrid()	{}
 
-			FloatGrid::Ptr getVolumeGrid()	{return myGrid;}
+			FloatGrid::Ptr getVolumeGrid(float bg = 0.0);
 			BBox getBBox()	{return gridBBox;}
 
 		private:
 			Volume<float>& myVolume;
 			float voxelSize;
 			BBox volumeBBox;
-			BBox gridBBox;
+            float background;
             int tag;
 
 			FloatGrid::Ptr myGrid;
 			Transform::Ptr transform;
+            BBox gridBBox;
 
-			void createVolumeGrid();
+			void createVolumeGrid(float bg);
 	};
 
 

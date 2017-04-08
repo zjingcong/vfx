@@ -335,6 +335,7 @@ FloatGrid::Ptr PolyLevelsets::getLevelsets()
         Transform::Ptr transform = mesh2levelsets->transformPtr();
 		// get background value
         backgroundValue = mesh2levelsets->background();
+        cout << "\t | VDB Levelsets Background: " << backgroundValue << endl;
         // get bounding box
         int min_i = 100000000;	int max_i = -100000000;
         int min_j = 100000000;	int max_j = -100000000;
@@ -348,6 +349,8 @@ FloatGrid::Ptr PolyLevelsets::getLevelsets()
             if (i < min_i)	{min_i = i;}	if (i > max_i)	{max_i = i;}
             if (j < min_j)	{min_j = j;}	if (j > max_j)	{max_j = j;}
             if (k < min_k)	{min_k = k;}	if (k > max_k)	{max_k = k;}
+
+            // if (*iter > 0)  cout << transform->indexToWorld(ijk) << endl;
         }
         Coord min(min_i, min_j, min_k);
         Coord max(max_i, max_j, max_k);
@@ -356,12 +359,13 @@ FloatGrid::Ptr PolyLevelsets::getLevelsets()
         levelsetsBBox = BBox(min_pos, max_pos);
         // get levelsets with value ranging from 0 to positive background value
         cout << "Convert VDB levelsets..." << endl;
-        VDBLevelsetsVolume levelsetsVolume(mesh2levelsets, backgroundValue);
+        VDBLevelsetsVolume levelsetsVolume(mesh2levelsets);
 		FloatVolumeToGrid levelsetsVolume2Grid(levelsetsVolume, voxelSize, levelsetsBBox);
-		FloatGrid::Ptr levelsetsGrid = levelsetsVolume2Grid.getVolumeGrid();
+		FloatGrid::Ptr levelsetsGrid = levelsetsVolume2Grid.getVolumeGrid(-backgroundValue);
 
         return levelsetsGrid;
 	}
+
 	else
 	{
 		createLevelsets();

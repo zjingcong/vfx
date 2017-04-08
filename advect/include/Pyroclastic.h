@@ -3,10 +3,12 @@
 
 # include <cmath>
 
+# include "Types.h"
 # include "Shape.h"
 # include "Vector.h"
 # include "Noise.h"
-# include "Types.h"
+# include "Grid.h"
+# include "VectorField.h"
 
 using namespace lux;
 
@@ -26,6 +28,26 @@ class Pyrosphere: public Volume<float>
 
         Noise_t myPyroParam;
         BBox pyroBBox;
+};
+
+
+// PyroLevelsets volume
+class PyroLevelsets: public Volume<float>
+{
+    public:
+        PyroLevelsets(FloatGridVolume& e, Noise& n, float bg);
+        ~PyroLevelsets()    {delete cptFieldPtr;}
+
+        const float eval(const Vector& x) const;
+
+    private:
+        FloatGridVolume& levelsetsVolume; // levelsets
+        Noise& noise;
+        float background;
+
+        Noise_t noiseParm;
+        VolumeVectorPtr cptFieldPtr;
+        FloatGrid::Ptr levelsetsGrid;
 };
 
 # endif

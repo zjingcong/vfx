@@ -24,17 +24,10 @@
 using namespace std;
 using namespace lux;
 
-//# define WEIGHT 1920
-//# define HEIGHT 1080
-//# define GRID_NUM 130
-//# define COLOR_GRID_NUM 70
-//# define LIGHT_GRID_NUM 80
-
-// test parms
 # define WEIGHT 960
 # define HEIGHT 540
 # define GRID_NUM 50
-# define LIGHT_GRID_NUM 100
+# define LIGHT_GRID_NUM 80
 # define VOXEL_SIZE 0.004
 # define HALF_NW 3
 
@@ -61,29 +54,55 @@ void loadBunny(VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
 
     // generate bunny levelsets
     cout << "Create levelsets..." << endl;
-    static PolyLevelsets bunnyLevelsets(true, polyBunny, VOXEL_SIZE);
+    cout << "\t | Half Narrow Band: " << VOXEL_SIZE * 50 << endl;
+    static PolyLevelsets bunnyLevelsets(true, polyBunny, VOXEL_SIZE, 50);
     static FloatGrid::Ptr bunnyGrid = bunnyLevelsets.getLevelsets();
-    BBox bunnyBBox = bunnyLevelsets.getBBox();
-    cout << "\t | Bunny BBox: " << bunnyBBox.min() << " " << bunnyBBox.max() << endl;
+    BBox bunnyLevelsetsBBox = bunnyLevelsets.getBBox();
+    cout << "\t | Bunny Levelsets BBox: " << bunnyLevelsetsBBox.min() << " " << bunnyLevelsetsBBox.max() << endl;
 
     // generate bunny volume
-    cout << "Stamping model..." << endl;
+    cout << "Generate bunny levelsets volume..." << endl;
     static FloatGridVolume bunnyVolume(bunnyGrid);
+
+    // ------------------------------- test area -------------------------------------
+
+    cout << "Create perlin noise..." << endl;
+    Noise_t parms;
+    parms.gamma = 1.333;
+    parms.frequency = 5.57434;
+    parms.fjump = 2.6;
+    parms.octaves = 1.0;
+    // parms.amplitude = 0.1;
+    static FractalSum<PerlinNoiseGustavson> perlin;
+    perlin.setParameters(parms);
+
+    float background = bunnyGrid->background();
+    cout << "\t | Bunny Levelsets Background: " << background << endl;
+    cout << "Create pyroclastic bunny..." << endl;
+    static PyroLevelsets bunnyPyroVolume(bunnyVolume, perlin, background);
+    cout << "Stamping pyroclastic bunny..." << endl;
+    static FloatVolumeToGrid bunnyPyroV2Grid(bunnyPyroVolume, 0.008, bunnyLevelsetsBBox);
+    static FloatGrid::Ptr bunnyPyroGrid = bunnyPyroV2Grid.getVolumeGrid();
+    BBox bunnyPyroBBox = bunnyPyroV2Grid.getBBox();
+    cout << "\t | bunnyPyroV2Grid bbox: " << bunnyPyroBBox.min() << bunnyPyroBBox.max() << endl;
+    static FloatGridVolume bunnyPyro(bunnyPyroGrid);
+
+    // -------------------------------------------------------------------------------
 
     // create bunny color volume and density volume
     static Color matColor(1.0, 1.0, 1.0, 1.0);
     static Color emColor(0.0, 0.0, 0.0, 0.0);
     static ConstantColor bunnyMatColor(matColor);
     static ConstantColor bunnyEmColor(emColor);
-    static ConstantFloat rho(500.0);
-    static DensityVolume bunnyDensity(rho, bunnyVolume);
+    static ConstantFloat rho(100.0);
+    static DensityVolume bunnyDensity(rho, bunnyPyro);
 
     // set K
     K = 0.8;
     finalDensityPtr = &bunnyDensity;
     finalEmColorPtr = &bunnyEmColor;
     finalMatColorPtr = &bunnyMatColor;
-    finalBBox = bunnyBBox;
+    finalBBox = bunnyPyroBBox;
 }
 
 
@@ -107,8 +126,9 @@ void createBunnyCumulo(int frame_id, string output_path)
 
     /// ---------------------------------- Lighting & Rendering ---------------------------------------
 
-    step_size = 0.01;
+    step_size = VOXEL_SIZE / CRAZY_NUM;
 
+    cout << "--------------------------------------------" << endl;
     // lighting
     cout << "Set lights..." << endl;
     Lights myLights;
@@ -143,7 +163,7 @@ void createBunnyCumulo(int frame_id, string output_path)
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(0.0, 0.0, 3.5);
+    Vector eye(0.0, 0.0, 4.0);
     Vector view(0.0, 0.0, -1.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);

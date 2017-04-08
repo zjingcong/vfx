@@ -155,14 +155,16 @@ math.h
 ../include/Pyroclastic.h
 cmath
 -
+Types.h
+../include/Types.h
 Shape.h
 ../include/Shape.h
 Vector.h
 ../include/Vector.h
 Noise.h
 ../include/Noise.h
-Types.h
-../include/Types.h
+VectorField.h
+../include/VectorField.h
 
 ../include/Renderer.h
 Types.h
@@ -225,6 +227,14 @@ openvdb/util/Util.h
 ../include/Vector.h
 cmath
 -
+
+../include/VectorField.h
+Types.h
+../include/Types.h
+Volume.h
+../include/Volume.h
+Vector.h
+../include/Vector.h
 
 ../include/Volume.h
 Vector.h

@@ -16,7 +16,7 @@ const float VDBLevelsetsVolume::eval(const Vector& x) const
 	openvdb::tools::GridSampler<FloatGrid, openvdb::tools::BoxSampler> sampler(*myFloatGrid);
 	float gridValue;
 	// openvdb use negative values as levelsets inside and positive values as levelsets outside
-	gridValue = -sampler.wsSample(xyz) + background;	// world space sample
+	gridValue = -sampler.wsSample(xyz);	// world space sample
 
 	return gridValue;
 }
@@ -25,16 +25,44 @@ const float VDBLevelsetsVolume::eval(const Vector& x) const
 
 // ---------------------------- Class FloatGridVolume -------------------------------------------
 
+FloatGridVolume::FloatGridVolume(FloatGrid::Ptr g): grid(g)
+{
+    Vec3s voxel = grid->voxelSize();
+    float voxeltmp = getMin(voxel.x(), voxel.y());
+    voxelSize = getMin(voxel.z(), voxeltmp);
+}
+
+
 const float FloatGridVolume::eval(const Vector& x) const
 {
-	// FloatGrid::Accessor accessor = myFloatGrid.getAccessor();
 	Vec3s xyz(x.X(), x.Y(), x.Z());	// world space
 	// construct a float grid box sampler to perform trilinear interpolation
-	openvdb::tools::GridSampler<FloatGrid, openvdb::tools::BoxSampler> sampler(*myFloatGrid);
+	openvdb::tools::GridSampler<FloatGrid, openvdb::tools::BoxSampler> sampler(*grid);
 	float gridValue;
 	gridValue = sampler.wsSample(xyz);	// world space sample
 
 	return gridValue;
+}
+
+
+const Vector FloatGridVolume::grad(const Vector& x) const
+{
+    Transform::Ptr transform = grid->transformPtr();
+    FloatGrid::Accessor accessor = grid->getAccessor();
+
+    Vec3s pos(float(x.X()), float(x.Y()), float(x.Z()));
+    Coord ijk = transform->worldToIndexNodeCentered(pos);
+    int i = ijk.x();
+    int j = ijk.y();
+    int k = ijk.z();
+
+    double grad_x = (accessor.getValue(Coord(i + 1, j, k)) - accessor.getValue(Coord(i - 1, j, k))) / (2.0 * voxelSize);
+    double grad_y = (accessor.getValue(Coord(i, j + 1, k)) - accessor.getValue(Coord(i, j - 1, k))) / (2.0 * voxelSize);
+    double grad_z = (accessor.getValue(Coord(i, j, k + 1)) - accessor.getValue(Coord(i, j, k - 1))) / (2.0 * voxelSize);
+
+    Vector grad(grad_x, grad_y, grad_z);
+
+	return grad;
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -63,21 +91,10 @@ const Color ColorGridVolume::eval(const Vector& x) const
 // tag = 0: density stamping
 // tag = 1: light stamping
 FloatVolumeToGrid::FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox, int tag):
-	myVolume(f), voxelSize(s), volumeBBox(bbox), tag(tag)
-{
-	// create the float grid
-	myGrid = FloatGrid::create(0.0);
-	// get the grid transform
-	transform = myGrid -> transformPtr();
-	// set voxel size
-	transform = Transform::createLinearTransform(voxelSize);
-	myGrid -> setTransform(transform);
-
-	createVolumeGrid();
-}
+	myVolume(f), voxelSize(s), volumeBBox(bbox), tag(tag) {}
 
 
-void FloatVolumeToGrid::createVolumeGrid()
+void FloatVolumeToGrid::createVolumeGrid(float bg)
 {
 	double start_time = omp_get_wtime();
 	FloatGrid::Accessor accessor = myGrid -> getAccessor();
@@ -101,9 +118,10 @@ void FloatVolumeToGrid::createVolumeGrid()
 				float value = myVolume.eval(vec);
 
 				bool stamping = false;
-				if (tag == 1)
+                // lighting stamp
+				if (tag == LIGHT_STAMP)
 				{
-					if (value <= 0)
+					if (value <= bg)
 					{
 						for (int ii = i - 1; ii <= i + 1; ++ii)
 						{
@@ -111,10 +129,11 @@ void FloatVolumeToGrid::createVolumeGrid()
 							{
 								for (int kk = k - 1; kk <= k + 1; ++kk)
 								{
-									Vec3s neiPos = transform->indexToWorld(ijk);
+                                    Coord iijjkk(ii, jj, kk);   // get neighbors coord
+									Vec3s neiPos = transform->indexToWorld(iijjkk);
 									lux::Vector neiVec(neiPos.x(), neiPos.y(), neiPos.z());
-									float neiValue = myVolume.eval(neiVec);
-									if (neiValue > 0)
+									float neiValue = myVolume.eval(neiVec); // get neighbors value
+									if (neiValue > bg)
 									{
 										stamping = true;
 										goto endLoop;	// end for loop
@@ -126,9 +145,10 @@ void FloatVolumeToGrid::createVolumeGrid()
 					}
 					else {stamping = true;}
 				}
-				else if (tag == 0)
+				// density stamp
+                else if (tag == DENSITY_STAMP)
 				{
-					if (value > 0)	{stamping = true;}	// only stamp positive value
+					if (value > bg)	{stamping = true;}	// only stamp positive value
 				}
 
 				if (stamping)
@@ -151,6 +171,22 @@ void FloatVolumeToGrid::createVolumeGrid()
 	gridBBox = BBox(min_pos, max_pos);
 	double exe_time = omp_get_wtime() - start_time;
 	std::cout << "	 | Elapsed Time: " << exe_time << "s" << std::endl;
+}
+
+
+FloatGrid::Ptr FloatVolumeToGrid::getVolumeGrid(float bg)
+{
+    // create the float grid
+    myGrid = FloatGrid::create(bg);
+    // get the grid transform
+    transform = myGrid -> transformPtr();
+    // set voxel size
+    transform = Transform::createLinearTransform(voxelSize);
+    myGrid -> setTransform(transform);
+
+    createVolumeGrid(bg);
+
+    return myGrid;
 }
 
 // ----------------------------------------------------------------------------------------------

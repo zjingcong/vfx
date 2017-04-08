@@ -21,6 +21,7 @@ CMakeFiles/cumulo.dir/cumulo.C.o: ../include/ScalarVolumeXform.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Shape.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Types.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Vector.h
+CMakeFiles/cumulo.dir/cumulo.C.o: ../include/VectorField.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Volume.h
 CMakeFiles/cumulo.dir/cumulo.C.o: /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 CMakeFiles/cumulo.dir/cumulo.C.o: /group/dpa/local/openvdb/include/openvdb/Grid.h
@@ -295,6 +296,7 @@ CMakeFiles/cumulo.dir/src/Pyroclastic.C.o: ../include/Pyroclastic.h
 CMakeFiles/cumulo.dir/src/Pyroclastic.C.o: ../include/Shape.h
 CMakeFiles/cumulo.dir/src/Pyroclastic.C.o: ../include/Types.h
 CMakeFiles/cumulo.dir/src/Pyroclastic.C.o: ../include/Vector.h
+CMakeFiles/cumulo.dir/src/Pyroclastic.C.o: ../include/VectorField.h
 CMakeFiles/cumulo.dir/src/Pyroclastic.C.o: ../include/Volume.h
 CMakeFiles/cumulo.dir/src/Pyroclastic.C.o: /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 CMakeFiles/cumulo.dir/src/Pyroclastic.C.o: /group/dpa/local/openvdb/include/openvdb/Grid.h
