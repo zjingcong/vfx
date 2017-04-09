@@ -273,12 +273,6 @@ cmath
 -
 
 ../include/VectorField.h
-openvdb/math/FiniteDifference.h
--
-openvdb/math/Operators.h
--
-openvdb/tools/Interpolation.h
--
 Types.h
 ../include/Types.h
 Volume.h

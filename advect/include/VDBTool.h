@@ -21,10 +21,10 @@ void writeVDBGrid(openvdb::GridPtrVec grids, string vdbFilePath)
     // write out the container and close the file
     file.write(grids);
     file.close();
-    cout << "Grid file generation complete." << endl;
     openvdb::uninitialize();
     double exe_time = omp_get_wtime() - start_time;
     cout << "	 | Elapsed Time: " << exe_time << "s" << endl;
+    cout << "Grid file generation complete." << endl;
 }
 
 

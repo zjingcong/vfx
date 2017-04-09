@@ -34,6 +34,7 @@ using namespace lux;
 
 // stamping
 # define GRID_VOXEL_SIZE 0.008
+# define CM_GRID_VOXEL_SIZE 0.008
 
 // volume property
 # define KAPPA 1.0
@@ -112,33 +113,38 @@ FloatGrid::Ptr loadBunnyPyro(int id, BBox& bbox)
 
 void createCMGrid()
 {
+    // get advect parms config
+    cout << "Get advection parms..." << endl;
+    cfg::FloatValueMap cfgAdvectParms;
+    cfgAdvectParms = cfg::floatValueParser(configPath);
+
     cout << "Create perlin noise..." << endl;
-    // get noise parms config
-    cfg::FloatValueMap cfgNoiseParms;
-    cfgNoiseParms = cfg::floatValueParser(configPath);
     // set noise parms
     Noise_t parms;
-    parms.gamma = cfgNoiseParms.at("gamma");
-    parms.frequency = cfgNoiseParms.at("frequency");
-    parms.fjump = cfgNoiseParms.at("fjump");
-    parms.octaves = cfgNoiseParms.at("octaves");
+    parms.gamma = cfgAdvectParms.at("gamma");
+    parms.frequency = cfgAdvectParms.at("frequency");
+    parms.fjump = cfgAdvectParms.at("fjump");
+    parms.octaves = cfgAdvectParms.at("octaves");
     // create perlin noise
     FractalSum<PerlinNoiseGustavson> perlin;
     perlin.setParameters(parms);
 
+    float timestep = cfgAdvectParms.at("timestep");
+    int stepnum = int(cfgAdvectParms.at("stepnum"));
+
     // generate velocity field from vector noise
     cout << "Create velocity field..." << endl;
-    Vector delta_x(0.1, 0.1, 0.1);
-    Vector delta_y(0.1, 0.0, -0.1);
-    Vector delta_z(0.0, 0.1, 0.0);
+    Vector delta_x = timestep * Vector(1.0, 1.0, 1.0);
+    Vector delta_y(1.0, 0.0, -1.0);
+    Vector delta_z(0.0, 1.0, 0.0);
     VNoise1 velocityField(perlin, delta_x, delta_y, delta_z);
 
     // initialization
     Identity identity;
-    VolumeVectorPtr X = &identity;
-    BBox advectBBox(Vec3s(-2, -2, -2), Vec3s(2, 2, 2));
+    VectorGridVolumePtr X;
+    BBox advectBBox(Vec3s(-1.5, -1.5, -1.5), Vec3s(1.5, 1.5, 1.5));
     // semi-lagrangian mapping
-    for (int id = 1; id <= 3; ++id)
+    for (int id = 1; id <= stepnum; ++id)
     {
         // get grid name and grid path
         char advectGridName[1024];
@@ -146,13 +152,25 @@ void createCMGrid()
         char advectPath[1024];
         sprintf(advectPath, advectPathTemplate.c_str(), id);
 
-        float delta_t = id;
-        VectorAdvectPtr vecAdvectPtr = new VectorAdvect(X, &velocityField, delta_t);
+        float delta_t = id * timestep;
+        VolumeVectorPtr vecAdvectPtr;
+        if (id == 1)
+            { vecAdvectPtr = new VectorAdvect(&identity, &velocityField, delta_t); }
+        else
+            { vecAdvectPtr = new VectorAdvect(X, &velocityField, delta_t); }
 
         // generate characteristic map grid
         cout << "Stamping characteristic map " << advectGridName << "..." << endl;
-        VectorVolumeToGrid vecAdvectV2Grid(*vecAdvectPtr, GRID_VOXEL_SIZE, advectBBox);
+        VectorVolumeToGrid vecAdvectV2Grid(*vecAdvectPtr, CM_GRID_VOXEL_SIZE, advectBBox);
         Vec3fGrid::Ptr vecAdvectGrid = vecAdvectV2Grid.getVolumeGrid();
+
+        // release memory
+        if (id > 1)
+        {
+            Vec3fGrid::Ptr preVecAdvectGrid = X->getGrid();
+            preVecAdvectGrid->clear();
+            delete X;
+        }
 
         // write levelsets grid into file
         openvdb::GridPtrVec grids;
@@ -164,7 +182,7 @@ void createCMGrid()
         writeVDBGrid(grids, advectPath);
 
         // gridded
-        VolumeVectorPtr vecAdvectVolume = new VectorGridVolume(vecAdvectGrid);
+        VectorGridVolumePtr vecAdvectVolume = new VectorGridVolume(vecAdvectGrid);
         X = vecAdvectVolume;
     }
 }

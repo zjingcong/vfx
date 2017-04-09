@@ -25,8 +25,8 @@ namespace cfg
 
         string line = "";
         FloatValueMap floatValueMap;
-        cout << "Config Value" << endl;
         cout << "========================" << endl;
+        cout << "***** Config Value *****" << endl;
         while (getline(cfgFile, line))
         {
             istringstream iss(line);

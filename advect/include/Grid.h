@@ -74,10 +74,13 @@ namespace lux
 			~VectorGridVolume()	{}
 
 			const Vector eval(const Vector& x) const;
+            Vec3fGrid::Ptr getGrid()    {return vectorGrid;}
 
 		private:
 			Vec3fGrid::Ptr vectorGrid;
 	};
+
+    typedef VectorGridVolume* VectorGridVolumePtr;
 
 
 	// -------------------------------- Volume to Grid -----------------------------------------

@@ -57,7 +57,6 @@ CMakeFiles/bunnyFile.dir/bunnyFile.C.o
  /group/dpa/local/openvdb/include/openvdb/metadata/Metadata.h
  /group/dpa/local/openvdb/include/openvdb/metadata/StringMetadata.h
  /group/dpa/local/openvdb/include/openvdb/openvdb.h
- /group/dpa/local/openvdb/include/openvdb/tools/Interpolation.h
  /group/dpa/local/openvdb/include/openvdb/tools/ValueTransformer.h
  /group/dpa/local/openvdb/include/openvdb/tree/InternalNode.h
  /group/dpa/local/openvdb/include/openvdb/tree/Iterator.h
