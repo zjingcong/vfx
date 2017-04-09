@@ -4,6 +4,7 @@
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Advect.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Camera.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Color.h
+CMakeFiles/cumulo.dir/cumulo.C.o: ../include/ConfigParser.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/DoAdvection.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Grid.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Image.h

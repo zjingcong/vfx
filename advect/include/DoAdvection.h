@@ -8,6 +8,7 @@
 # include <openvdb/openvdb.h>
 
 # include "Types.h"
+# include "ConfigParser.h"
 # include "Noise.h"
 # include "PerlinNoise.h"
 # include "Pyroclastic.h"
@@ -53,6 +54,7 @@ using namespace lux;
 # define getMax(x, y) (x > y ? x : y)
 # define getMin(x, y) (x < y ? x : y)
 
+// vdb files
 string levelsetsPath = "../tmp/bunny_levelsets.vdb";
 string levelsetsGridName = "bunny_levelsets";
 
@@ -62,7 +64,8 @@ string pyroGridName = "bunny_pyro";
 string advectPathTemplate = "../tmp/bunny_advect.%04d.vdb";
 string advectGridNameTemplate = "bunny_advect.%04d";
 
-float step_size;
+// config file
+string configPath = "../config/advect.cfg";
 
 
 // ---------------------------------------- bunny pyroclast --------------------------------------------
@@ -72,8 +75,8 @@ FloatGrid::Ptr loadBunnyPyro(int id, BBox& bbox)
     /// ----------------------------------- Load Levelsets --------------------------------------------
 
     // load bunny levelsets from .vdb file
-    FloatGrid::Ptr bunnyGrid = readVDBFloatGrid(levelsetsPath, levelsetsGridName);
-    BBox bunnyLevelsetsBBox = getGridBBox(bunnyGrid);
+    FloatGrid::Ptr bunnyGrid = readVDBGrid<FloatTree>(levelsetsPath, levelsetsGridName);
+    BBox bunnyLevelsetsBBox = getGridBBox<FloatTree>(bunnyGrid);
     cout << "\t | Bunny Levelsets BBox: " << bunnyLevelsetsBBox.min() << " " << bunnyLevelsetsBBox.max() << endl;
 
     /// ----------------------------------- Create Pyroclasts -----------------------------------------
@@ -110,11 +113,16 @@ FloatGrid::Ptr loadBunnyPyro(int id, BBox& bbox)
 void createCMGrid()
 {
     cout << "Create perlin noise..." << endl;
+    // get noise parms config
+    cfg::FloatValueMap cfgNoiseParms;
+    cfgNoiseParms = cfg::floatValueParser(configPath);
+    // set noise parms
     Noise_t parms;
-//    parms.gamma = 1.5;
-//    parms.frequency = 9.57434;
-//    parms.fjump = 2.6;
-//    parms.octaves = 0.5;
+    parms.gamma = cfgNoiseParms.at("gamma");
+    parms.frequency = cfgNoiseParms.at("frequency");
+    parms.fjump = cfgNoiseParms.at("fjump");
+    parms.octaves = cfgNoiseParms.at("octaves");
+    // create perlin noise
     FractalSum<PerlinNoiseGustavson> perlin;
     perlin.setParameters(parms);
 
@@ -169,8 +177,8 @@ FloatGrid::Ptr loadBunnyAdvect(int frame_id, BBox& bbox)
     int id = frame_id - 59;
 
     // load pyroclastic bunny from .vdb file
-    FloatGrid::Ptr pyrobunnyGrid = readVDBFloatGrid(pyroPath, pyroGridName);
-    BBox pyrobunnyGridBBox = getGridBBox(pyrobunnyGrid);
+    FloatGrid::Ptr pyrobunnyGrid = readVDBGrid<FloatTree>(pyroPath, pyroGridName);
+    BBox pyrobunnyGridBBox = getGridBBox<FloatTree>(pyrobunnyGrid);
     cout << "\t | Bunny Levelsets BBox: " << pyrobunnyGridBBox.min() << " " << pyrobunnyGridBBox.max() << endl;
 
     // get grid name and grid path
@@ -180,19 +188,27 @@ FloatGrid::Ptr loadBunnyAdvect(int frame_id, BBox& bbox)
     sprintf(advectPath, advectPathTemplate.c_str(), id);
 
     // load characteristic map from .vdb file
-    Vec3fGrid::Ptr advectGrid = readVDBVectorGrid(advectPath, advectGridName);
+    // Vec3fGrid::Ptr advectGrid = readVDBVectorGrid(advectPath, advectGridName);
+    Vec3fGrid::Ptr advectGrid = readVDBGrid<Vec3fTree>(advectPath, advectGridName);
+    BBox CMBBox = getGridBBox<Vec3fTree>(advectGrid);
 
     // gridded for density volume and characteristic map volume
-    FloatGridVolume densityVolume(pyrobunnyGrid);
-    VectorGridVolume advectVolume(advectGrid);
+    static FloatGridVolume densityVolume(pyrobunnyGrid);
+    static VectorGridVolume advectVolume(advectGrid);
     VolumeFloatPtr densityVolumePtr = &densityVolume;
     VolumeVectorPtr advectVolumePtr = &advectVolume;
-    Warp warp(densityVolumePtr, advectVolumePtr);
+    static Warp warpedBunny(densityVolumePtr, advectVolumePtr);
 
-    // test pyrobunny
-    bbox = pyrobunnyGridBBox;
+    // stamping warped density into grid
+    cout << "Stamping advection bunny..." << endl;
+    static FloatVolumeToGrid bunnyAdvectV2Grid(warpedBunny, GRID_VOXEL_SIZE, CMBBox);
+    static FloatGrid::Ptr bunnyAdvectGrid = bunnyAdvectV2Grid.getVolumeGrid();
+    BBox bunnyAdvectBBox = bunnyAdvectV2Grid.getBBox();
+    cout << "\t | bunnyAdvectV2Grid bbox: " << bunnyAdvectBBox.min() << bunnyAdvectBBox.max() << endl;
 
-    return pyrobunnyGrid;
+    bbox = bunnyAdvectBBox;
+
+    return bunnyAdvectGrid;
 }
 
 // ----------------------------------- Volume Rendering ------------------------------------------------
@@ -245,7 +261,7 @@ void createBunnyCumulo(int frame_id, string output_path)
 
     /// ---------------------------------- Lighting & Rendering ---------------------------------------
 
-    step_size = GRID_VOXEL_SIZE / CRAZY_NUM;
+    float step_size = GRID_VOXEL_SIZE / CRAZY_NUM;
 
     // lighting
     cout << "Set lights..." << endl;

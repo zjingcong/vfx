@@ -1,6 +1,5 @@
 
 # include "Grid.h"
-# include "omp.h"
 
 using namespace lux;
 
@@ -282,37 +281,19 @@ void VectorVolumeToGrid::createVolumeGrid()
 	std::cout << "	 | Elapsed Time: " << exe_time << "s" << std::endl;
 }
 
+
 Vec3fGrid::Ptr VectorVolumeToGrid::getVolumeGrid()
 {
 	createVolumeGrid();
 	return grid;
 }
 
-// ----------------------------------------------------------------------------------------------
 
-
-BBox getGridBBox(FloatGrid::Ptr grid)
+BBox VectorVolumeToGrid::getBBox()
 {
-	// get bounding box
-	int min_i = 100000000;	int max_i = -100000000;
-	int min_j = 100000000;	int max_j = -100000000;
-	int min_k = 100000000;	int max_k = -100000000;
-	Transform::Ptr transform = grid->transformPtr();
-	for (FloatGrid::ValueOnIter iter = grid->beginValueOn(); iter; ++iter)
-	{
-		Coord ijk = iter.getCoord();
-		int i = ijk.x();
-		int j = ijk.y();
-		int k = ijk.z();
-		if (i < min_i)	{min_i = i;}	if (i > max_i)	{max_i = i;}
-		if (j < min_j)	{min_j = j;}	if (j > max_j)	{max_j = j;}
-		if (k < min_k)	{min_k = k;}	if (k > max_k)	{max_k = k;}
-	}
-	Coord min(min_i, min_j, min_k);
-	Coord max(max_i, max_j, max_k);
-	Vec3s min_pos = transform -> indexToWorld(min);
-	Vec3s max_pos = transform -> indexToWorld(max);
-	BBox bbox = BBox(min_pos, max_pos);
+	BBox gridBBox = getGridBBox<Vec3fTree>(grid);
 
-	return bbox;
+	return gridBBox;
 }
+
+// -----------------------------------------------------------------------------------------

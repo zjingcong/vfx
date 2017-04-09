@@ -5,6 +5,7 @@ CMakeFiles/bunnyFile.dir/bunnyFile.C.o
  ../include/Advect.h
  ../include/Camera.h
  ../include/Color.h
+ ../include/ConfigParser.h
  ../include/DoAdvection.h
  ../include/Image.h
  ../include/Levelsets.h

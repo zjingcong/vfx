@@ -9,7 +9,7 @@ using namespace lux;
 
 BBox PolyLevelsets::getBBox()
 {
-	levelsetsBBox = getGridBBox(VDBLevelsetsGrid);
+	levelsetsBBox = getGridBBox<FloatTree>(VDBLevelsetsGrid);
 
 	return levelsetsBBox;
 }
@@ -34,7 +34,7 @@ FloatGrid::Ptr PolyLevelsets::getLevelsets()
 {
 	FloatGrid::Ptr mesh2levelsets = VDBcreateLevelsets();
 	VDBLevelsetsGrid = mesh2levelsets;
-	levelsetsBBox = getGridBBox(VDBLevelsetsGrid);
+	levelsetsBBox = getGridBBox<FloatTree>(VDBLevelsetsGrid);
 	cout << "Convert VDB levelsets..." << endl;
 	VDBLevelsetsVolume levelsetsVolume(mesh2levelsets);
 	FloatVolumeToGrid levelsetsVolume2Grid(levelsetsVolume, voxelSize, levelsetsBBox);
