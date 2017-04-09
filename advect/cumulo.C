@@ -23,6 +23,7 @@ int main(int argc, char* argv[])
     }
     else {printHelp();  exit(0);}
 
+//    createCMGrid();
     createBunnyCumulo(frameid, output_path);
 
     return 0;

@@ -56,6 +56,23 @@ const Color ColorGridVolume::eval(const Vector& x) const
 
 // ----------------------------------------------------------------------------------------------
 
+
+// ---------------------------- Class VectorGridVolume -------------------------------------------
+
+const Vector VectorGridVolume::eval(const Vector& x) const
+{
+	Vec3s xyz(float(x.X()), float(x.Y()), float(x.Z()));	// world space
+	// construct a color grid box sampler to perform trilinear interpolation
+	openvdb::tools::GridSampler<Vec3fGrid, openvdb::tools::BoxSampler> sampler(*vectorGrid);
+	Vec3s gridValue;
+	gridValue = sampler.wsSample(xyz);	// world space sample
+	Vector vecValue(gridValue.x(), gridValue.y(), gridValue.z());
+
+	return vecValue;
+}
+
+// ----------------------------------------------------------------------------------------------
+
 /// =============================================================================================
 
 // ---------------------------- Class FloatVolumeToGrid -----------------------------------------
@@ -169,7 +186,7 @@ FloatGrid::Ptr FloatVolumeToGrid::getVolumeGrid(float bg)
 ColorVolumeToGrid::ColorVolumeToGrid(Volume<Color>& f, float s, BBox& bbox): 
 	myVolume(f), voxelSize(s), volumeBBox(bbox)
 {
-	// create the float grid
+	// create the color grid
 	myGrid = Vec4fGrid::create();
 	// get the grid transform
 	transform = myGrid -> transformPtr();
@@ -216,6 +233,59 @@ Vec4fGrid::Ptr ColorVolumeToGrid::getVolumeGrid()
 {
 	createVolumeGrid();
 	return myGrid;
+}
+
+
+// ---------------------------- Class VectorVolumeToGrid ----------------------------------------
+
+VectorVolumeToGrid::VectorVolumeToGrid(Volume<Vector> &f, float s, BBox &bbox):
+		vectorVolume(f), voxelSize(s), volumeBBox(bbox)
+{
+	// create the vector grid
+	grid = Vec3fGrid::create();
+	// get the grid transform
+	transform = grid -> transformPtr();
+	// set voxel size
+	transform = Transform::createLinearTransform(voxelSize);
+	grid -> setTransform(transform);
+}
+
+
+void VectorVolumeToGrid::createVolumeGrid()
+{
+	double start_time = omp_get_wtime();
+	Vec3fGrid::Accessor accessor = grid -> getAccessor();
+	Vec3s llc = volumeBBox.min();
+	Vec3s urc = volumeBBox.max();
+	Coord ijk0 = transform -> worldToIndexNodeCentered(llc);
+	Coord ijk1 = transform -> worldToIndexNodeCentered(urc);
+	# pragma omp parallel for collapse(3)
+	for (int i = ijk0.x(); i <= ijk1.x(); ++i)
+	{
+		for (int j = ijk0.y(); j <= ijk1.y(); ++j)
+		{
+			for (int k = ijk0.z(); k <= ijk1.z(); ++k)
+			{
+				Coord ijk(i, j, k);
+				Vec3s gridPointPos = transform -> indexToWorld(ijk);
+				lux::Vector vec(gridPointPos.x(), gridPointPos.y(), gridPointPos.z());
+				Vector value = vectorVolume.eval(vec);
+				Vec3s valueVec3s(float(value.X()), float(value.Y()), float(value.Z()));
+				# pragma omp critical
+				{
+					accessor.setValue(ijk, valueVec3s);
+				}
+			}
+		}
+	}
+	double exe_time = omp_get_wtime() - start_time;
+	std::cout << "	 | Elapsed Time: " << exe_time << "s" << std::endl;
+}
+
+Vec3fGrid::Ptr VectorVolumeToGrid::getVolumeGrid()
+{
+	createVolumeGrid();
+	return grid;
 }
 
 // ----------------------------------------------------------------------------------------------

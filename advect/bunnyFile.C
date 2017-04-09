@@ -11,15 +11,13 @@
 using namespace std;
 using namespace lux;
 
-# define VOXEL_SIZE 0.003
-# define HALF_NW 80
-
 
 void printHelp()
 {
     cout << "[Usage] ./bunny tag" << endl;
     cout << "\t -l: create bunny levelsets" << endl;
     cout << "\t -p: create pyroclastic bunny" << endl;
+    cout << "\t -a: create characteristic map grid" << endl;
 }
 
 
@@ -32,10 +30,11 @@ int main(int argc, char* argv[])
     if (argc >= 2)
     {
         tag = argv[1];
-        if (tag != "-p" && tag != "-l") {printHelp(); exit(0);}
+        if (tag != "-p" && tag != "-l" && tag != "-a") {printHelp(); exit(0);}
     }
     else    {printHelp(); exit(0);}
 
+    // create levelsets grid
     if (tag == "-l")
     {
         cout << "Bunny OpenVDB Levelsets Generation" << endl;
@@ -57,9 +56,14 @@ int main(int argc, char* argv[])
         cout << "--------------------------------------------" << endl;
 
         // write levelsets grid into file
-        writeVDBGrid(bunnyGrid, levelsetsPath, levelsetsGridName);
+        cout << "Writing grid " << levelsetsGridName << " into file: " << levelsetsPath << "..." << endl;
+        bunnyGrid->setName(levelsetsGridName);
+        openvdb::GridPtrVec grids;
+        grids.push_back(bunnyGrid);
+        writeVDBGrid(grids, levelsetsPath);
     }
 
+    // create pyroclast grid
     if (tag == "-p")
     {
         cout << "Pyroclast Bunny Frame 59 Generation" << endl;
@@ -70,7 +74,19 @@ int main(int argc, char* argv[])
         bunnyPyroGrid->setGridClass(openvdb::GRID_FOG_VOLUME);
 
         // write pyro grid into file
-        writeVDBGrid(bunnyPyroGrid, pyroPath, pyroGridName);
+        cout << "Writing grid " << pyroGridName << " into file: " << pyroPath << "..." << endl;
+        bunnyPyroGrid->setName(pyroGridName);
+        openvdb::GridPtrVec grids;
+        grids.push_back(bunnyPyroGrid);
+        writeVDBGrid(grids, pyroPath);
+    }
+
+    // create characteristic map grid
+    if (tag == "-a")
+    {
+        cout << "Characteristic Map Grids Generation" << endl;
+        cout << "====================================" << endl;
+        createCMGrid();
     }
 
     return 0;

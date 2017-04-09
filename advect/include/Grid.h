@@ -65,6 +65,20 @@ namespace lux
 	};
 
 
+	// convert a Vec3f grid to a vector volume
+	class VectorGridVolume: public Volume<Vector>
+	{
+		public:
+			VectorGridVolume(Vec3fGrid::Ptr grid): vectorGrid(grid)	{}
+			~VectorGridVolume()	{}
+
+			const Vector eval(const Vector& x) const;
+
+		private:
+			Vec3fGrid::Ptr vectorGrid;
+	};
+
+
 	// -------------------------------- Volume to Grid -----------------------------------------
 
 	// stamp a float volume to a float grid
@@ -109,6 +123,27 @@ namespace lux
 			BBox volumeBBox;
 
 			Vec4fGrid::Ptr myGrid;
+			Transform::Ptr transform;
+
+			void createVolumeGrid();
+	};
+
+
+	// stamp a vector volume to a Vec3f grid
+	class VectorVolumeToGrid
+	{
+		public:
+			VectorVolumeToGrid(Volume<Vector>& f, float s, BBox& bbox);
+			~VectorVolumeToGrid()	{}
+
+			Vec3fGrid::Ptr getVolumeGrid();
+
+		private:
+			Volume<Vector>& vectorVolume;
+			float voxelSize;
+			BBox volumeBBox;
+
+			Vec3fGrid::Ptr grid;
 			Transform::Ptr transform;
 
 			void createVolumeGrid();

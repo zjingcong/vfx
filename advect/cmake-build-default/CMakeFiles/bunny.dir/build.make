@@ -60,28 +60,28 @@ include CMakeFiles/bunny.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/bunny.dir/flags.make
 
-CMakeFiles/bunny.dir/bunny.C.o: CMakeFiles/bunny.dir/flags.make
-CMakeFiles/bunny.dir/bunny.C.o: ../bunny.C
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/advect/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/bunny.dir/bunny.C.o"
-	g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/bunny.dir/bunny.C.o -c /home/jingcoz/workspace/clion_projects/advect/bunny.C
+CMakeFiles/bunny.dir/bunnyFile.C.o: CMakeFiles/bunny.dir/flags.make
+CMakeFiles/bunny.dir/bunnyFile.C.o: ../bunnyFile.C
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/advect/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/bunny.dir/bunnyFile.C.o"
+	g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/bunny.dir/bunnyFile.C.o -c /home/jingcoz/workspace/clion_projects/advect/bunnyFile.C
 
-CMakeFiles/bunny.dir/bunny.C.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/bunny.dir/bunny.C.i"
-	g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jingcoz/workspace/clion_projects/advect/bunny.C > CMakeFiles/bunny.dir/bunny.C.i
+CMakeFiles/bunny.dir/bunnyFile.C.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/bunny.dir/bunnyFile.C.i"
+	g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jingcoz/workspace/clion_projects/advect/bunnyFile.C > CMakeFiles/bunny.dir/bunnyFile.C.i
 
-CMakeFiles/bunny.dir/bunny.C.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/bunny.dir/bunny.C.s"
-	g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jingcoz/workspace/clion_projects/advect/bunny.C -o CMakeFiles/bunny.dir/bunny.C.s
+CMakeFiles/bunny.dir/bunnyFile.C.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/bunny.dir/bunnyFile.C.s"
+	g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jingcoz/workspace/clion_projects/advect/bunnyFile.C -o CMakeFiles/bunny.dir/bunnyFile.C.s
 
-CMakeFiles/bunny.dir/bunny.C.o.requires:
+CMakeFiles/bunny.dir/bunnyFile.C.o.requires:
 
-.PHONY : CMakeFiles/bunny.dir/bunny.C.o.requires
+.PHONY : CMakeFiles/bunny.dir/bunnyFile.C.o.requires
 
-CMakeFiles/bunny.dir/bunny.C.o.provides: CMakeFiles/bunny.dir/bunny.C.o.requires
-	$(MAKE) -f CMakeFiles/bunny.dir/build.make CMakeFiles/bunny.dir/bunny.C.o.provides.build
-.PHONY : CMakeFiles/bunny.dir/bunny.C.o.provides
+CMakeFiles/bunny.dir/bunnyFile.C.o.provides: CMakeFiles/bunny.dir/bunnyFile.C.o.requires
+	$(MAKE) -f CMakeFiles/bunny.dir/build.make CMakeFiles/bunny.dir/bunnyFile.C.o.provides.build
+.PHONY : CMakeFiles/bunny.dir/bunnyFile.C.o.provides
 
-CMakeFiles/bunny.dir/bunny.C.o.provides.build: CMakeFiles/bunny.dir/bunny.C.o
+CMakeFiles/bunny.dir/bunnyFile.C.o.provides.build: CMakeFiles/bunny.dir/bunnyFile.C.o
 
 
 CMakeFiles/bunny.dir/src/Camera.C.o: CMakeFiles/bunny.dir/flags.make
@@ -374,7 +374,7 @@ CMakeFiles/bunny.dir/src/Renderer.C.o.provides.build: CMakeFiles/bunny.dir/src/R
 
 # Object files for target bunny
 bunny_OBJECTS = \
-"CMakeFiles/bunny.dir/bunny.C.o" \
+"CMakeFiles/bunny.dir/bunnyFile.C.o" \
 "CMakeFiles/bunny.dir/src/Camera.C.o" \
 "CMakeFiles/bunny.dir/src/Grid.C.o" \
 "CMakeFiles/bunny.dir/src/Image.C.o" \
@@ -391,7 +391,7 @@ bunny_OBJECTS = \
 # External object files for target bunny
 bunny_EXTERNAL_OBJECTS =
 
-bunny: CMakeFiles/bunny.dir/bunny.C.o
+bunny: CMakeFiles/bunny.dir/bunnyFile.C.o
 bunny: CMakeFiles/bunny.dir/src/Camera.C.o
 bunny: CMakeFiles/bunny.dir/src/Grid.C.o
 bunny: CMakeFiles/bunny.dir/src/Image.C.o
@@ -414,7 +414,7 @@ CMakeFiles/bunny.dir/build: bunny
 
 .PHONY : CMakeFiles/bunny.dir/build
 
-CMakeFiles/bunny.dir/requires: CMakeFiles/bunny.dir/bunny.C.o.requires
+CMakeFiles/bunny.dir/requires: CMakeFiles/bunny.dir/bunnyFile.C.o.requires
 CMakeFiles/bunny.dir/requires: CMakeFiles/bunny.dir/src/Camera.C.o.requires
 CMakeFiles/bunny.dir/requires: CMakeFiles/bunny.dir/src/Grid.C.o.requires
 CMakeFiles/bunny.dir/requires: CMakeFiles/bunny.dir/src/Image.C.o.requires

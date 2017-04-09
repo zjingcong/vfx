@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/bunny.dir/bunny.C.o"
+  "CMakeFiles/bunny.dir/bunnyFile.C.o"
   "CMakeFiles/bunny.dir/src/Camera.C.o"
   "CMakeFiles/bunny.dir/src/Grid.C.o"
   "CMakeFiles/bunny.dir/src/Image.C.o"
