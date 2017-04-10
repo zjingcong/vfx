@@ -84,7 +84,8 @@ const float PyroVDBLevelsets::eval(const Vector& x) const
         float amp = noise.getAmp();
         double scale = pow( 1.0 + noiseParm.roughness, noiseParm.octaves - 1.0);
         // set noise value range to [-amp, amp]
-        float val = float(amp * (noise.eval(cptVec) + 0.5 * scale ) / scale);
+        // float val = float(amp * (noise.eval(cptVec) + 0.5 * scale ) / scale);
+        float val = float(amp * (2 * noise.eval(cptVec)) / scale);
         float noiseValue = pow(fabs(val), gamma);
         value = levelsetsVolumePtr->eval(x) + noiseValue;
     }

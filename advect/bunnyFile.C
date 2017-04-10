@@ -14,25 +14,33 @@ using namespace lux;
 
 void printHelp()
 {
-    cout << "[Usage] ./bunny tag" << endl;
+    cout << "[Usage] ./bunny cfg_path tag" << endl;
     cout << "\t -l: create bunny levelsets" << endl;
     cout << "\t -p: create pyroclastic bunny" << endl;
-    cout << "\t -a: create characteristic map grid" << endl;
+    cout << "\t -a: create characteristic map grids" << endl;
+    cout << "\t -as [id]: create single characteristic map grid" << endl;
 }
 
 
 int main(int argc, char* argv[])
 {
-    // [usage] ./bunny tag
-    // -l: create bunny levelsets
-    // -p: create pyroclastic bunny
     string tag;
-    if (argc >= 2)
+    string cfg_path;
+    int cm_id = 0;
+    if (argc >= 3)
     {
-        tag = argv[1];
-        if (tag != "-p" && tag != "-l" && tag != "-a") {printHelp(); exit(0);}
+        cfg_path = argv[1];
+        tag = argv[2];
+        if (tag != "-p" && tag != "-l" && tag != "-a" && tag != "-as") {printHelp(); exit(0);}
+        if (tag == "-as")
+        {
+            if (argc <= 3)  {cout << "Please input CM id." << endl; printHelp(); exit(0);}
+            cm_id = atoi(argv[3]);
+        }
     }
     else    {printHelp(); exit(0);}
+
+    setCfgPath(cfg_path);
 
     // create levelsets grid
     if (tag == "-l")
@@ -81,12 +89,20 @@ int main(int argc, char* argv[])
         writeVDBGrid(grids, pyroPath);
     }
 
-    // create characteristic map grid
+    // create characteristic map grids
     if (tag == "-a")
     {
         cout << "Characteristic Map Grids Generation" << endl;
         cout << "====================================" << endl;
         createCMGrid();
+    }
+
+    // create single characteristic map grid
+    if (tag == "-as")
+    {
+        cout << "Single Characteristic Map Grid Generation" << endl;
+        cout << "==========================================" << endl;
+        createSingleCMGrid(cm_id);
     }
 
     return 0;

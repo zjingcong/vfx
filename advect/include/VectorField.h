@@ -28,10 +28,13 @@ class VNoise1: public Volume<Vector>
 
         inline const Vector eval(const Vector& x) const
         {
-            float n0 = noise.eval(x);
-            float nx = noise.eval(x + delta_x);
-            float ny = noise.eval(x + delta_y);
-            float nz = noise.eval(x + delta_z);
+            Noise_t noiseParm = noise.getNoiseParameters();
+            double scale = pow( 1.0 + noiseParm.roughness, noiseParm.octaves - 1.0);
+
+            float n0 = (2 * noise.eval(x)) / scale;
+            float nx = (2 * noise.eval(x + delta_x)) / scale;
+            float ny = (2 * noise.eval(x + delta_y)) / scale;
+            float nz = (2 * noise.eval(x + delta_z)) / scale;
 
             return Vector(nx - n0, ny - n0, nz - n0);
         }

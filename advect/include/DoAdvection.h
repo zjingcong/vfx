@@ -34,7 +34,7 @@ using namespace lux;
 
 // stamping
 # define GRID_VOXEL_SIZE 0.008
-# define CM_GRID_VOXEL_SIZE 0.008
+# define CM_GRID_VOXEL_SIZE 0.01
 
 // volume property
 # define KAPPA 1.0
@@ -56,17 +56,31 @@ using namespace lux;
 # define getMin(x, y) (x < y ? x : y)
 
 // vdb files
-string levelsetsPath = "../tmp/bunny_levelsets.vdb";
+string levelsetsPath = "./DPA/jedi/zjingcong/grids/advect_grids/bunny_levelsets.vdb";
 string levelsetsGridName = "bunny_levelsets";
 
-string pyroPath = "../tmp/bunny_pyro.vdb";
+string pyroPath = "/DPA/jedi/zjingcong/grids/advect_grids/bunny_pyro.vdb";
 string pyroGridName = "bunny_pyro";
 
-string advectPathTemplate = "../tmp/bunny_advect.%04d.vdb";
+string advectPathTemplate = "/DPA/jedi/zjingcong/grids/advect_grids/bunny_advect.%04d.vdb";
 string advectGridNameTemplate = "bunny_advect.%04d";
 
 // config file
-string configPath = "../config/advect.cfg";
+string advectCfgName = "advect.cfg";
+string pyroCfgName = "pyro.cfg";
+string advectConfigPath;
+string pyroConfigPath;
+
+
+// -------------------------------------------- setup --------------------------------------------------
+
+void setCfgPath(string cfgPath)
+{
+    advectConfigPath = cfgPath + "/" + advectCfgName;
+    pyroConfigPath = cfgPath + "/" + pyroCfgName;
+    cout << "advectConfigPath: " << advectConfigPath << endl;
+    cout << "pyroConfigPath: " << pyroConfigPath << endl;
+}
 
 
 // ---------------------------------------- bunny pyroclast --------------------------------------------
@@ -85,12 +99,17 @@ FloatGrid::Ptr loadBunnyPyro(int id, BBox& bbox)
     float maxNoiseAmp = bunnyGrid->background();    // background = halfwidth * voxelSize
     float noiseAmp = maxNoiseAmp * id / float(59);
 
+    // get pyro parms config
+    cout << "Get pyroclasts parms..." << endl;
+    cfg::FloatValueMap cfgPyroParms;
+    cfgPyroParms = cfg::floatValueParser(pyroConfigPath);
+
     cout << "Create perlin noise..." << endl;
     Noise_t parms;
-    parms.gamma = 1.5;
-    parms.frequency = 9.57434;
-    parms.fjump = 2.6;
-    parms.octaves = 0.5;
+    parms.gamma = cfgPyroParms.at("gamma");
+    parms.frequency = cfgPyroParms.at("frequency");
+    parms.fjump = cfgPyroParms.at("fjump");
+    parms.octaves = cfgPyroParms.at("octaves");
     parms.amplitude = noiseAmp;
     static FractalSum<PerlinNoiseGustavson> perlin;
     perlin.setParameters(parms);
@@ -111,12 +130,13 @@ FloatGrid::Ptr loadBunnyPyro(int id, BBox& bbox)
 
 // ---------------------------------------- bunny advection --------------------------------------------
 
+
 void createCMGrid()
 {
     // get advect parms config
     cout << "Get advection parms..." << endl;
     cfg::FloatValueMap cfgAdvectParms;
-    cfgAdvectParms = cfg::floatValueParser(configPath);
+    cfgAdvectParms = cfg::floatValueParser(advectConfigPath);
 
     cout << "Create perlin noise..." << endl;
     // set noise parms
@@ -131,12 +151,13 @@ void createCMGrid()
 
     float timestep = cfgAdvectParms.at("timestep");
     int stepnum = int(cfgAdvectParms.at("stepnum"));
+    float offset = cfgAdvectParms.at("offset");
 
     // generate velocity field from vector noise
     cout << "Create velocity field..." << endl;
-    Vector delta_x = timestep * Vector(1.0, 1.0, 1.0);
-    Vector delta_y(1.0, 0.0, -1.0);
-    Vector delta_z(0.0, 1.0, 0.0);
+    Vector delta_x = offset * Vector(1.0, 1.0, 1.0);
+    Vector delta_y = offset * Vector(1.0, 0.0, -1.0);
+    Vector delta_z = offset * Vector(0.0, 1.0, 0.0);
     VNoise1 velocityField(perlin, delta_x, delta_y, delta_z);
 
     // initialization
@@ -155,9 +176,9 @@ void createCMGrid()
         float delta_t = id * timestep;
         VolumeVectorPtr vecAdvectPtr;
         if (id == 1)
-            { vecAdvectPtr = new VectorAdvect(&identity, &velocityField, delta_t); }
+        { vecAdvectPtr = new VectorAdvect(&identity, &velocityField, delta_t); }
         else
-            { vecAdvectPtr = new VectorAdvect(X, &velocityField, delta_t); }
+        { vecAdvectPtr = new VectorAdvect(X, &velocityField, delta_t); }
 
         // generate characteristic map grid
         cout << "Stamping characteristic map " << advectGridName << "..." << endl;
@@ -188,6 +209,91 @@ void createCMGrid()
 }
 
 
+// create single characteristic map grid from .vdb file
+void createSingleCMGrid(int id)
+{
+    // get advect parms config
+    cout << "Get advection parms..." << endl;
+    cfg::FloatValueMap cfgAdvectParms;
+    cfgAdvectParms = cfg::floatValueParser(advectConfigPath);
+
+    cout << "Create perlin noise..." << endl;
+    // set noise parms
+    Noise_t parms;
+    parms.gamma = cfgAdvectParms.at("gamma");
+    parms.frequency = cfgAdvectParms.at("frequency");
+    parms.fjump = cfgAdvectParms.at("fjump");
+    parms.octaves = cfgAdvectParms.at("octaves");
+    // create perlin noise
+    FractalSum<PerlinNoiseGustavson> perlin;
+    perlin.setParameters(parms);
+
+    float timestep = cfgAdvectParms.at("timestep");
+    int stepnum = int(cfgAdvectParms.at("stepnum"));
+    float offset = cfgAdvectParms.at("offset");
+
+    // generate velocity field from vector noise
+    cout << "Create velocity field..." << endl;
+    Vector delta_x = offset * Vector(1.0, 1.0, 1.0);
+    Vector delta_y = offset * Vector(1.0, 0.0, -1.0);
+    Vector delta_z = offset * Vector(0.0, 1.0, 0.0);
+    VNoise1 velocityField(perlin, delta_x, delta_y, delta_z);
+
+    // get grid name and grid path
+    char advectGridName[1024];
+    sprintf(advectGridName, advectGridNameTemplate.c_str(), id);
+    char advectPath[1024];
+    sprintf(advectPath, advectPathTemplate.c_str(), id);
+
+    // initialization
+    Identity identity;
+    BBox advectBBox(Vec3s(-1.5, -1.5, -1.5), Vec3s(1.5, 1.5, 1.5));
+    // load previous grid
+    VectorGridVolumePtr X;
+    if (id > 1)
+    {
+        char preGridName[1024];
+        sprintf(preGridName, advectGridNameTemplate.c_str(), (id - 1));
+        char preGridPath[1024];
+        sprintf(preGridPath, advectPathTemplate.c_str(), (id - 1));
+        Vec3fGrid::Ptr preGrid = readVDBGrid<Vec3fTree>(preGridPath, preGridName);
+        X = new VectorGridVolume(preGrid);
+    }
+
+    // semi-lagrangian mapping
+    float delta_t = id * timestep;
+    VolumeVectorPtr vecAdvectPtr;
+    if (id == 1)
+    { vecAdvectPtr = new VectorAdvect(&identity, &velocityField, delta_t); }
+    else
+    { vecAdvectPtr = new VectorAdvect(X, &velocityField, delta_t); }
+
+    // generate characteristic map grid
+    cout << "Stamping characteristic map " << advectGridName << "..." << endl;
+    VectorVolumeToGrid vecAdvectV2Grid(*vecAdvectPtr, CM_GRID_VOXEL_SIZE, advectBBox);
+    Vec3fGrid::Ptr vecAdvectGrid = vecAdvectV2Grid.getVolumeGrid();
+
+    // write levelsets grid into file
+    openvdb::GridPtrVec grids;
+    // push into container
+    vecAdvectGrid->setName(advectGridName);
+    vecAdvectGrid->setGridClass(openvdb::GRID_UNKNOWN);
+    grids.push_back(vecAdvectGrid);
+    cout << "Writing grid " << advectGridName << " into file: " << advectPath << "..." << endl;
+    writeVDBGrid(grids, advectPath);
+
+    // release memory
+    if (id > 1)
+    {
+        Vec3fGrid::Ptr preVecAdvectGrid = X->getGrid();
+        preVecAdvectGrid->clear();
+        delete X;
+    }
+    vecAdvectGrid->clear();
+    delete vecAdvectPtr;
+}
+
+
 FloatGrid::Ptr loadBunnyAdvect(int frame_id, BBox& bbox)
 {
     /// ----------------------------------- Load Pyrobunny --------------------------------------------
@@ -197,7 +303,7 @@ FloatGrid::Ptr loadBunnyAdvect(int frame_id, BBox& bbox)
     // load pyroclastic bunny from .vdb file
     FloatGrid::Ptr pyrobunnyGrid = readVDBGrid<FloatTree>(pyroPath, pyroGridName);
     BBox pyrobunnyGridBBox = getGridBBox<FloatTree>(pyrobunnyGrid);
-    cout << "\t | Bunny Levelsets BBox: " << pyrobunnyGridBBox.min() << " " << pyrobunnyGridBBox.max() << endl;
+    cout << "\t | Bunny Pyro BBox: " << pyrobunnyGridBBox.min() << " " << pyrobunnyGridBBox.max() << endl;
 
     // get grid name and grid path
     char advectGridName[1024];
@@ -206,7 +312,6 @@ FloatGrid::Ptr loadBunnyAdvect(int frame_id, BBox& bbox)
     sprintf(advectPath, advectPathTemplate.c_str(), id);
 
     // load characteristic map from .vdb file
-    // Vec3fGrid::Ptr advectGrid = readVDBVectorGrid(advectPath, advectGridName);
     Vec3fGrid::Ptr advectGrid = readVDBGrid<Vec3fTree>(advectPath, advectGridName);
     BBox CMBBox = getGridBBox<Vec3fTree>(advectGrid);
 
@@ -228,6 +333,7 @@ FloatGrid::Ptr loadBunnyAdvect(int frame_id, BBox& bbox)
 
     return bunnyAdvectGrid;
 }
+
 
 // ----------------------------------- Volume Rendering ------------------------------------------------
 
@@ -332,3 +438,4 @@ void createBunnyCumulo(int frame_id, string output_path)
 }
 
 # endif
+
