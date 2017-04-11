@@ -74,8 +74,10 @@ string earPath;
 // config file
 string advectCfgName = "advect.cfg";
 string pyroCfgName = "pyro.cfg";
+string renderCfgName = "render.cfg";
 string advectConfigPath;
 string pyroConfigPath;
+string renderConfigPath;
 
 
 // -------------------------------------------- setup --------------------------------------------------
@@ -84,8 +86,10 @@ void setCfgPath(string cfgPath)
 {
     advectConfigPath = cfgPath + "/" + advectCfgName;
     pyroConfigPath = cfgPath + "/" + pyroCfgName;
+    renderConfigPath = cfgPath + "/" + renderCfgName;
     cout << "advectConfigPath: " << advectConfigPath << endl;
     cout << "pyroConfigPath: " << pyroConfigPath << endl;
+    cout << "renderConfigPath: " << renderConfigPath << endl;
 }
 
 
@@ -405,7 +409,7 @@ void createEarAdvect()
     VolumeFloatPtr densityVolumePtr = &ear;
     VolumeVectorPtr advectVolumePtr = &advectVolume;
     Warp warpedEar(densityVolumePtr, advectVolumePtr);
-    
+
     // union ear and body
     ImplicitUnion warpedBunny(warpedEar, body);
 
@@ -563,6 +567,11 @@ void createEar(int frame_id, string output_path)
     float angle = float(360) / 120;	// total frame: 120
     float theta = frame_id  * angle;
 
+    // get render parms config
+    cout << "Get render color parms..." << endl;
+    cfg::ColorValueMap cfgColorParms;
+    cfgColorParms = cfg::colorValueParser(renderConfigPath);
+
     /// ------------------------------------- Ears Setup ----------------------------------------------
 
     VolumeFloatPtr finalDensityPtr;
@@ -587,8 +596,8 @@ void createEar(int frame_id, string output_path)
     Vector keyPos(0.0, 3.0, 0.0);
     Vector rimPos(0.0, -3.0, 0.0);
     // light color
-    Color keyColor(0.0, 0.5, 0.25, 1.0);
-    Color rimColor(0.2, 0.2, 0.0, 1.0);
+    Color keyColor = cfgColorParms.at("earkey");
+    Color rimColor = cfgColorParms.at("earrim");
     // set lights
     LightSource keyLight(keyPos, keyColor);
     LightSource rimLight(rimPos, rimColor);
@@ -634,4 +643,3 @@ void createEar(int frame_id, string output_path)
 }
 
 # endif
-

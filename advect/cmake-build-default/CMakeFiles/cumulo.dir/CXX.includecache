@@ -29,6 +29,8 @@ fstream
 -
 string
 -
+Color.h
+../include/Color.h
 
 ../include/DoAdvection.h
 iostream

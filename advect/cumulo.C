@@ -15,7 +15,7 @@ void printHelp()
 
 int main(int argc, char* argv[])
 {
-    // cmd line parser
+    // cmdline parser
     int frameid = 0;
     string cfg_path;
     string grid_path;
