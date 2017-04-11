@@ -19,6 +19,7 @@ CMakeFiles/cumulo.dir/cumulo.C.o: ../include/PolyModel.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/PropertyVolume.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Pyroclastic.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Renderer.h
+CMakeFiles/cumulo.dir/cumulo.C.o: ../include/ScalarVolumeXform.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Shape.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Types.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/VDBTool.h

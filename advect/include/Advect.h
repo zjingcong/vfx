@@ -33,7 +33,8 @@ typedef VectorAdvect* VectorAdvectPtr;
 class Warp: public Volume<float>
 {
     public:
-        Warp(VolumeFloatPtr d, VolumeVectorPtr v): densityVolumePtr(d), vecAdvect(v)  {}
+        Warp(VolumeFloatPtr d, VolumeVectorPtr v):
+                densityVolumePtr(d), vecAdvect(v)  {}
         ~Warp() {}
 
         inline const float eval(const Vector& x) const

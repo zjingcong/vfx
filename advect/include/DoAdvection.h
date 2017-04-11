@@ -24,6 +24,8 @@
 # include "VDBTool.h"
 # include "Advect.h"
 # include "VectorField.h"
+# include "Shape.h"
+# include "ScalarVolumeXform.h"
 
 using namespace std;
 using namespace lux;
@@ -55,15 +57,19 @@ using namespace lux;
 # define getMax(x, y) (x > y ? x : y)
 # define getMin(x, y) (x < y ? x : y)
 
+# define LEVELSETS_GRID 1
+# define STANDARD_GRID 0
+
 // vdb files
-string levelsetsPath = "./DPA/jedi/zjingcong/grids/advect_grids/bunny_levelsets.vdb";
 string levelsetsGridName = "bunny_levelsets";
-
-string pyroPath = "/DPA/jedi/zjingcong/grids/advect_grids/bunny_pyro.vdb";
 string pyroGridName = "bunny_pyro";
-
-string advectPathTemplate = "/DPA/jedi/zjingcong/grids/advect_grids/bunny_advect.%04d.vdb";
 string advectGridNameTemplate = "bunny_advect.%04d";
+string earGridName = "bunny_ear";
+
+string levelsetsPath;
+string pyroPath;
+string advectPathTemplate;
+string earPath;
 
 // config file
 string advectCfgName = "advect.cfg";
@@ -80,6 +86,25 @@ void setCfgPath(string cfgPath)
     pyroConfigPath = cfgPath + "/" + pyroCfgName;
     cout << "advectConfigPath: " << advectConfigPath << endl;
     cout << "pyroConfigPath: " << pyroConfigPath << endl;
+}
+
+
+void setGridsOutPath(string out)
+{
+    levelsetsPath = out + "/bunny_levelsets.vdb";
+    pyroPath = out + "/bunny_pyro.vdb";
+    advectPathTemplate = out + "/bunny_advect.%04d.vdb";
+    earPath = out + "/bunny_ear.vdb";
+    cout << "Grids File Path: " << out << endl;
+}
+
+
+// theta in degree
+// axis should be unit vector
+Vector vecRotation(Vector v, Vector axis, float a)
+{
+    float theta = PI * a / 180.0;
+    return v * cos(theta) + axis * (axis * v) * ( 1 - cos(theta)) + (axis ^ v) * sin(theta);
 }
 
 
@@ -129,7 +154,6 @@ FloatGrid::Ptr loadBunnyPyro(int id, BBox& bbox)
 
 
 // ---------------------------------------- bunny advection --------------------------------------------
-
 
 void createCMGrid()
 {
@@ -335,22 +359,110 @@ FloatGrid::Ptr loadBunnyAdvect(int frame_id, BBox& bbox)
 }
 
 
+// ----------------------------------------- ear advection ---------------------------------------------
+
+// create ear advection for bunny and write into .vdb file
+void createEarAdvect()
+{
+    /// ----------------------------------- Load Levelsets --------------------------------------------
+
+    // load bunny levelsets from .vdb file
+    FloatGrid::Ptr bunnyGrid = readVDBGrid<FloatTree>(levelsetsPath, levelsetsGridName);
+    BBox bunnyLevelsetsBBox = getGridBBox<FloatTree>(bunnyGrid);
+    cout << "\t | Bunny Levelsets BBox: " << bunnyLevelsetsBBox.min() << " " << bunnyLevelsetsBBox.max() << endl;
+
+    /// --------------------------------- create ear advection ----------------------------------------
+
+    // get advect parms config
+    cout << "Get advection parms..." << endl;
+    cfg::FloatValueMap cfgAdvectParms;
+    cfgAdvectParms = cfg::floatValueParser(advectConfigPath);
+
+    // cutout ear area to do advection
+    VDBLevelsetsVolume bunnyVolume(bunnyGrid);
+    float transx = cfgAdvectParms.at("transx");
+    float transy = cfgAdvectParms.at("transy");
+    float transz = cfgAdvectParms.at("transz");
+    float radius = cfgAdvectParms.at("radius");
+    int cm_step = int(cfgAdvectParms.at("cmlevel"));
+    Sphere sphere(radius);
+    ScalarTranslate cutoutSphere(sphere, Vector(transx, transy, transz));
+    // get bunny body
+    ImplicitCutout body(bunnyVolume, cutoutSphere);
+    // get bunny ear
+    ImplicitIntersec ear(bunnyVolume, cutoutSphere);
+    // get cm grid name and grid path
+    char advectGridName[1024];
+    char advectPath[1024];
+    sprintf(advectGridName, advectGridNameTemplate.c_str(), cm_step);
+    sprintf(advectPath, advectPathTemplate.c_str(), cm_step);
+    // load characteristic map from .vdb file
+    Vec3fGrid::Ptr advectGrid = readVDBGrid<Vec3fTree>(advectPath, advectGridName);
+    // BBox CMBBox = getGridBBox<Vec3fTree>(advectGrid);
+    VectorGridVolume advectVolume(advectGrid);
+    // do advection
+    // gridded for density volume and characteristic map volume
+    VolumeFloatPtr densityVolumePtr = &ear;
+    VolumeVectorPtr advectVolumePtr = &advectVolume;
+    Warp warpedEar(densityVolumePtr, advectVolumePtr);
+    
+    // union ear and body
+    ImplicitUnion warpedBunny(warpedEar, body);
+
+    // stamping warped density into grid
+    BBox earsBBox(Vec3s(-1, -1, -1), Vec3s(1, 1, 1));
+    cout << "Stamping advection bunny..." << endl;
+    FloatVolumeToGrid earAdvectV2Grid(warpedBunny, GRID_VOXEL_SIZE, earsBBox);
+    FloatGrid::Ptr earAdvectGrid = earAdvectV2Grid.getVolumeGrid();
+
+    FloatGrid::Ptr earGrid = earAdvectGrid;
+
+    /// ----------------------------------------- save grid -------------------------------------------
+
+    // write ear advection grid into file
+    cout << "Writing grid " << earGridName << " into file: " << earPath << "..." << endl;
+    earGrid->setName(earGridName);
+    openvdb::GridPtrVec grids;
+    grids.push_back(earGrid);
+    writeVDBGrid(grids, earPath);
+}
+
+
+FloatGrid::Ptr loadEarAdvect(BBox& bbox)
+{
+    /// ----------------------------------- Load ear advection --------------------------------------------
+
+    // load ear advection grid from .vdb file
+    FloatGrid::Ptr earGrid = readVDBGrid<FloatTree>(earPath, earGridName);
+    BBox earBBox = getGridBBox<FloatTree>(earGrid);
+    cout << "\t | Ear Advection Bunny BBox: " << earBBox.min() << " " << earBBox.max() << endl;
+
+    bbox = earBBox;
+
+    return earGrid;
+}
+
+
 // ----------------------------------- Volume Rendering ------------------------------------------------
 
 void assignVolumeProperty(FloatGrid::Ptr grid,
                           VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
-                          VolumeColorPtr& finalMatColorPtr, float& K)
+                          VolumeColorPtr& finalMatColorPtr, float& K,
+                          float k_value, float density, int grid_type = STANDARD_GRID)
 {
-    VolumeFloatPtr volume = new FloatGridVolume(grid);
+    VolumeFloatPtr volume;
+    if (grid_type == STANDARD_GRID) {volume = new FloatGridVolume(grid);}
+    else    {volume = new VDBLevelsetsVolume(grid);}
+
     // create bunny color volume and density volume
     static Color matColor(1.0, 1.0, 1.0, 1.0);
     static Color emColor(0.0, 0.0, 0.0, 0.0);
     static ConstantColor bunnyMatColor(matColor);
     static ConstantColor bunnyEmColor(emColor);
-    static ConstantFloat rho(100.0);
+    static ConstantFloat rho(density);
     static DensityVolume bunnyDensity(rho, *volume);
     // set K
-    K = 0.8;
+    K = k_value;
     finalDensityPtr = &bunnyDensity;
     finalEmColorPtr = &bunnyEmColor;
     finalMatColorPtr = &bunnyMatColor;
@@ -381,7 +493,7 @@ void createBunnyCumulo(int frame_id, string output_path)
     // remaining 60 frames: do advection
     else    {bunnyCumuloGrid = loadBunnyAdvect(frame_id, finalBBox);}
     // assign color, opacity, density to volume
-    assignVolumeProperty(bunnyCumuloGrid, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, K);
+    assignVolumeProperty(bunnyCumuloGrid, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, K, 0.8, 100);
 
     /// ---------------------------------- Lighting & Rendering ---------------------------------------
 
@@ -427,6 +539,90 @@ void createBunnyCumulo(int frame_id, string output_path)
     myCamera.setFarPlane(NEAR);
     myCamera.setFarPlane(FAR);
     myCamera.setEyeViewUp(eye, view, up);
+    cout << "Start rendering..." << endl;
+    cout << "	 | Render step size: " << step_size << endl;
+    Renderer myRenderer(myImg, myCamera, step_size);
+    myRenderer.render(*finalEmColorPtr, *finalDensityPtr, K, lightVolume, finalBBox, 1);
+    cout << "Rendering complete." << endl;
+    // write into file
+    cout << "Write frame " << frame_id << " into" << file_name << "."<< endl;
+    writeOIIOImage(file_name, myImg);
+}
+
+
+void createEar(int frame_id, string output_path)
+{
+    /// ----------------------------------- Initialization --------------------------------------------
+
+    cout << "frame_id: " << frame_id << endl;
+    char file_name[1024];
+    sprintf(file_name, "%s/jingcoz_hw5_ears.%04d.exr", output_path.c_str(), frame_id);
+    cout << "Output path: " << file_name << endl;
+    cout << "--------------------------------------------" << endl;
+
+    float angle = float(360) / 120;	// total frame: 120
+    float theta = frame_id  * angle;
+
+    /// ------------------------------------- Ears Setup ----------------------------------------------
+
+    VolumeFloatPtr finalDensityPtr;
+    VolumeColorPtr finalEmColorPtr;
+    VolumeColorPtr finalMatColorPtr;
+    BBox finalBBox;
+    float K;
+
+    FloatGrid::Ptr earGrid;
+    earGrid = loadEarAdvect(finalBBox);
+    // assign color, opacity, density to volume
+    assignVolumeProperty(earGrid, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, K, 0.8, 100);
+
+    /// ---------------------------------- Lighting & Rendering ---------------------------------------
+
+    float step_size = GRID_VOXEL_SIZE / CRAZY_NUM;
+
+    // lighting
+    cout << "Set lights..." << endl;
+    Lights myLights;
+    // light position
+    Vector keyPos(0.0, 3.0, 0.0);
+    Vector rimPos(0.0, -3.0, 0.0);
+    // light color
+    Color keyColor(0.0, 0.5, 0.25, 1.0);
+    Color rimColor(0.2, 0.2, 0.0, 1.0);
+    // set lights
+    LightSource keyLight(keyPos, keyColor);
+    LightSource rimLight(rimPos, rimColor);
+    myLights.push_back(keyLight);
+    myLights.push_back(rimLight);
+    // get light step size
+    float bboxSize_x = (finalBBox.max().x() - finalBBox.min().x());
+    float bboxSize_y = (finalBBox.max().y() - finalBBox.min().y());
+    float bboxSize_z = (finalBBox.max().z() - finalBBox.min().z());
+    float bboxSize;
+    bboxSize = getMin(bboxSize_x, bboxSize_y);
+    bboxSize = getMin(bboxSize, bboxSize_z);
+    cout << "	 | BBox size: " << bboxSize << endl;
+    float light_voxelSize = float(bboxSize) / LIGHT_GRID_NUM;
+    float light_step_size = float(light_voxelSize) / CRAZY_NUM;   // get step size form grid
+    cout << "	 | Light voxel size: " << light_voxelSize << endl;
+    cout << "	 | Light step size: " << light_step_size << endl;
+    // get final light volume
+    LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, light_step_size, light_voxelSize, finalBBox);
+
+    cout << "Set image..." << endl;
+    Image myImg;
+    myImg.reset(WEIGHT, HEIGHT);
+    cout << "Set camera..." << endl;
+    Camera myCamera;
+    Vector originEye(0.0, 0.0, 4.0);
+    Vector lookAt(0.0, 0.0, 0.0);
+    Vector camera_axis(0.0, 1.0, 0.0);
+    Vector eye_new = vecRotation(originEye, camera_axis, theta);
+    Vector view_new = lookAt - eye_new;
+    Vector up(0.0, 1.0, 0.0);
+    myCamera.setFarPlane(NEAR);
+    myCamera.setFarPlane(FAR);
+    myCamera.setEyeViewUp(eye_new, view_new, up);
     cout << "Start rendering..." << endl;
     cout << "	 | Render step size: " << step_size << endl;
     Renderer myRenderer(myImg, myCamera, step_size);

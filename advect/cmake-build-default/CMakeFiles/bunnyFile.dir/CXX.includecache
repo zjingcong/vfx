@@ -75,6 +75,10 @@ Advect.h
 ../include/Advect.h
 VectorField.h
 ../include/VectorField.h
+Shape.h
+../include/Shape.h
+ScalarVolumeXform.h
+../include/ScalarVolumeXform.h
 
 ../include/Grid.h
 openvdb/tools/Interpolation.h
@@ -229,6 +233,14 @@ math.h
 ../include/math.h
 vector
 -
+
+../include/ScalarVolumeXform.h
+Volume.h
+../include/Volume.h
+Vector.h
+../include/Vector.h
+math.h
+../include/math.h
 
 ../include/Shape.h
 Volume.h

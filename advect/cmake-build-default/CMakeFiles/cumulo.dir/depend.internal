@@ -20,6 +20,7 @@ CMakeFiles/cumulo.dir/cumulo.C.o
  ../include/PropertyVolume.h
  ../include/Pyroclastic.h
  ../include/Renderer.h
+ ../include/ScalarVolumeXform.h
  ../include/Shape.h
  ../include/Types.h
  ../include/VDBTool.h

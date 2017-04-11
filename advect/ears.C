@@ -6,22 +6,29 @@ using namespace std;
 
 void printHelp()
 {
-    cout << "[Usage] ./ears frame_id [output_path]" << endl;
+    cout << "[Usage] ./ears frame_id grid_path output_path" << endl;
+    cout << "grid_path: .vdb grids file path" << endl;
+    cout << "output_path: images output path" << endl;
 }
 
 
 int main(int argc, char* argv[])
 {
-    // cmd line parser
+    // cmdline parser
     int frameid = 0;
-    string output_path = "../output";
-    if (argc >= 2)
+    string grid_path;
+    string output_path;
+    if (argc >= 4)
     {
         frameid = atoi(argv[1]);
-        if (frameid >= 300 || frameid < 0)  {cout << "frame_id: 0~299" << endl; exit(0);}
-        if (argc == 3)  {output_path = argv[2];}
+        if (frameid >= 120 || frameid < 0)  {cout << "frame_id: 0~199" << endl; exit(0);}
+        grid_path = argv[2];
+        output_path = argv[3];
     }
     else {printHelp();  exit(0);}
+
+    setGridsOutPath(grid_path);
+    createEar(frameid, output_path);
 
     return 0;
 }

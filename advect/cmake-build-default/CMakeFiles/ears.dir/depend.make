@@ -19,6 +19,7 @@ CMakeFiles/ears.dir/ears.C.o: ../include/PolyModel.h
 CMakeFiles/ears.dir/ears.C.o: ../include/PropertyVolume.h
 CMakeFiles/ears.dir/ears.C.o: ../include/Pyroclastic.h
 CMakeFiles/ears.dir/ears.C.o: ../include/Renderer.h
+CMakeFiles/ears.dir/ears.C.o: ../include/ScalarVolumeXform.h
 CMakeFiles/ears.dir/ears.C.o: ../include/Shape.h
 CMakeFiles/ears.dir/ears.C.o: ../include/Types.h
 CMakeFiles/ears.dir/ears.C.o: ../include/VDBTool.h
