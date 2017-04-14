@@ -19,13 +19,13 @@ CMakeFiles/ears.dir/ears.C.o: ../include/PolyModel.h
 CMakeFiles/ears.dir/ears.C.o: ../include/PropertyVolume.h
 CMakeFiles/ears.dir/ears.C.o: ../include/Pyroclastic.h
 CMakeFiles/ears.dir/ears.C.o: ../include/Renderer.h
-CMakeFiles/ears.dir/ears.C.o: ../include/ScalarVolumeXform.h
 CMakeFiles/ears.dir/ears.C.o: ../include/Shape.h
 CMakeFiles/ears.dir/ears.C.o: ../include/Types.h
 CMakeFiles/ears.dir/ears.C.o: ../include/VDBTool.h
 CMakeFiles/ears.dir/ears.C.o: ../include/Vector.h
 CMakeFiles/ears.dir/ears.C.o: ../include/VectorField.h
 CMakeFiles/ears.dir/ears.C.o: ../include/Volume.h
+CMakeFiles/ears.dir/ears.C.o: ../include/Xform.h
 CMakeFiles/ears.dir/ears.C.o: /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 CMakeFiles/ears.dir/ears.C.o: /group/dpa/local/openvdb/include/openvdb/Grid.h
 CMakeFiles/ears.dir/ears.C.o: /group/dpa/local/openvdb/include/openvdb/Metadata.h

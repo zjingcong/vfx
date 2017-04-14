@@ -19,13 +19,13 @@ CMakeFiles/cumulo.dir/cumulo.C.o: ../include/PolyModel.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/PropertyVolume.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Pyroclastic.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Renderer.h
-CMakeFiles/cumulo.dir/cumulo.C.o: ../include/ScalarVolumeXform.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Shape.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Types.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/VDBTool.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Vector.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/VectorField.h
 CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Volume.h
+CMakeFiles/cumulo.dir/cumulo.C.o: ../include/Xform.h
 CMakeFiles/cumulo.dir/cumulo.C.o: /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 CMakeFiles/cumulo.dir/cumulo.C.o: /group/dpa/local/openvdb/include/openvdb/Grid.h
 CMakeFiles/cumulo.dir/cumulo.C.o: /group/dpa/local/openvdb/include/openvdb/Metadata.h

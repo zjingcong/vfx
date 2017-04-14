@@ -29,7 +29,12 @@ const float Pyrosphere::eval(const Vector &x) const {
 
 // ------------------------------- PyroVDBLevelsets ------------------------------------
 
-PyroVDBLevelsets::PyroVDBLevelsets(VDBLevelsetsPtr l, Noise& n): levelsetsGrid(l), noise(n)
+PyroVDBLevelsets::PyroVDBLevelsets(VDBLevelsetsPtr l, Noise& n):
+        levelsetsGrid(l),
+        noise(n),
+        transform(levelsetsGrid->transformPtr()),
+        acc(levelsetsGrid->getAccessor()),
+        map(transform->map<UniformScaleMap>())
 {
     levelsetsVolumePtr = new VDBLevelsetsVolume(levelsetsGrid);
     noiseParm = noise.getNoiseParameters();
@@ -38,8 +43,6 @@ PyroVDBLevelsets::PyroVDBLevelsets(VDBLevelsetsPtr l, Noise& n): levelsetsGrid(l
 
 const float PyroVDBLevelsets::eval(const Vector& x) const
 {
-    FloatGrid::Accessor acc = levelsetsGrid->getAccessor();
-    Transform::Ptr transform = levelsetsGrid->transformPtr();
     Vec3s pos(float(x.X()), float(x.Y()), float(x.Z()));
     Coord ijk = transform->worldToIndexNodeCentered(pos);
 
@@ -47,26 +50,6 @@ const float PyroVDBLevelsets::eval(const Vector& x) const
     if (acc.isValueOn(ijk))
     {
         doCPT = true;
-//        int i = ijk.x();
-//        int j = ijk.y();
-//        int k = ijk.z();
-//        std::vector<Coord> coordList;
-//        coordList.push_back(ijk);
-//        coordList.push_back(Coord(i - 1, j, k));
-//        coordList.push_back(Coord(i + 1, j, k));
-//        coordList.push_back(Coord(i, j + 1, k));
-//        coordList.push_back(Coord(i, j - 1, k));
-//        coordList.push_back(Coord(i, j, k + 1));
-//        coordList.push_back(Coord(i, j, k - 1));
-//        for (Coord iijjkk: coordList)
-//        {
-//            if (!acc.isValueOn(iijjkk))
-//            {
-//                doCPT = false;
-//                goto endLoop;
-//            }
-//        }
-//        endLoop: ;
     }
 
     float value;
@@ -74,19 +57,16 @@ const float PyroVDBLevelsets::eval(const Vector& x) const
     if (doCPT)
     {
         // using openvdb cpt
-        UniformScaleMap::Ptr map = transform->map<UniformScaleMap>();
-        // CPT_RANGE will compute in the range space of the map (world space)
-        openvdb::math::CPT_RANGE<UniformScaleMap, openvdb::math::CD_2ND> cptROp;
         Vec3s cptResult = cptROp.result(*map, acc, ijk);
         Vector cptVec(cptResult.x(), cptResult.y(), cptResult.z());
 
         float gamma = noiseParm.gamma;
         float amp = noise.getAmp();
         double scale = pow( 1.0 + noiseParm.roughness, noiseParm.octaves - 1.0);
-        // set noise value range to [-amp, amp]
-        // float val = float(amp * (noise.eval(cptVec) + 0.5 * scale ) / scale);
-        float val = float(amp * (2 * noise.eval(cptVec)) / scale);
-        float noiseValue = pow(fabs(val), gamma);
+        // set noise value range to [-1, 1]
+        float val = float((2 * noise.eval(cptVec)) / scale);
+        // set (noise value ^ gamma) range to [-amp, amp]
+        float noiseValue = amp * pow(fabs(val), gamma);
         value = levelsetsVolumePtr->eval(x) + noiseValue;
     }
     else    {value = volumeValue;}

@@ -6,7 +6,7 @@ using namespace std;
 
 void printHelp()
 {
-    cout << "[Usage] ./ears frame_id grid_path output_path" << endl;
+    cout << "[Usage] ./ears cfg_path grid_path output_path start_id end_id" << endl;
     cout << "cfg_path: config file path" << endl;
     cout << "grid_path: .vdb grids file path" << endl;
     cout << "output_path: images output path" << endl;
@@ -16,23 +16,26 @@ void printHelp()
 int main(int argc, char* argv[])
 {
     // cmdline parser
-    int frameid = 0;
+    int start_id, end_id;
     string cfg_path;
     string grid_path;
     string output_path;
-    if (argc >= 5)
+    if (argc >= 6)
     {
-        frameid = atoi(argv[1]);
-        if (frameid >= 120 || frameid < 0)  {cout << "frame_id: 0~199" << endl; exit(0);}
-        cfg_path = argv[2];
-        grid_path = argv[3];
-        output_path = argv[4];
+        cfg_path = argv[1];
+        grid_path = argv[2];
+        output_path = argv[3];
+        start_id = atoi(argv[4]);
+        end_id = atoi(argv[5]);
+        
+        if (start_id >= 120 || start_id < 0 || end_id >= 120 || end_id < 0)
+            {cout << "frame_id: 0~199" << endl; exit(0);}
     }
     else {printHelp();  exit(0);}
 
     setCfgPath(cfg_path);
     setGridsOutPath(grid_path);
-    createEar(frameid, output_path);
+    createEar(start_id, end_id, output_path);
 
     return 0;
 }

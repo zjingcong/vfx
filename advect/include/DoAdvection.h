@@ -25,17 +25,19 @@
 # include "Advect.h"
 # include "VectorField.h"
 # include "Shape.h"
-# include "ScalarVolumeXform.h"
+# include "Xform.h"
 
 using namespace std;
 using namespace lux;
 
-// levelsets
+// levelsets for cumulo
 # define VOXEL_SIZE 0.003
 # define HALF_NW 80
 
 // stamping
-# define GRID_VOXEL_SIZE 0.008
+# define GRID_VOXEL_SIZE 0.004   // cumulo
+//# define GRID_VOXEL_SIZE 0.003  // ears
+//# define GRID_VOXEL_SIZE 0.008
 # define CM_GRID_VOXEL_SIZE 0.01
 
 // volume property
@@ -43,11 +45,13 @@ using namespace lux;
 # define RHO 16.0
 
 // renderer
-# define LIGHT_GRID_NUM 50
+# define LIGHT_GRID_NUM 150
+// # define LIGHT_GRID_NUM 120
+//# define LIGHT_GRID_NUM 50
 
 // camera
-# define WEIGHT 960
-# define HEIGHT 540
+# define WEIGHT 1920
+# define HEIGHT 1080
 # define NEAR 0.1
 # define FAR 500
 
@@ -103,12 +107,28 @@ void setGridsOutPath(string out)
 }
 
 
-// theta in degree
-// axis should be unit vector
-Vector vecRotation(Vector v, Vector axis, float a)
+// ----------------------------------- Volume Property ------------------------------------------------
+
+void assignVolumeProperty(FloatGrid::Ptr grid,
+                          VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
+                          VolumeColorPtr& finalMatColorPtr,
+                          float density, int grid_type = STANDARD_GRID)
 {
-    float theta = PI * a / 180.0;
-    return v * cos(theta) + axis * (axis * v) * ( 1 - cos(theta)) + (axis ^ v) * sin(theta);
+    VolumeFloatPtr volume;
+    if (grid_type == STANDARD_GRID) {volume = new FloatGridVolume(grid);}
+    else    {volume = new VDBLevelsetsVolume(grid);}
+
+    // create bunny color volume and density volume
+    static Color matColor(1.0, 1.0, 1.0, 1.0);
+    static Color emColor(0.0, 0.0, 0.0, 0.0);
+    static ConstantColor bunnyMatColor(matColor);
+    static ConstantColor bunnyEmColor(emColor);
+    static ConstantFloat rho(density);
+    static DensityVolume bunnyDensity(rho, *volume);
+    // set K
+    finalDensityPtr = &bunnyDensity;
+    finalEmColorPtr = &bunnyEmColor;
+    finalMatColorPtr = &bunnyMatColor;
 }
 
 
@@ -125,8 +145,8 @@ FloatGrid::Ptr loadBunnyPyro(int id, BBox& bbox)
 
     /// ----------------------------------- Create Pyroclasts -----------------------------------------
 
-    float maxNoiseAmp = bunnyGrid->background();    // background = halfwidth * voxelSize
-    float noiseAmp = maxNoiseAmp * id / float(59);
+    float maxNoiseAmp = bunnyGrid->background() - VOXEL_SIZE;    // background = halfwidth * voxelSize
+    float noiseAmp = maxNoiseAmp * id / float(60);
 
     // get pyro parms config
     cout << "Get pyroclasts parms..." << endl;
@@ -181,7 +201,7 @@ void createCMGrid()
     int stepnum = int(cfgAdvectParms.at("stepnum"));
     float offset = cfgAdvectParms.at("offset");
 
-    // generate velocity field from vector noise
+    // generatePyro velocity field from vector noise
     cout << "Create velocity field..." << endl;
     Vector delta_x = offset * Vector(1.0, 1.0, 1.0);
     Vector delta_y = offset * Vector(1.0, 0.0, -1.0);
@@ -208,7 +228,7 @@ void createCMGrid()
         else
         { vecAdvectPtr = new VectorAdvect(X, &velocityField, delta_t); }
 
-        // generate characteristic map grid
+        // generatePyro characteristic map grid
         cout << "Stamping characteristic map " << advectGridName << "..." << endl;
         VectorVolumeToGrid vecAdvectV2Grid(*vecAdvectPtr, CM_GRID_VOXEL_SIZE, advectBBox);
         Vec3fGrid::Ptr vecAdvectGrid = vecAdvectV2Grid.getVolumeGrid();
@@ -260,7 +280,7 @@ void createSingleCMGrid(int id)
     int stepnum = int(cfgAdvectParms.at("stepnum"));
     float offset = cfgAdvectParms.at("offset");
 
-    // generate velocity field from vector noise
+    // generatePyro velocity field from vector noise
     cout << "Create velocity field..." << endl;
     Vector delta_x = offset * Vector(1.0, 1.0, 1.0);
     Vector delta_y = offset * Vector(1.0, 0.0, -1.0);
@@ -296,7 +316,7 @@ void createSingleCMGrid(int id)
     else
     { vecAdvectPtr = new VectorAdvect(X, &velocityField, delta_t); }
 
-    // generate characteristic map grid
+    // generatePyro characteristic map grid
     cout << "Stamping characteristic map " << advectGridName << "..." << endl;
     VectorVolumeToGrid vecAdvectV2Grid(*vecAdvectPtr, CM_GRID_VOXEL_SIZE, advectBBox);
     Vec3fGrid::Ptr vecAdvectGrid = vecAdvectV2Grid.getVolumeGrid();
@@ -388,11 +408,17 @@ void createEarAdvect()
     float transy = cfgAdvectParms.at("transy");
     float transz = cfgAdvectParms.at("transz");
     float radius = cfgAdvectParms.at("radius");
+    float transx1 = cfgAdvectParms.at("transx1");
+    float transy1 = cfgAdvectParms.at("transy1");
+    float transz1 = cfgAdvectParms.at("transz1");
+    float radius1 = cfgAdvectParms.at("radius1");
     int cm_step = int(cfgAdvectParms.at("cmlevel"));
     Sphere sphere(radius);
+    Sphere sphere1(radius1);
     ScalarTranslate cutoutSphere(sphere, Vector(transx, transy, transz));
+    ScalarTranslate cutoutSphere1(sphere1, Vector(transx1, transy1, transz1));
     // get bunny body
-    ImplicitCutout body(bunnyVolume, cutoutSphere);
+    ImplicitCutout body(bunnyVolume, cutoutSphere1);
     // get bunny ear
     ImplicitIntersec ear(bunnyVolume, cutoutSphere);
     // get cm grid name and grid path
@@ -447,30 +473,7 @@ FloatGrid::Ptr loadEarAdvect(BBox& bbox)
 }
 
 
-// ----------------------------------- Volume Rendering ------------------------------------------------
-
-void assignVolumeProperty(FloatGrid::Ptr grid,
-                          VolumeFloatPtr& finalDensityPtr, VolumeColorPtr& finalEmColorPtr,
-                          VolumeColorPtr& finalMatColorPtr, float& K,
-                          float k_value, float density, int grid_type = STANDARD_GRID)
-{
-    VolumeFloatPtr volume;
-    if (grid_type == STANDARD_GRID) {volume = new FloatGridVolume(grid);}
-    else    {volume = new VDBLevelsetsVolume(grid);}
-
-    // create bunny color volume and density volume
-    static Color matColor(1.0, 1.0, 1.0, 1.0);
-    static Color emColor(0.0, 0.0, 0.0, 0.0);
-    static ConstantColor bunnyMatColor(matColor);
-    static ConstantColor bunnyEmColor(emColor);
-    static ConstantFloat rho(density);
-    static DensityVolume bunnyDensity(rho, *volume);
-    // set K
-    K = k_value;
-    finalDensityPtr = &bunnyDensity;
-    finalEmColorPtr = &bunnyEmColor;
-    finalMatColorPtr = &bunnyMatColor;
-}
+// ------------------------------------------ rendering ------------------------------------------------
 
 
 void createBunnyCumulo(int frame_id, string output_path)
@@ -483,21 +486,31 @@ void createBunnyCumulo(int frame_id, string output_path)
     cout << "Output path: " << file_name << endl;
     cout << "--------------------------------------------" << endl;
 
+    // get render parms config
+    cout << "Get render color parms..." << endl;
+    cfg::ColorValueMap cfgColorParms;
+    cfgColorParms = cfg::colorValueParser(renderConfigPath);
+    cout << "get render volume parms..." << endl;
+    cfg::FloatValueMap cfgVolumeParms;
+    cfgVolumeParms = cfg::floatValueParser(renderConfigPath);
+
     /// ----------------------------------- Cumulo Setup ----------------------------------------------
 
     VolumeFloatPtr finalDensityPtr;
     VolumeColorPtr finalEmColorPtr;
     VolumeColorPtr finalMatColorPtr;
     BBox finalBBox;
-    float K;
+    float K = cfgVolumeParms.at("cumulok");
 
     FloatGrid::Ptr bunnyCumuloGrid;
     // first 60 frames: do pyroclasts
     if (frame_id <= 59) {bunnyCumuloGrid = loadBunnyPyro(frame_id, finalBBox);}
     // remaining 60 frames: do advection
     else    {bunnyCumuloGrid = loadBunnyAdvect(frame_id, finalBBox);}
-    // assign color, opacity, density to volume
-    assignVolumeProperty(bunnyCumuloGrid, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, K, 0.8, 100);
+
+    // assign color, density to volume
+    float d = cfgVolumeParms.at("cumulorho");
+    assignVolumeProperty(bunnyCumuloGrid, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, d);
 
     /// ---------------------------------- Lighting & Rendering ---------------------------------------
 
@@ -507,11 +520,11 @@ void createBunnyCumulo(int frame_id, string output_path)
     cout << "Set lights..." << endl;
     Lights myLights;
     // light position
-    Vector keyPos(0.0, 3.0, 0.0);
-    Vector rimPos(0.0, -3.0, 0.0);
+    Vector keyPos(0.0, 2.0, 2.0);
+    Vector rimPos(0.0, -3.0, 3.0);
     // light color
-    Color keyColor(0.0, 0.5, 0.25, 1.0);
-    Color rimColor(0.2, 0.2, 0.0, 1.0);
+    Color keyColor = cfgColorParms.at("cumulokey");
+    Color rimColor = cfgColorParms.at("cumulorim");
     // set lights
     LightSource keyLight(keyPos, keyColor);
     LightSource rimLight(rimPos, rimColor);
@@ -554,23 +567,19 @@ void createBunnyCumulo(int frame_id, string output_path)
 }
 
 
-void createEar(int frame_id, string output_path)
+void createEar(int start, int end, string output_path)
 {
     /// ----------------------------------- Initialization --------------------------------------------
 
-    cout << "frame_id: " << frame_id << endl;
-    char file_name[1024];
-    sprintf(file_name, "%s/jingcoz_hw5_ears.%04d.exr", output_path.c_str(), frame_id);
-    cout << "Output path: " << file_name << endl;
-    cout << "--------------------------------------------" << endl;
-
     float angle = float(360) / 120;	// total frame: 120
-    float theta = frame_id  * angle;
 
     // get render parms config
     cout << "Get render color parms..." << endl;
     cfg::ColorValueMap cfgColorParms;
     cfgColorParms = cfg::colorValueParser(renderConfigPath);
+    cout << "get render volume parms..." << endl;
+    cfg::FloatValueMap cfgVolumeParms;
+    cfgVolumeParms = cfg::floatValueParser(renderConfigPath);
 
     /// ------------------------------------- Ears Setup ----------------------------------------------
 
@@ -578,12 +587,13 @@ void createEar(int frame_id, string output_path)
     VolumeColorPtr finalEmColorPtr;
     VolumeColorPtr finalMatColorPtr;
     BBox finalBBox;
-    float K;
+    float K = cfgVolumeParms.at("eark");
 
     FloatGrid::Ptr earGrid;
     earGrid = loadEarAdvect(finalBBox);
-    // assign color, opacity, density to volume
-    assignVolumeProperty(earGrid, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, K, 0.8, 100);
+    // assign color, density to volume
+    float d = cfgVolumeParms.at("earrho");
+    assignVolumeProperty(earGrid, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, d);
 
     /// ---------------------------------- Lighting & Rendering ---------------------------------------
 
@@ -618,28 +628,37 @@ void createEar(int frame_id, string output_path)
     // get final light volume
     LightVolume lightVolume(myLights, *finalDensityPtr, *finalMatColorPtr, K, light_step_size, light_voxelSize, finalBBox);
 
-    cout << "Set image..." << endl;
-    Image myImg;
-    myImg.reset(WEIGHT, HEIGHT);
-    cout << "Set camera..." << endl;
-    Camera myCamera;
-    Vector originEye(0.0, 0.0, 4.0);
-    Vector lookAt(0.0, 0.0, 0.0);
-    Vector camera_axis(0.0, 1.0, 0.0);
-    Vector eye_new = vecRotation(originEye, camera_axis, theta);
-    Vector view_new = lookAt - eye_new;
-    Vector up(0.0, 1.0, 0.0);
-    myCamera.setFarPlane(NEAR);
-    myCamera.setFarPlane(FAR);
-    myCamera.setEyeViewUp(eye_new, view_new, up);
-    cout << "Start rendering..." << endl;
-    cout << "	 | Render step size: " << step_size << endl;
-    Renderer myRenderer(myImg, myCamera, step_size);
-    myRenderer.render(*finalEmColorPtr, *finalDensityPtr, K, lightVolume, finalBBox, 1);
-    cout << "Rendering complete." << endl;
-    // write into file
-    cout << "Write frame " << frame_id << " into" << file_name << "."<< endl;
-    writeOIIOImage(file_name, myImg);
+    for (int frame_id = start; frame_id <= end; ++frame_id)
+    {
+        float theta = frame_id  * angle;
+        cout << "frame_id: " << frame_id << endl;
+        char file_name[1024];
+        sprintf(file_name, "%s/jingcoz_hw5_ears.%04d.exr", output_path.c_str(), frame_id);
+        cout << "Output path: " << file_name << endl;
+        cout << "--------------------------------------------" << endl;
+        cout << "Set image..." << endl;
+        Image myImg;
+        myImg.reset(WEIGHT, HEIGHT);
+        cout << "Set camera..." << endl;
+        Camera myCamera;
+        Vector originEye(0.0, 0.0, 4.0);
+        Vector lookAt(0.0, 0.0, 0.0);
+        Vector camera_axis(0.0, 1.0, 0.0);
+        Vector eye_new = vecRotation(originEye, camera_axis, theta);
+        Vector view_new = lookAt - eye_new;
+        Vector up(0.0, 1.0, 0.0);
+        myCamera.setFarPlane(NEAR);
+        myCamera.setFarPlane(FAR);
+        myCamera.setEyeViewUp(eye_new, view_new, up);
+        cout << "Start rendering..." << endl;
+        cout << "	 | Render step size: " << step_size << endl;
+        Renderer myRenderer(myImg, myCamera, step_size);
+        myRenderer.render(*finalEmColorPtr, *finalDensityPtr, K, lightVolume, finalBBox, 1);
+        cout << "Rendering complete." << endl;
+        // write into file
+        cout << "Write frame " << frame_id << " into" << file_name << "."<< endl;
+        writeOIIOImage(file_name, myImg);
+    }
 }
 
 # endif

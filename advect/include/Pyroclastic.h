@@ -51,6 +51,12 @@ class PyroVDBLevelsets: public Volume<float>
 
         VolumeFloatPtr levelsetsVolumePtr;
         Noise_t noiseParm;
+
+        Transform::Ptr transform;
+        FloatGrid::Accessor acc;
+        UniformScaleMap::Ptr map;
+        // CPT_RANGE will compute in the range space of the map (world space)
+        openvdb::math::CPT_RANGE<UniformScaleMap, openvdb::math::CD_2ND> cptROp;
 };
 
 # endif

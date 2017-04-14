@@ -114,6 +114,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named test
+
+# Build rule for target.
+test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test
+.PHONY : test
+
+# fast build rule for target.
+test/fast:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
+.PHONY : test/fast
+
+#=============================================================================
 # Target rules for targets named cumulo
 
 # Build rule for target.
@@ -629,6 +642,33 @@ src/Renderer.C.s:
 	$(MAKE) -f CMakeFiles/bunnyFile.dir/build.make CMakeFiles/bunnyFile.dir/src/Renderer.C.s
 .PHONY : src/Renderer.C.s
 
+test.o: test.C.o
+
+.PHONY : test.o
+
+# target to build an object file
+test.C.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.C.o
+.PHONY : test.C.o
+
+test.i: test.C.i
+
+.PHONY : test.i
+
+# target to preprocess a source file
+test.C.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.C.i
+.PHONY : test.C.i
+
+test.s: test.C.s
+
+.PHONY : test.s
+
+# target to generate assembly for a file
+test.C.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.C.s
+.PHONY : test.C.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -637,6 +677,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... cumulo"
 	@echo "... ears"
 	@echo "... bunnyFile"
@@ -685,6 +726,9 @@ help:
 	@echo "... src/Renderer.o"
 	@echo "... src/Renderer.i"
 	@echo "... src/Renderer.s"
+	@echo "... test.o"
+	@echo "... test.i"
+	@echo "... test.s"
 .PHONY : help
 
 

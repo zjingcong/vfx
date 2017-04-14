@@ -5,14 +5,14 @@
 // 	- Rotation
 // ---------------------------------
 
-#ifndef __LUX_SCALARVOLUMEXFORM_H__
-#define __LUX_SCALARVOLUMEXFORM_H__
+# ifndef __LUX_SCALARVOLUMEXFORM_H__
+# define __LUX_SCALARVOLUMEXFORM_H__
+
+# include <cmath>
 
 # include "Volume.h"
 # include "Vector.h"
 # include "math.h"
-
-# define PI 3.14159265
 
 using namespace std;
 
@@ -63,8 +63,8 @@ namespace lux
 				Vector Vr;
 				// f'(x) = f(R(n, -theta)x)
 				// -theta
-				double cos_theta = cos((-theta) * PI / 180.0);
-				double sin_theta = sin((-theta) * PI / 180.0);
+				double cos_theta = cos((-theta) * M_PI / 180.0);
+				double sin_theta = sin((-theta) * M_PI / 180.0);
 				// multipilcation: *, inner product: *, cross product: ^
 				Vr = x * cos_theta + (axis * x) * (1 - cos_theta) * axis + (axis ^ x) * sin_theta;
 				
@@ -79,5 +79,16 @@ namespace lux
 
 }
 
-#endif
 
+// -------------------------------- xform tools ------------------------------------------------
+
+// vector rotation
+// theta in degree
+// axis should be unit vector
+lux::Vector vecRotation(lux::Vector v, lux::Vector axis, float a)
+{
+    float theta = M_PI * a / 180.0;
+    return v * cos(theta) + axis * (axis * v) * ( 1 - cos(theta)) + (axis ^ v) * sin(theta);
+}
+
+#endif

@@ -18,13 +18,13 @@ CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/PolyModel.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/PropertyVolume.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/Pyroclastic.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/Renderer.h
-CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/ScalarVolumeXform.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/Shape.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/Types.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/VDBTool.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/Vector.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/VectorField.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/Volume.h
+CMakeFiles/bunnyFile.dir/bunnyFile.C.o: ../include/Xform.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: /group/dpa/local/openvdb/include/openvdb/Grid.h
 CMakeFiles/bunnyFile.dir/bunnyFile.C.o: /group/dpa/local/openvdb/include/openvdb/Metadata.h

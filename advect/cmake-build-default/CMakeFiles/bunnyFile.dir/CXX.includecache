@@ -79,8 +79,8 @@ VectorField.h
 ../include/VectorField.h
 Shape.h
 ../include/Shape.h
-ScalarVolumeXform.h
-../include/ScalarVolumeXform.h
+Xform.h
+../include/Xform.h
 
 ../include/Grid.h
 openvdb/tools/Interpolation.h
@@ -146,6 +146,8 @@ vector
 
 ../include/Operations.h
 vector
+-
+cmath
 -
 Volume.h
 ../include/Volume.h
@@ -236,14 +238,6 @@ math.h
 vector
 -
 
-../include/ScalarVolumeXform.h
-Volume.h
-../include/Volume.h
-Vector.h
-../include/Vector.h
-math.h
-../include/math.h
-
 ../include/Shape.h
 Volume.h
 ../include/Volume.h
@@ -313,6 +307,16 @@ boost/shared_ptr.hpp
 -
 cstring
 -
+
+../include/Xform.h
+cmath
+-
+Volume.h
+../include/Volume.h
+Vector.h
+../include/Vector.h
+math.h
+../include/math.h
 
 /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 exception

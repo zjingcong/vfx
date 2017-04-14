@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# submit pyro chain render task to DPA queue
+# submit cumulo render task to DPA queue
 
 import os
 import time
@@ -8,13 +8,18 @@ import datetime
 # directory
 QUEUE = "velveeta"
 SCRIPT_ROOT_DIR = "/DPA/jedi/zjingcong/script/"
-EXE_DIR = "/DPA/jedi/zjingcong/pyro/cmake-build-default/pyro"
+PRJ_DIR = "/DPA/jedi/zjingcong/advect"
 OUTPUT_ROOT_DIR = "/DPA/jedi/zjingcong/output"
-FOLDER_HEAD = 'pyroChain'
+FOLDER_HEAD = 'cumulo'
 
 
 start_frame = 0
-task_num = 300
+task_num = 120
+
+command = "{exe} {id} {cfg} {grid} {out}"
+exe = os.path.join(PRJ_DIR, 'cmake-build-default/cumulo')
+cfg = os.path.join(PRJ_DIR, 'config')
+grid = '/DPA/jedi/zjingcong/grids/cumulo_grids'
 
 
 def submitTask():
@@ -38,7 +43,9 @@ def submitTask():
         filepath = os.path.join(script_dir, filename)
         f = open(filepath, 'w')
         f.write("#!/bin/bash\n")
-        f.write("{exe} {frameid} {out}\n".format(exe=EXE_DIR, frameid=frame_id, out=output_dir))
+        cmd = command.format(exe=exe, id=frame_id, out=output_dir,
+                             cfg=cfg, grid=grid)
+        f.write(cmd)
         f.close()
         # chmod for script file
         os.system("chmod 770 {file}".format(file=filepath))

@@ -10,6 +10,7 @@
 #define __LUX_IMPLICITFUNCOPS_H__
 
 # include <vector>
+# include <cmath>
 
 # include "Volume.h"
 # include "Vector.h"
@@ -18,6 +19,8 @@
 
 # define myMax(x, y) (x > y ? x : y)
 # define myMin(x, y) (x < y ? x : y)
+
+using namespace lux;
 
 
 namespace lux

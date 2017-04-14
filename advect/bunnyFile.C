@@ -11,6 +11,8 @@
 using namespace std;
 using namespace lux;
 
+# define EAR_LEVEL_VOXEL_SIZE   0.002
+
 
 void printHelp()
 {
@@ -23,6 +25,7 @@ void printHelp()
     cout << "\t -a: create characteristic map grids" << endl;
     cout << "\t -as [id]: create single characteristic map grid" << endl;
     cout << "\t -e: create ear advection grid" << endl;
+    cout << "\t -nl: create bunny levelsets with narrow halfwidth" << endl;
 }
 
 
@@ -37,7 +40,8 @@ int main(int argc, char* argv[])
         cfg_path = argv[1];
         output_path = argv[2];
         tag = argv[3];
-        if (tag != "-p" && tag != "-l" && tag != "-a" && tag != "-as" && tag != "-e") {printHelp(); exit(0);}
+        if (tag != "-p" && tag != "-l" && tag != "-a" && tag != "-as" && tag != "-e" && tag != "-nl")
+            {printHelp(); exit(0);}
         if (tag == "-as")
         {
             if (argc <= 4)  {cout << "Please input CM id." << endl; printHelp(); exit(0);}
@@ -62,7 +66,7 @@ int main(int argc, char* argv[])
         polyBunny.loadObj(bunnyPath);
         cout << "--------------------------------------------" << endl;
 
-        // generate bunny levelsets
+        // generatePyro bunny levelsets
         cout << "Create levelsets..." << endl;
         cout << "\t | Half Narrow Band: " << VOXEL_SIZE * HALF_NW << endl;
         PolyLevelsets bunnyLevelsets(polyBunny, VOXEL_SIZE, HALF_NW);
@@ -77,6 +81,36 @@ int main(int argc, char* argv[])
         grids.push_back(bunnyGrid);
         writeVDBGrid(grids, levelsetsPath);
     }
+
+    // create levelsets grid
+    if (tag == "-nl")
+    {
+        cout << "Bunny OpenVDB Levelsets Generation" << endl;
+        cout << "====================================" << endl;
+
+        // load bunny model
+        string bunnyPath = "../models/cleanbunny.obj";
+        // load bunny model
+        PolyModel polyBunny;
+        polyBunny.loadObj(bunnyPath);
+        cout << "--------------------------------------------" << endl;
+
+        // generatePyro bunny levelsets
+        cout << "Create levelsets..." << endl;
+        cout << "\t | Half Narrow Band: " << EAR_LEVEL_VOXEL_SIZE * 3 << endl;
+        PolyLevelsets bunnyLevelsets(polyBunny, EAR_LEVEL_VOXEL_SIZE, 3);
+        VDBLevelsetsPtr bunnyGrid = bunnyLevelsets.getVDBLevelsets();
+        bunnyGrid->setGridClass(openvdb::GRID_LEVEL_SET);
+        cout << "--------------------------------------------" << endl;
+
+        // write levelsets grid into file
+        cout << "Writing grid " << levelsetsGridName << " into file: " << levelsetsPath << "..." << endl;
+        bunnyGrid->setName(levelsetsGridName);
+        openvdb::GridPtrVec grids;
+        grids.push_back(bunnyGrid);
+        writeVDBGrid(grids, levelsetsPath);
+    }
+
 
     // create pyroclast grid
     if (tag == "-p")

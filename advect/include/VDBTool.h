@@ -43,11 +43,10 @@ typename openvdb::Grid<T>::Ptr readVDBGrid(string vdbFilePath, string gridName)
     }
     fileR.close();
     openvdb::uninitialize();
-    double exe_time = omp_get_wtime() - start_time;
-    cout << "	 | Elapsed Time: " << exe_time << "s" << endl;
-
     cout << "Generate openVDB grid..." << endl;
     typename openvdb::Grid<T>::Ptr grid = openvdb::gridPtrCast<typename openvdb::Grid<T>>(base);
+    double exe_time = omp_get_wtime() - start_time;
+    cout << "	 | Elapsed Time: " << exe_time << "s" << endl;
 
     return grid;
 }

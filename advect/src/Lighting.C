@@ -12,7 +12,7 @@ using namespace lux;
 const float DSMVolume::eval(const Vector& x) const
 {
 	float T = 0;
-	if (densityVolume.eval(x) > 0)	// don't do this when using openvdb levelsets
+	if (densityVolume.eval(x) > 0)
 	{
 		float s_max = (x - light.getPos()).magnitude();
 		Vector normal = (light.getPos() - x).unitvector();

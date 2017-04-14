@@ -26,3 +26,7 @@ target_include_directories(ears PUBLIC /group/dpa/local/openvdb/include)
 add_executable(cumulo cumulo.C ${SOURCE_FILES})
 target_link_libraries(cumulo Half tbb openvdb OpenImageIO)
 target_include_directories(cumulo PUBLIC /group/dpa/local/openvdb/include)
+
+# add_executable(test test.C)
+# target_link_libraries(test Half tbb openvdb OpenImageIO)
+# target_include_directories(test PUBLIC /group/dpa/local/openvdb/include)
