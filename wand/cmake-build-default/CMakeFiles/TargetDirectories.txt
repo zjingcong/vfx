@@ -1,0 +1,3 @@
+/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles/edit_cache.dir
+/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles/rebuild_cache.dir
+/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles/wand.dir
