@@ -12,6 +12,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/wand.dir/src/PolyModel.C.o"
   "CMakeFiles/wand.dir/src/Pyroclastic.C.o"
   "CMakeFiles/wand.dir/src/Renderer.C.o"
+  "CMakeFiles/wand.dir/src/Wisp.C.o"
   "wand.pdb"
   "wand"
 )

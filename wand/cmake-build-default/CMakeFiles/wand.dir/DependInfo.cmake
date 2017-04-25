@@ -16,6 +16,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/jingcoz/workspace/clion_projects/wand/src/PolyModel.C" "/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles/wand.dir/src/PolyModel.C.o"
   "/home/jingcoz/workspace/clion_projects/wand/src/Pyroclastic.C" "/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles/wand.dir/src/Pyroclastic.C.o"
   "/home/jingcoz/workspace/clion_projects/wand/src/Renderer.C" "/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles/wand.dir/src/Renderer.C.o"
+  "/home/jingcoz/workspace/clion_projects/wand/src/Wisp.C" "/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles/wand.dir/src/Wisp.C.o"
   "/home/jingcoz/workspace/clion_projects/wand/wand.C" "/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles/wand.dir/wand.C.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

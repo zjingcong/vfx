@@ -114,6 +114,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named mytest
+
+# Build rule for target.
+mytest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 mytest
+.PHONY : mytest
+
+# fast build rule for target.
+mytest/fast:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/build
+.PHONY : mytest/fast
+
+#=============================================================================
 # Target rules for targets named wand
 
 # Build rule for target.
@@ -450,6 +463,60 @@ src/Renderer.C.s:
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Renderer.C.s
 .PHONY : src/Renderer.C.s
 
+src/Wisp.o: src/Wisp.C.o
+
+.PHONY : src/Wisp.o
+
+# target to build an object file
+src/Wisp.C.o:
+	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Wisp.C.o
+.PHONY : src/Wisp.C.o
+
+src/Wisp.i: src/Wisp.C.i
+
+.PHONY : src/Wisp.i
+
+# target to preprocess a source file
+src/Wisp.C.i:
+	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Wisp.C.i
+.PHONY : src/Wisp.C.i
+
+src/Wisp.s: src/Wisp.C.s
+
+.PHONY : src/Wisp.s
+
+# target to generate assembly for a file
+src/Wisp.C.s:
+	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Wisp.C.s
+.PHONY : src/Wisp.C.s
+
+test.o: test.C.o
+
+.PHONY : test.o
+
+# target to build an object file
+test.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/test.C.o
+.PHONY : test.C.o
+
+test.i: test.C.i
+
+.PHONY : test.i
+
+# target to preprocess a source file
+test.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/test.C.i
+.PHONY : test.C.i
+
+test.s: test.C.s
+
+.PHONY : test.s
+
+# target to generate assembly for a file
+test.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/test.C.s
+.PHONY : test.C.s
+
 wand.o: wand.C.o
 
 .PHONY : wand.o
@@ -485,6 +552,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... mytest"
 	@echo "... wand"
 	@echo "... src/Camera.o"
 	@echo "... src/Camera.i"
@@ -522,6 +590,12 @@ help:
 	@echo "... src/Renderer.o"
 	@echo "... src/Renderer.i"
 	@echo "... src/Renderer.s"
+	@echo "... src/Wisp.o"
+	@echo "... src/Wisp.i"
+	@echo "... src/Wisp.s"
+	@echo "... test.o"
+	@echo "... test.i"
+	@echo "... test.s"
 	@echo "... wand.o"
 	@echo "... wand.i"
 	@echo "... wand.s"

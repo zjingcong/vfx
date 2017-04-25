@@ -1,0 +1,1 @@
+g++    --std=c++11 -Ofast -fopenmp   CMakeFiles/mytest.dir/test.C.o  -o mytest  -L/group/dpa/local/openvdb/lib -rdynamic -lHalf -ltbb -lopenvdb -lOpenImageIO -Wl,-rpath,/group/dpa/local/openvdb/lib 
