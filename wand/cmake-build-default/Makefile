@@ -406,6 +406,36 @@ src/OIIOFiles.C.s:
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/OIIOFiles.C.s
 .PHONY : src/OIIOFiles.C.s
 
+src/Particles.o: src/Particles.C.o
+
+.PHONY : src/Particles.o
+
+# target to build an object file
+src/Particles.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Particles.C.o
+	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Particles.C.o
+.PHONY : src/Particles.C.o
+
+src/Particles.i: src/Particles.C.i
+
+.PHONY : src/Particles.i
+
+# target to preprocess a source file
+src/Particles.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Particles.C.i
+	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Particles.C.i
+.PHONY : src/Particles.C.i
+
+src/Particles.s: src/Particles.C.s
+
+.PHONY : src/Particles.s
+
+# target to generate assembly for a file
+src/Particles.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Particles.C.s
+	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Particles.C.s
+.PHONY : src/Particles.C.s
+
 src/PerlinNoise.o: src/PerlinNoise.C.o
 
 .PHONY : src/PerlinNoise.o
@@ -620,6 +650,9 @@ help:
 	@echo "... src/OIIOFiles.o"
 	@echo "... src/OIIOFiles.i"
 	@echo "... src/OIIOFiles.s"
+	@echo "... src/Particles.o"
+	@echo "... src/Particles.i"
+	@echo "... src/Particles.s"
 	@echo "... src/PerlinNoise.o"
 	@echo "... src/PerlinNoise.i"
 	@echo "... src/PerlinNoise.s"

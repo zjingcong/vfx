@@ -8,6 +8,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/mytest.dir/src/Matrix.C.o"
   "CMakeFiles/mytest.dir/src/Noise.C.o"
   "CMakeFiles/mytest.dir/src/OIIOFiles.C.o"
+  "CMakeFiles/mytest.dir/src/Particles.C.o"
   "CMakeFiles/mytest.dir/src/PerlinNoise.C.o"
   "CMakeFiles/mytest.dir/src/PolyModel.C.o"
   "CMakeFiles/mytest.dir/src/Pyroclastic.C.o"

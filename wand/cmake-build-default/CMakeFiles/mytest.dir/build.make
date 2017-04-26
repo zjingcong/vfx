@@ -276,9 +276,33 @@ CMakeFiles/mytest.dir/src/OIIOFiles.C.o.provides: CMakeFiles/mytest.dir/src/OIIO
 CMakeFiles/mytest.dir/src/OIIOFiles.C.o.provides.build: CMakeFiles/mytest.dir/src/OIIOFiles.C.o
 
 
+CMakeFiles/mytest.dir/src/Particles.C.o: CMakeFiles/mytest.dir/flags.make
+CMakeFiles/mytest.dir/src/Particles.C.o: ../src/Particles.C
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/mytest.dir/src/Particles.C.o"
+	g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mytest.dir/src/Particles.C.o -c /home/jingcoz/workspace/clion_projects/wand/src/Particles.C
+
+CMakeFiles/mytest.dir/src/Particles.C.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mytest.dir/src/Particles.C.i"
+	g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jingcoz/workspace/clion_projects/wand/src/Particles.C > CMakeFiles/mytest.dir/src/Particles.C.i
+
+CMakeFiles/mytest.dir/src/Particles.C.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mytest.dir/src/Particles.C.s"
+	g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jingcoz/workspace/clion_projects/wand/src/Particles.C -o CMakeFiles/mytest.dir/src/Particles.C.s
+
+CMakeFiles/mytest.dir/src/Particles.C.o.requires:
+
+.PHONY : CMakeFiles/mytest.dir/src/Particles.C.o.requires
+
+CMakeFiles/mytest.dir/src/Particles.C.o.provides: CMakeFiles/mytest.dir/src/Particles.C.o.requires
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Particles.C.o.provides.build
+.PHONY : CMakeFiles/mytest.dir/src/Particles.C.o.provides
+
+CMakeFiles/mytest.dir/src/Particles.C.o.provides.build: CMakeFiles/mytest.dir/src/Particles.C.o
+
+
 CMakeFiles/mytest.dir/src/PerlinNoise.C.o: CMakeFiles/mytest.dir/flags.make
 CMakeFiles/mytest.dir/src/PerlinNoise.C.o: ../src/PerlinNoise.C
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/mytest.dir/src/PerlinNoise.C.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/mytest.dir/src/PerlinNoise.C.o"
 	g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mytest.dir/src/PerlinNoise.C.o -c /home/jingcoz/workspace/clion_projects/wand/src/PerlinNoise.C
 
 CMakeFiles/mytest.dir/src/PerlinNoise.C.i: cmake_force
@@ -302,7 +326,7 @@ CMakeFiles/mytest.dir/src/PerlinNoise.C.o.provides.build: CMakeFiles/mytest.dir/
 
 CMakeFiles/mytest.dir/src/PolyModel.C.o: CMakeFiles/mytest.dir/flags.make
 CMakeFiles/mytest.dir/src/PolyModel.C.o: ../src/PolyModel.C
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/mytest.dir/src/PolyModel.C.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/mytest.dir/src/PolyModel.C.o"
 	g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mytest.dir/src/PolyModel.C.o -c /home/jingcoz/workspace/clion_projects/wand/src/PolyModel.C
 
 CMakeFiles/mytest.dir/src/PolyModel.C.i: cmake_force
@@ -326,7 +350,7 @@ CMakeFiles/mytest.dir/src/PolyModel.C.o.provides.build: CMakeFiles/mytest.dir/sr
 
 CMakeFiles/mytest.dir/src/Pyroclastic.C.o: CMakeFiles/mytest.dir/flags.make
 CMakeFiles/mytest.dir/src/Pyroclastic.C.o: ../src/Pyroclastic.C
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/mytest.dir/src/Pyroclastic.C.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/mytest.dir/src/Pyroclastic.C.o"
 	g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mytest.dir/src/Pyroclastic.C.o -c /home/jingcoz/workspace/clion_projects/wand/src/Pyroclastic.C
 
 CMakeFiles/mytest.dir/src/Pyroclastic.C.i: cmake_force
@@ -350,7 +374,7 @@ CMakeFiles/mytest.dir/src/Pyroclastic.C.o.provides.build: CMakeFiles/mytest.dir/
 
 CMakeFiles/mytest.dir/src/Renderer.C.o: CMakeFiles/mytest.dir/flags.make
 CMakeFiles/mytest.dir/src/Renderer.C.o: ../src/Renderer.C
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/mytest.dir/src/Renderer.C.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/mytest.dir/src/Renderer.C.o"
 	g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mytest.dir/src/Renderer.C.o -c /home/jingcoz/workspace/clion_projects/wand/src/Renderer.C
 
 CMakeFiles/mytest.dir/src/Renderer.C.i: cmake_force
@@ -374,7 +398,7 @@ CMakeFiles/mytest.dir/src/Renderer.C.o.provides.build: CMakeFiles/mytest.dir/src
 
 CMakeFiles/mytest.dir/src/Wisp.C.o: CMakeFiles/mytest.dir/flags.make
 CMakeFiles/mytest.dir/src/Wisp.C.o: ../src/Wisp.C
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/mytest.dir/src/Wisp.C.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/mytest.dir/src/Wisp.C.o"
 	g++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mytest.dir/src/Wisp.C.o -c /home/jingcoz/workspace/clion_projects/wand/src/Wisp.C
 
 CMakeFiles/mytest.dir/src/Wisp.C.i: cmake_force
@@ -407,6 +431,7 @@ mytest_OBJECTS = \
 "CMakeFiles/mytest.dir/src/Matrix.C.o" \
 "CMakeFiles/mytest.dir/src/Noise.C.o" \
 "CMakeFiles/mytest.dir/src/OIIOFiles.C.o" \
+"CMakeFiles/mytest.dir/src/Particles.C.o" \
 "CMakeFiles/mytest.dir/src/PerlinNoise.C.o" \
 "CMakeFiles/mytest.dir/src/PolyModel.C.o" \
 "CMakeFiles/mytest.dir/src/Pyroclastic.C.o" \
@@ -425,6 +450,7 @@ mytest: CMakeFiles/mytest.dir/src/Lighting.C.o
 mytest: CMakeFiles/mytest.dir/src/Matrix.C.o
 mytest: CMakeFiles/mytest.dir/src/Noise.C.o
 mytest: CMakeFiles/mytest.dir/src/OIIOFiles.C.o
+mytest: CMakeFiles/mytest.dir/src/Particles.C.o
 mytest: CMakeFiles/mytest.dir/src/PerlinNoise.C.o
 mytest: CMakeFiles/mytest.dir/src/PolyModel.C.o
 mytest: CMakeFiles/mytest.dir/src/Pyroclastic.C.o
@@ -432,7 +458,7 @@ mytest: CMakeFiles/mytest.dir/src/Renderer.C.o
 mytest: CMakeFiles/mytest.dir/src/Wisp.C.o
 mytest: CMakeFiles/mytest.dir/build.make
 mytest: CMakeFiles/mytest.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking CXX executable mytest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jingcoz/workspace/clion_projects/wand/cmake-build-default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX executable mytest"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mytest.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -449,6 +475,7 @@ CMakeFiles/mytest.dir/requires: CMakeFiles/mytest.dir/src/Lighting.C.o.requires
 CMakeFiles/mytest.dir/requires: CMakeFiles/mytest.dir/src/Matrix.C.o.requires
 CMakeFiles/mytest.dir/requires: CMakeFiles/mytest.dir/src/Noise.C.o.requires
 CMakeFiles/mytest.dir/requires: CMakeFiles/mytest.dir/src/OIIOFiles.C.o.requires
+CMakeFiles/mytest.dir/requires: CMakeFiles/mytest.dir/src/Particles.C.o.requires
 CMakeFiles/mytest.dir/requires: CMakeFiles/mytest.dir/src/PerlinNoise.C.o.requires
 CMakeFiles/mytest.dir/requires: CMakeFiles/mytest.dir/src/PolyModel.C.o.requires
 CMakeFiles/mytest.dir/requires: CMakeFiles/mytest.dir/src/Pyroclastic.C.o.requires

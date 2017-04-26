@@ -148,6 +148,20 @@ ConfigParser.h
 Color.h
 ../include/Color.h
 
+../include/Particles.h
+vector
+-
+Noise.h
+../include/Noise.h
+Grid.h
+../include/Grid.h
+Wisp.h
+../include/Wisp.h
+Volume.h
+../include/Volume.h
+Vector.h
+../include/Vector.h
+
 ../include/PerlinNoise.h
 Vector.h
 ../include/Vector.h
@@ -1061,6 +1075,8 @@ DoWandTest.h
 /home/jingcoz/workspace/clion_projects/wand/DoWandTest.h
 CmdLineFind.h
 /home/jingcoz/workspace/clion_projects/wand/CmdLineFind.h
+Particles.h
+/home/jingcoz/workspace/clion_projects/wand/Particles.h
 
 /home/jingcoz/workspace/clion_projects/wand/src/Camera.C
 Camera.h
@@ -1126,6 +1142,10 @@ pwd.h
 sys/utsname.h
 -
 
+/home/jingcoz/workspace/clion_projects/wand/src/Particles.C
+Particles.h
+/home/jingcoz/workspace/clion_projects/wand/src/Particles.h
+
 /home/jingcoz/workspace/clion_projects/wand/src/PerlinNoise.C
 cstdlib
 -
@@ -1163,6 +1183,8 @@ stdlib.h
 -
 cmath
 -
+omp.h
+/home/jingcoz/workspace/clion_projects/wand/src/omp.h
 Wisp.h
 /home/jingcoz/workspace/clion_projects/wand/src/Wisp.h
 

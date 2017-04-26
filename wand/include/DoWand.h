@@ -14,6 +14,7 @@
 # include "Noise.h"
 # include "PerlinNoise.h"
 # include "Wisp.h"
+# include "Particles.h"
 
 using namespace std;
 using namespace lux;
@@ -53,24 +54,6 @@ void assignVolumeProperty(VolumeFloatPtr volume, VolumeConstProperty pro,
 }
 
 
-/*
-// test
-vector<VolumeFloatPtr> setActiveWisps()
-{
-
-}
-
-
-VolumeFloatPtr createLines(const vector<VolumeFloatPtr>& activeWisps)
-{
-    for (VolumeFloatPtr wisp: activeWisps)
-    {
-
-    }
-}
-*/
-
-
 // ------------------------------------------ rendering ------------------------------------------------
 
 
@@ -87,41 +70,16 @@ void createWispLines(int frame_id, string output_path)
 
     /// ------------------------------------- Wisp Setup ----------------------------------------------
 
-    FractalSum<PerlinNoiseGustavson> FSPN1;
-    FractalSum<PerlinNoiseGustavson> FSPN2;
-
-    Noise_t FSPN1Parms;
-    Noise_t FSPN2Parms;
-    // id 383
-    FSPN2Parms.octaves = 1.9;
-    FSPN2Parms.frequency = 1.5343;
-    FSPN2Parms.fjump = 2.5;
-
-    // guide particle parms
-    // FSPN1Parms.P = Vector(0.0, 0.0, 0.0);
-    // FSPN1Parms.frequency = 1.52032;
-
-
-    WispParms wispParameters;
-    wispParameters.clump = 2.0;
-    wispParameters.FSPN1 = &FSPN1;
-    wispParameters.FSPN2 = &FSPN2;
-    wispParameters.dot_num = 5000000;
-    wispParameters.offset = Vector(0.0, 0.0, 0.0);
-
     cout << "Create wisp grid..." << endl;
     FloatGrid::Ptr wispGrid = FloatGrid::create(0.0);
     Transform::Ptr xform = wispGrid -> transformPtr();
     xform = Transform::createLinearTransform(WISP_VOXEL_SIZE);
     wispGrid -> setTransform(xform);
-    cout << "Stamp wisps..." << endl;
-    for (int i = 0; i < 2; ++ i)
-    {
-        FSPN1Parms.P = Vector(0.0, 0.0, 4.0 * i);
-        FSPN1.setParameters(FSPN1Parms);
-        FSPN2.setParameters(FSPN2Parms);
-        SingleGuideWisp wisp(wispParameters, wispGrid);
-    }
+
+    WispCloud wispCloud(5);
+    wispCloud.spendTime(frame_id);
+    wispCloud.stampWispCloudGrid(wispGrid);
+
     BBox wispBBox = getGridBBox<FloatTree>(wispGrid);
     cout << "	 | Wisp bounding box: " << wispBBox.min() << " " << wispBBox.max() << endl;
     FloatGridVolume wispVolume(wispGrid);

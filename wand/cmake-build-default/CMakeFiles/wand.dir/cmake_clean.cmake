@@ -8,6 +8,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/wand.dir/src/Matrix.C.o"
   "CMakeFiles/wand.dir/src/Noise.C.o"
   "CMakeFiles/wand.dir/src/OIIOFiles.C.o"
+  "CMakeFiles/wand.dir/src/Particles.C.o"
   "CMakeFiles/wand.dir/src/PerlinNoise.C.o"
   "CMakeFiles/wand.dir/src/PolyModel.C.o"
   "CMakeFiles/wand.dir/src/Pyroclastic.C.o"
