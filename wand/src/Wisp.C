@@ -7,14 +7,17 @@
 using namespace lux;
 
 
-SingleGuideWisp::SingleGuideWisp(Noise& n, WispParms& w, float s):
-        guideParticle(n), wisp_parms(w), voxelSize(s), dot_num(w.dot_num)
+SingleGuideWisp::SingleGuideWisp(WispParms& w, float s):
+        wisp_parms(w), guideParticle(w.FSPN1), FSPN2(w.FSPN2), voxelSize(s), dot_num(w.dot_num)
 {
+    // get parms
+    FSPN1Parms = guideParticle->getNoiseParameters();
+    FSPN2Parms = FSPN2->getNoiseParameters();
     // create noise grid with specified voxel size
-    myGrid = FloatGrid::create(0.0);
-    xform = myGrid -> transformPtr();
+    wispGrid = FloatGrid::create(0.0);
+    xform = wispGrid -> transformPtr();
     xform = Transform::createLinearTransform(voxelSize);
-    myGrid -> setTransform(xform);
+    wispGrid -> setTransform(xform);
 
     createWispDots();
 }
@@ -25,7 +28,7 @@ void SingleGuideWisp::burnDot(Vector xw)
     Vec3s xw_pos(xw.X(), xw.Y(), xw.Z());
     Coord ijk = xform -> worldToIndexNodeCentered(xw_pos);
     int i = ijk.x();    int j = ijk.y();    int k = ijk.z();
-    FloatGrid::Accessor accessor = myGrid -> getAccessor();
+    FloatGrid::Accessor accessor = wispGrid -> getAccessor();
 
     float opacity = wisp_parms.opacity;
     float value;
@@ -78,6 +81,11 @@ void SingleGuideWisp::createDot()
     double x = 2 * drand48() - 1;
     double y = 2 * drand48() - 1;
     double z = 2 * drand48() - 1;
+    // create offset
+    Vector offset = wisp_parms.offset;
+    x += offset.X();
+    y += offset.Y();
+    z += offset.Z();
     // move to surface of a sphere
     Vector xyz(x, y, z);
     double radius = xyz.magnitude();
@@ -85,10 +93,9 @@ void SingleGuideWisp::createDot()
     double ys = y / radius;
     double zs = z / radius;
     // move off the sphere
-    Noise_t FSPNParms = guideParticle.getNoiseParameters();
     float clump = wisp_parms.clump;
-    double FSPN1scale = pow( 1.0 + FSPNParms.roughness, FSPNParms.octaves - 1.0);
-    double FSPNValue = (guideParticle.eval(xyz) * 2) / FSPN1scale;
+    double FSPN1scale = pow( 1.0 + FSPN1Parms.roughness, FSPN1Parms.octaves - 1.0);
+    double FSPNValue = (guideParticle->eval(xyz) * 2) / FSPN1scale;
     // double FSPNValue = guideParticle.eval(xyz);
     double R = pow(fabs(FSPNValue), clump);
     xs *= R;
@@ -96,19 +103,18 @@ void SingleGuideWisp::createDot()
     zs *= R;
     // transform to world space
     Vector xyzs(xs, ys, zs);
-    Vector P = FSPNParms.P;
-    float pscale = FSPNParms.pscale;
+    Vector P = FSPN1Parms.P;
+    float pscale = FSPN1Parms.pscale;
     Vector xw = xyzs * pscale + P;
     // displace
     float delta_x = wisp_parms.delta_x;
-    Noise* FSPN2 = wisp_parms.FSPN2;
-    Noise_t FSPN2Parms = FSPN2->getNoiseParameters();
     double FSPN2scale = pow(1.0 + FSPN2Parms.roughness, FSPN2Parms.octaves - 1.0);
     Vector xyzs1(xs + delta_x, ys + delta_x, zs + delta_x);
     Vector xyzs2(xs - delta_x, ys - delta_x, zs - delta_x);
     double dx = (FSPN2 -> eval(xyzs)) * 2 / FSPN2scale;
     double dy = (FSPN2 -> eval(xyzs1)) * 2 / FSPN2scale;
     double dz = (FSPN2 -> eval(xyzs2)) * 2 / FSPN2scale;
+    // dx = 0.0;   dy = 0.0;   dz = 0.0;   // test for FSPN1
     // double dx = FSPN2 -> eval(xyzs);
     // double dy = FSPN2 -> eval(xyzs1);
     // double dz = FSPN2 -> eval(xyzs2);
@@ -133,7 +139,7 @@ void SingleGuideWisp::createWispDots()
     int min_i = 1000000;    int max_i = -1000000;
     int min_j = 1000000;    int max_j = -1000000;
     int min_k = 1000000;    int max_k = -1000000;
-    for (FloatGrid::ValueOnIter iter = myGrid -> beginValueOn(); iter; ++iter)
+    for (FloatGrid::ValueOnIter iter = wispGrid -> beginValueOn(); iter; ++iter)
     {
         Coord ijk = iter.getCoord();
         int i = ijk.x();    int j = ijk.y();    int k = ijk.z();
