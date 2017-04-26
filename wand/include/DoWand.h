@@ -101,20 +101,28 @@ void createWispLines(int frame_id, string output_path)
     // FSPN1Parms.P = Vector(0.0, 0.0, 0.0);
     // FSPN1Parms.frequency = 1.52032;
 
-    FSPN1.setParameters(FSPN1Parms);
-    FSPN2.setParameters(FSPN2Parms);
 
     WispParms wispParameters;
     wispParameters.clump = 2.0;
     wispParameters.FSPN1 = &FSPN1;
     wispParameters.FSPN2 = &FSPN2;
     wispParameters.dot_num = 5000000;
-    wispParameters.offset = Vector(0.0, 0.0, 6.0);
+    wispParameters.offset = Vector(0.0, 0.0, 0.0);
 
     cout << "Create wisp grid..." << endl;
-    SingleGuideWisp wisp(wispParameters, WISP_VOXEL_SIZE);
-    FloatGrid::Ptr wispGrid = wisp.getWispGrid();
-    BBox wispBBox = wisp.getBBox();
+    FloatGrid::Ptr wispGrid = FloatGrid::create(0.0);
+    Transform::Ptr xform = wispGrid -> transformPtr();
+    xform = Transform::createLinearTransform(WISP_VOXEL_SIZE);
+    wispGrid -> setTransform(xform);
+    cout << "Stamp wisps..." << endl;
+    for (int i = 0; i < 2; ++ i)
+    {
+        FSPN1Parms.P = Vector(0.0, 0.0, 4.0 * i);
+        FSPN1.setParameters(FSPN1Parms);
+        FSPN2.setParameters(FSPN2Parms);
+        SingleGuideWisp wisp(wispParameters, wispGrid);
+    }
+    BBox wispBBox = getGridBBox<FloatTree>(wispGrid);
     cout << "	 | Wisp bounding box: " << wispBBox.min() << " " << wispBBox.max() << endl;
     FloatGridVolume wispVolume(wispGrid);
 

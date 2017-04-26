@@ -1157,6 +1157,8 @@ stdlib.h
 -
 cmath
 -
+omp.h
+/home/jingcoz/workspace/clion_projects/wand/src/omp.h
 Wisp.h
 /home/jingcoz/workspace/clion_projects/wand/src/Wisp.h
 
