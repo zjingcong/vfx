@@ -1,3 +1,0 @@
-/home/jingcoz/workspace/clion_projects/wedges/cmake-build-default/CMakeFiles/edit_cache.dir
-/home/jingcoz/workspace/clion_projects/wedges/cmake-build-default/CMakeFiles/rebuild_cache.dir
-/home/jingcoz/workspace/clion_projects/wedges/cmake-build-default/CMakeFiles/wedges.dir
