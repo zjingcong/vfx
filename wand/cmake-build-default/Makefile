@@ -139,12 +139,40 @@ wand/fast:
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/build
 .PHONY : wand/fast
 
+myTest.o: myTest.C.o
+
+.PHONY : myTest.o
+
+# target to build an object file
+myTest.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/myTest.C.o
+.PHONY : myTest.C.o
+
+myTest.i: myTest.C.i
+
+.PHONY : myTest.i
+
+# target to preprocess a source file
+myTest.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/myTest.C.i
+.PHONY : myTest.C.i
+
+myTest.s: myTest.C.s
+
+.PHONY : myTest.s
+
+# target to generate assembly for a file
+myTest.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/myTest.C.s
+.PHONY : myTest.C.s
+
 src/Camera.o: src/Camera.C.o
 
 .PHONY : src/Camera.o
 
 # target to build an object file
 src/Camera.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Camera.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Camera.C.o
 .PHONY : src/Camera.C.o
 
@@ -154,6 +182,7 @@ src/Camera.i: src/Camera.C.i
 
 # target to preprocess a source file
 src/Camera.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Camera.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Camera.C.i
 .PHONY : src/Camera.C.i
 
@@ -163,6 +192,7 @@ src/Camera.s: src/Camera.C.s
 
 # target to generate assembly for a file
 src/Camera.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Camera.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Camera.C.s
 .PHONY : src/Camera.C.s
 
@@ -172,6 +202,7 @@ src/Grid.o: src/Grid.C.o
 
 # target to build an object file
 src/Grid.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Grid.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Grid.C.o
 .PHONY : src/Grid.C.o
 
@@ -181,6 +212,7 @@ src/Grid.i: src/Grid.C.i
 
 # target to preprocess a source file
 src/Grid.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Grid.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Grid.C.i
 .PHONY : src/Grid.C.i
 
@@ -190,6 +222,7 @@ src/Grid.s: src/Grid.C.s
 
 # target to generate assembly for a file
 src/Grid.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Grid.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Grid.C.s
 .PHONY : src/Grid.C.s
 
@@ -199,6 +232,7 @@ src/Image.o: src/Image.C.o
 
 # target to build an object file
 src/Image.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Image.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Image.C.o
 .PHONY : src/Image.C.o
 
@@ -208,6 +242,7 @@ src/Image.i: src/Image.C.i
 
 # target to preprocess a source file
 src/Image.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Image.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Image.C.i
 .PHONY : src/Image.C.i
 
@@ -217,6 +252,7 @@ src/Image.s: src/Image.C.s
 
 # target to generate assembly for a file
 src/Image.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Image.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Image.C.s
 .PHONY : src/Image.C.s
 
@@ -226,6 +262,7 @@ src/Levelsets.o: src/Levelsets.C.o
 
 # target to build an object file
 src/Levelsets.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Levelsets.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Levelsets.C.o
 .PHONY : src/Levelsets.C.o
 
@@ -235,6 +272,7 @@ src/Levelsets.i: src/Levelsets.C.i
 
 # target to preprocess a source file
 src/Levelsets.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Levelsets.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Levelsets.C.i
 .PHONY : src/Levelsets.C.i
 
@@ -244,6 +282,7 @@ src/Levelsets.s: src/Levelsets.C.s
 
 # target to generate assembly for a file
 src/Levelsets.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Levelsets.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Levelsets.C.s
 .PHONY : src/Levelsets.C.s
 
@@ -253,6 +292,7 @@ src/Lighting.o: src/Lighting.C.o
 
 # target to build an object file
 src/Lighting.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Lighting.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Lighting.C.o
 .PHONY : src/Lighting.C.o
 
@@ -262,6 +302,7 @@ src/Lighting.i: src/Lighting.C.i
 
 # target to preprocess a source file
 src/Lighting.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Lighting.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Lighting.C.i
 .PHONY : src/Lighting.C.i
 
@@ -271,6 +312,7 @@ src/Lighting.s: src/Lighting.C.s
 
 # target to generate assembly for a file
 src/Lighting.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Lighting.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Lighting.C.s
 .PHONY : src/Lighting.C.s
 
@@ -280,6 +322,7 @@ src/Matrix.o: src/Matrix.C.o
 
 # target to build an object file
 src/Matrix.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Matrix.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Matrix.C.o
 .PHONY : src/Matrix.C.o
 
@@ -289,6 +332,7 @@ src/Matrix.i: src/Matrix.C.i
 
 # target to preprocess a source file
 src/Matrix.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Matrix.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Matrix.C.i
 .PHONY : src/Matrix.C.i
 
@@ -298,6 +342,7 @@ src/Matrix.s: src/Matrix.C.s
 
 # target to generate assembly for a file
 src/Matrix.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Matrix.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Matrix.C.s
 .PHONY : src/Matrix.C.s
 
@@ -307,6 +352,7 @@ src/Noise.o: src/Noise.C.o
 
 # target to build an object file
 src/Noise.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Noise.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Noise.C.o
 .PHONY : src/Noise.C.o
 
@@ -316,6 +362,7 @@ src/Noise.i: src/Noise.C.i
 
 # target to preprocess a source file
 src/Noise.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Noise.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Noise.C.i
 .PHONY : src/Noise.C.i
 
@@ -325,6 +372,7 @@ src/Noise.s: src/Noise.C.s
 
 # target to generate assembly for a file
 src/Noise.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Noise.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Noise.C.s
 .PHONY : src/Noise.C.s
 
@@ -334,6 +382,7 @@ src/OIIOFiles.o: src/OIIOFiles.C.o
 
 # target to build an object file
 src/OIIOFiles.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/OIIOFiles.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/OIIOFiles.C.o
 .PHONY : src/OIIOFiles.C.o
 
@@ -343,6 +392,7 @@ src/OIIOFiles.i: src/OIIOFiles.C.i
 
 # target to preprocess a source file
 src/OIIOFiles.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/OIIOFiles.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/OIIOFiles.C.i
 .PHONY : src/OIIOFiles.C.i
 
@@ -352,6 +402,7 @@ src/OIIOFiles.s: src/OIIOFiles.C.s
 
 # target to generate assembly for a file
 src/OIIOFiles.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/OIIOFiles.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/OIIOFiles.C.s
 .PHONY : src/OIIOFiles.C.s
 
@@ -361,6 +412,7 @@ src/PerlinNoise.o: src/PerlinNoise.C.o
 
 # target to build an object file
 src/PerlinNoise.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/PerlinNoise.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/PerlinNoise.C.o
 .PHONY : src/PerlinNoise.C.o
 
@@ -370,6 +422,7 @@ src/PerlinNoise.i: src/PerlinNoise.C.i
 
 # target to preprocess a source file
 src/PerlinNoise.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/PerlinNoise.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/PerlinNoise.C.i
 .PHONY : src/PerlinNoise.C.i
 
@@ -379,6 +432,7 @@ src/PerlinNoise.s: src/PerlinNoise.C.s
 
 # target to generate assembly for a file
 src/PerlinNoise.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/PerlinNoise.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/PerlinNoise.C.s
 .PHONY : src/PerlinNoise.C.s
 
@@ -388,6 +442,7 @@ src/PolyModel.o: src/PolyModel.C.o
 
 # target to build an object file
 src/PolyModel.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/PolyModel.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/PolyModel.C.o
 .PHONY : src/PolyModel.C.o
 
@@ -397,6 +452,7 @@ src/PolyModel.i: src/PolyModel.C.i
 
 # target to preprocess a source file
 src/PolyModel.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/PolyModel.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/PolyModel.C.i
 .PHONY : src/PolyModel.C.i
 
@@ -406,6 +462,7 @@ src/PolyModel.s: src/PolyModel.C.s
 
 # target to generate assembly for a file
 src/PolyModel.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/PolyModel.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/PolyModel.C.s
 .PHONY : src/PolyModel.C.s
 
@@ -415,6 +472,7 @@ src/Pyroclastic.o: src/Pyroclastic.C.o
 
 # target to build an object file
 src/Pyroclastic.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Pyroclastic.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Pyroclastic.C.o
 .PHONY : src/Pyroclastic.C.o
 
@@ -424,6 +482,7 @@ src/Pyroclastic.i: src/Pyroclastic.C.i
 
 # target to preprocess a source file
 src/Pyroclastic.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Pyroclastic.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Pyroclastic.C.i
 .PHONY : src/Pyroclastic.C.i
 
@@ -433,6 +492,7 @@ src/Pyroclastic.s: src/Pyroclastic.C.s
 
 # target to generate assembly for a file
 src/Pyroclastic.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Pyroclastic.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Pyroclastic.C.s
 .PHONY : src/Pyroclastic.C.s
 
@@ -442,6 +502,7 @@ src/Renderer.o: src/Renderer.C.o
 
 # target to build an object file
 src/Renderer.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Renderer.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Renderer.C.o
 .PHONY : src/Renderer.C.o
 
@@ -451,6 +512,7 @@ src/Renderer.i: src/Renderer.C.i
 
 # target to preprocess a source file
 src/Renderer.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Renderer.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Renderer.C.i
 .PHONY : src/Renderer.C.i
 
@@ -460,6 +522,7 @@ src/Renderer.s: src/Renderer.C.s
 
 # target to generate assembly for a file
 src/Renderer.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Renderer.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Renderer.C.s
 .PHONY : src/Renderer.C.s
 
@@ -469,6 +532,7 @@ src/Wisp.o: src/Wisp.C.o
 
 # target to build an object file
 src/Wisp.C.o:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Wisp.C.o
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Wisp.C.o
 .PHONY : src/Wisp.C.o
 
@@ -478,6 +542,7 @@ src/Wisp.i: src/Wisp.C.i
 
 # target to preprocess a source file
 src/Wisp.C.i:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Wisp.C.i
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Wisp.C.i
 .PHONY : src/Wisp.C.i
 
@@ -487,35 +552,9 @@ src/Wisp.s: src/Wisp.C.s
 
 # target to generate assembly for a file
 src/Wisp.C.s:
+	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/src/Wisp.C.s
 	$(MAKE) -f CMakeFiles/wand.dir/build.make CMakeFiles/wand.dir/src/Wisp.C.s
 .PHONY : src/Wisp.C.s
-
-test.o: test.C.o
-
-.PHONY : test.o
-
-# target to build an object file
-test.C.o:
-	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/test.C.o
-.PHONY : test.C.o
-
-test.i: test.C.i
-
-.PHONY : test.i
-
-# target to preprocess a source file
-test.C.i:
-	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/test.C.i
-.PHONY : test.C.i
-
-test.s: test.C.s
-
-.PHONY : test.s
-
-# target to generate assembly for a file
-test.C.s:
-	$(MAKE) -f CMakeFiles/mytest.dir/build.make CMakeFiles/mytest.dir/test.C.s
-.PHONY : test.C.s
 
 wand.o: wand.C.o
 
@@ -554,6 +593,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... mytest"
 	@echo "... wand"
+	@echo "... myTest.o"
+	@echo "... myTest.i"
+	@echo "... myTest.s"
 	@echo "... src/Camera.o"
 	@echo "... src/Camera.i"
 	@echo "... src/Camera.s"
@@ -593,9 +635,6 @@ help:
 	@echo "... src/Wisp.o"
 	@echo "... src/Wisp.i"
 	@echo "... src/Wisp.s"
-	@echo "... test.o"
-	@echo "... test.i"
-	@echo "... test.s"
 	@echo "... wand.o"
 	@echo "... wand.i"
 	@echo "... wand.s"

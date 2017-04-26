@@ -42,10 +42,8 @@ string
 Color.h
 ../include/Color.h
 
-../include/DoWand.h
+../include/DoWandTest.h
 iostream
--
-vector
 -
 Types.h
 ../include/Types.h
@@ -1056,6 +1054,14 @@ iosfwd
 string
 -
 
+/home/jingcoz/workspace/clion_projects/wand/myTest.C
+iostream
+-
+DoWandTest.h
+/home/jingcoz/workspace/clion_projects/wand/DoWandTest.h
+CmdLineFind.h
+/home/jingcoz/workspace/clion_projects/wand/CmdLineFind.h
+
 /home/jingcoz/workspace/clion_projects/wand/src/Camera.C
 Camera.h
 /home/jingcoz/workspace/clion_projects/wand/src/Camera.h
@@ -1159,12 +1165,4 @@ cmath
 -
 Wisp.h
 /home/jingcoz/workspace/clion_projects/wand/src/Wisp.h
-
-/home/jingcoz/workspace/clion_projects/wand/wand.C
-iostream
--
-DoWand.h
-/home/jingcoz/workspace/clion_projects/wand/DoWand.h
-CmdLineFind.h
-/home/jingcoz/workspace/clion_projects/wand/CmdLineFind.h
 

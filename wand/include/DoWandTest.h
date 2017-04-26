@@ -1,8 +1,7 @@
-# ifndef __DOWAND_H__
-# define __DOWAND_H__
+# ifndef __DOWANDTEST_H__
+# define __DOWANDTEST_H__
 
 # include <iostream>
-# include <vector>
 
 # include "Types.h"
 # include "Parms.h"
@@ -53,28 +52,10 @@ void assignVolumeProperty(VolumeFloatPtr volume, VolumeConstProperty pro,
 }
 
 
-/*
-// test
-vector<VolumeFloatPtr> setActiveWisps()
-{
-
-}
-
-
-VolumeFloatPtr createLines(const vector<VolumeFloatPtr>& activeWisps)
-{
-    for (VolumeFloatPtr wisp: activeWisps)
-    {
-
-    }
-}
-*/
-
-
 // ------------------------------------------ rendering ------------------------------------------------
 
 
-void createWispLines(int frame_id, string output_path)
+void testCreateWispLines(int frame_id, string output_path)
 {
     /// ----------------------------------- Initialization --------------------------------------------
 
@@ -96,10 +77,10 @@ void createWispLines(int frame_id, string output_path)
     FSPN2Parms.octaves = 1.9;
     FSPN2Parms.frequency = 1.5343;
     FSPN2Parms.fjump = 2.5;
+    // FSPN2Parms.translate = Vector(0.0, frame_id * 0.1, 0.0);
 
-    // guide particle parms
-    // FSPN1Parms.P = Vector(0.0, 0.0, 0.0);
     // FSPN1Parms.frequency = 1.52032;
+    FSPN1Parms.translate = Vector(0.0, frame_id * 0.1, 0.0);
 
     FSPN1.setParameters(FSPN1Parms);
     FSPN2.setParameters(FSPN2Parms);
