@@ -1,23 +1,40 @@
 
 # include <stdlib.h>
 # include <cmath>
+# include "omp.h"
 
 # include "Wisp.h"
 
 using namespace lux;
 
 
+// create a new grid
 SingleGuideWisp::SingleGuideWisp(WispParms& w, float s):
-        wisp_parms(w), guideParticle(w.FSPN1), FSPN2(w.FSPN2), voxelSize(s), dot_num(w.dot_num)
+        wisp_parms(w), guideParticle(w.FSPN1), FSPN2(w.FSPN2), dot_num(w.dot_num)
 {
+    voxelSize = Vec3s(s, s, s);
     // get parms
     FSPN1Parms = guideParticle->getNoiseParameters();
     FSPN2Parms = FSPN2->getNoiseParameters();
     // create noise grid with specified voxel size
     wispGrid = FloatGrid::create(0.0);
     xform = wispGrid -> transformPtr();
-    xform = Transform::createLinearTransform(voxelSize);
+    xform = Transform::createLinearTransform(s);
     wispGrid -> setTransform(xform);
+
+    createWispDots();
+}
+
+
+// burn dot on a given grid
+SingleGuideWisp::SingleGuideWisp(WispParms& w, FloatGrid::Ptr g):
+        wisp_parms(w), guideParticle(w.FSPN1), FSPN2(w.FSPN2), dot_num(w.dot_num), wispGrid(g)
+{
+    voxelSize = wispGrid->voxelSize();
+    // get parms
+    FSPN1Parms = guideParticle->getNoiseParameters();
+    FSPN2Parms = FSPN2->getNoiseParameters();
+    xform = wispGrid->transformPtr();
 
     createWispDots();
 }
@@ -25,7 +42,7 @@ SingleGuideWisp::SingleGuideWisp(WispParms& w, float s):
 
 void SingleGuideWisp::burnDot(Vector xw)
 {
-    Vec3s xw_pos(xw.X(), xw.Y(), xw.Z());
+    Vec3s xw_pos(float(xw.X()), float(xw.Y()), float(xw.Z()));
     Coord ijk = xform -> worldToIndexNodeCentered(xw_pos);
     int i = ijk.x();    int j = ijk.y();    int k = ijk.z();
     FloatGrid::Accessor accessor = wispGrid -> getAccessor();
@@ -33,44 +50,50 @@ void SingleGuideWisp::burnDot(Vector xw)
     float opacity = wisp_parms.opacity;
     float value;
     Coord iijjkk;
-    float w = voxelSize;
-    float weight0 = (1 - w) * (1 - w) * (1 - w);
-    float weight1 = w * (1 - w) * (1 - w);
-    float weight2 = w * w * (1 - w);
-    float weight3 = w * w * w;
+    float wx = voxelSize.x();
+    float wy = voxelSize.y();
+    float wz = voxelSize.z();
+    float weight0 = (1 - wx) * (1 - wy) * (1 - wz);
+    float weight1 = wx * (1 - wy) * (1 - wz);
+    float weight2 = (1 - wx) * wy * (1 - wz);
+    float weight3 = (1 - wx) * (1 - wy) * wz;
+    float weight4 = wx * wy * (1 - wz);
+    float weight5 = wx * (1 - wy) * wz;
+    float weight6 = (1 - wx) * wy * wz;
+    float weight7 = wx * wy * wz;
     // # pragma omp critical
     // {
     // i, j, k
     value = accessor.getValue(ijk);
-    accessor.setValue(ijk, value + opacity * weight0);  // (1 - w) * (1 - w) * (1 - w)
+    accessor.setValue(ijk, value + opacity * weight0);  // (1 - wx) * (1 - wy) * (1 - wz)
     // i+1, j, k
     iijjkk = Coord(i + 1, j, k);
     value = accessor.getValue(iijjkk);
-    accessor.setValue(iijjkk, value + opacity * weight1); // w * (1 - w) * (1 - w)
+    accessor.setValue(iijjkk, value + opacity * weight1); // wx * (1 - wy) * (1 - wz)
     // i, j+1, k
     iijjkk = Coord(i, j + 1, k);
     value = accessor.getValue(iijjkk);
-    accessor.setValue(iijjkk, value + opacity * weight1); // (1 - w) * w * (1 - w)
+    accessor.setValue(iijjkk, value + opacity * weight2); // (1 - wx) * wy * (1 - wz)
     // i, j, k+1
     iijjkk = Coord(i, j, k + 1);
     value = accessor.getValue(iijjkk);
-    accessor.setValue(iijjkk, value + opacity * weight1); // (1 - w) * (1 - w) * w
+    accessor.setValue(iijjkk, value + opacity * weight3); // (1 - wx) * (1 - wy) * wz
     // i+1, j+1, k
     iijjkk = Coord(i + 1, j + 1, k);
     value = accessor.getValue(iijjkk);
-    accessor.setValue(iijjkk, value + opacity * weight2);   // w * w * (1 - w)
+    accessor.setValue(iijjkk, value + opacity * weight4);   // wx * wy * (1 - wz)
     // i+1, j, k+1
     iijjkk = Coord(i + 1, j, k + 1);
     value = accessor.getValue(iijjkk);
-    accessor.setValue(iijjkk, value + opacity * weight2);   // w * (1 - w) * w
+    accessor.setValue(iijjkk, value + opacity * weight5);   // wx * (1 - wy) * wz
     // i, j+1, k+1
     iijjkk = Coord(i, j + 1, k + 1);
     value = accessor.getValue(iijjkk);
-    accessor.setValue(iijjkk, value + opacity * weight2);   // (1 - w) * w * w
+    accessor.setValue(iijjkk, value + opacity * weight6);   // (1 - wx) * wy * wz
     // i+1, j+1, k+1
     iijjkk = Coord(i + 1, j + 1, k + 1);
     value = accessor.getValue(iijjkk);
-    accessor.setValue(iijjkk, value + opacity * weight3);   // w * w * w
+    accessor.setValue(iijjkk, value + opacity * weight7);   // wx * wy * wz
     // }
 }
 
@@ -129,12 +152,14 @@ void SingleGuideWisp::createDot()
 
 void SingleGuideWisp::createWispDots()
 {
+    double start_time = omp_get_wtime();
     // # pragma omp parallel for
     for (int i = 0; i < dot_num; i++)
     {
-        createDot();
+            createDot();
     }
-
+    double exe_time = omp_get_wtime() - start_time;
+    std::cout << "	 | Elapsed Time: " << exe_time << "s" << std::endl;
     // get wisp bbox
     int min_i = 1000000;    int max_i = -1000000;
     int min_j = 1000000;    int max_j = -1000000;

@@ -36,8 +36,10 @@ struct WispParms
 class SingleGuideWisp
 {
     public:
-        // 5 million: 5000000
+        // create a new grid
         SingleGuideWisp(WispParms& w, float s);
+        // burn dot on a given grid
+        SingleGuideWisp(WispParms& w, FloatGrid::Ptr g);
         ~SingleGuideWisp() {}
 
         FloatGrid::Ptr getWispGrid()    {return wispGrid;}
@@ -47,13 +49,11 @@ class SingleGuideWisp
         WispParms& wisp_parms;
         Noise* guideParticle;   // guide particle
         Noise* FSPN2;
-        float voxelSize;
         int dot_num;
-
         Noise_t FSPN1Parms;
         Noise_t FSPN2Parms;
-        Vector P;   // guide particle position
         FloatGrid::Ptr wispGrid;
+        Vec3s voxelSize;
         Transform::Ptr xform;
         BBox wispBBox;
 
