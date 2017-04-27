@@ -44,7 +44,7 @@ class WispCloud
     private:
         int particle_num;
 
-        std::map<int, WispParms> wispParmsMap;
+        std::map<int, WispParms*> wispParmsMap;
         Cloud cloud;
 
         void initialize();

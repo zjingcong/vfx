@@ -24,7 +24,7 @@ using namespace lux;
 // renderer
 # define LIGHT_GRID_NUM 50
 // voxel size
-# define WISP_VOXEL_SIZE 0.015
+# define WISP_VOXEL_SIZE 0.04
 
 // camera
 # define WEIGHT 860
@@ -132,7 +132,7 @@ void createWispLines(int frame_id, string output_path)
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(10.0, 0.0, 0.0);
+    Vector eye(23.0, 0.0, 0.0);
     Vector view(-1.0, 0.0, 0.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);

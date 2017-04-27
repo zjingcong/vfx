@@ -17,13 +17,18 @@ int main(int argc, char* argv[])
 
     WispCloud wispCloud(5);
     // test particles
-    for (int i = 0; i < 20; ++i)
-    {
-        wispCloud.spendTime();
-        cout << "time_step: " << i << endl;
-        wispCloud.testSys();
-        cout << "---------------------" << endl;
-    }
+//    for (int i = 0; i < 20; ++i)
+//    {
+//        wispCloud.spendTime();
+//        cout << "time_step: " << i << endl;
+//        wispCloud.testSys();
+//        cout << "---------------------" << endl;
+//    }
+
+    wispCloud.spendTime(1);
+    cout << "time_step: " << 1 << endl;
+    wispCloud.testSys();
+    cout << "---------------------" << endl;
 
     return 0;
 }
