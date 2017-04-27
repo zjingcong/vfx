@@ -109,11 +109,6 @@ void SingleGuideWisp::createDot()
     x += offset.X();
     y += offset.Y();
     z += offset.Z();
-    // create scale
-    Vector scale1 = wisp_parms.scale1;
-    x *= scale1.X();
-    y *= scale1.Y();
-    z *= scale1.Z();
     // move to surface of a sphere
     Vector xyz(x, y, z);
     double radius = xyz.magnitude();
@@ -142,10 +137,7 @@ void SingleGuideWisp::createDot()
     double dx = (FSPN2 -> eval(xyzs)) * 2 / FSPN2scale;
     double dy = (FSPN2 -> eval(xyzs1)) * 2 / FSPN2scale;
     double dz = (FSPN2 -> eval(xyzs2)) * 2 / FSPN2scale;
-    // double dx = FSPN2 -> eval(xyzs);
-    // double dy = FSPN2 -> eval(xyzs1);
-    // double dz = FSPN2 -> eval(xyzs2);
-    float dscale = wisp_parms.dscale;
+    float dscale = wisp_parms.dscale * float(pow(xyzs.magnitude() * pscale, wisp_parms.exp));
     Vector dxyz(dx, dy, dz);
     Vector D = dxyz * dscale;
     xw += D;

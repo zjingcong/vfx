@@ -21,7 +21,7 @@ VolumeConstProperty setVolumeConstProperty()
 {
     VolumeConstProperty property;
     property.matColor = Color(0.0, 1.0, 1.0, 1.0);
-    property.emColor = Color(0.2, 1.0, 1.0, 1.0);
+    property.emColor = Color(0.4, 8.0, 8.0, 1.0);
     property.rho = 0.6;
     property.K = 0.3;
 

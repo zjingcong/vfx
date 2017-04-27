@@ -1,11 +1,11 @@
 
 import os
 
-frame_num = 30
+frame_num = 13
 
 cwd = os.getcwd()
 exe_path = os.path.join(cwd, 'cmake-build-default', 'mytest')
-out_path = os.path.join(cwd, 'output')
+out_path = os.path.join(cwd, 'output', 'wisp_cloud_test_1')
 log_path = os.path.join(cwd, 'log', 'generateWisps.log')
 
 for frame_id in xrange(frame_num):

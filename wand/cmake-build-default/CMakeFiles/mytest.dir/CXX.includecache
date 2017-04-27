@@ -10,61 +10,7 @@
 Vector.h
 ../include/Vector.h
 
-../include/CmdLineFind.h
-vector
--
-map
--
-string
--
-sstream
--
-iostream
--
-cstdlib
--
-Vector.h
-../include/Vector.h
-
 ../include/Color.h
-
-../include/ConfigParser.h
-vector
--
-map
--
-iostream
--
-fstream
--
-string
--
-Color.h
-../include/Color.h
-
-../include/DoWandTest.h
-iostream
--
-Types.h
-../include/Types.h
-Parms.h
-../include/Parms.h
-Camera.h
-../include/Camera.h
-Color.h
-../include/Color.h
-Renderer.h
-../include/Renderer.h
-OIIOFiles.h
-../include/OIIOFiles.h
-Vector.h
-../include/Vector.h
-Noise.h
-../include/Noise.h
-PerlinNoise.h
-../include/PerlinNoise.h
-Wisp.h
-../include/Wisp.h
 
 ../include/Grid.h
 openvdb/tools/Interpolation.h
@@ -142,12 +88,6 @@ math.h
 Color.h
 ../include/Color.h
 
-../include/Parms.h
-ConfigParser.h
-../include/ConfigParser.h
-Color.h
-../include/Color.h
-
 ../include/Particles.h
 vector
 -
@@ -161,6 +101,8 @@ Volume.h
 ../include/Volume.h
 Vector.h
 ../include/Vector.h
+Randomm.h
+../include/Randomm.h
 
 ../include/PerlinNoise.h
 Vector.h
@@ -219,6 +161,12 @@ VectorField.h
 ../include/VectorField.h
 Levelsets.h
 ../include/Levelsets.h
+
+../include/Randomm.h
+cmath
+-
+Vector.h
+../include/Vector.h
 
 ../include/Renderer.h
 Types.h
@@ -1069,14 +1017,10 @@ string
 -
 
 /home/jingcoz/workspace/clion_projects/wand/myTest.C
-iostream
--
-DoWandTest.h
-/home/jingcoz/workspace/clion_projects/wand/DoWandTest.h
-CmdLineFind.h
-/home/jingcoz/workspace/clion_projects/wand/CmdLineFind.h
-Particles.h
-/home/jingcoz/workspace/clion_projects/wand/Particles.h
+Randomm.h
+/home/jingcoz/workspace/clion_projects/wand/Randomm.h
+Randomm.h
+/home/jingcoz/workspace/clion_projects/wand/Randomm.h
 
 /home/jingcoz/workspace/clion_projects/wand/src/Camera.C
 Camera.h

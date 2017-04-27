@@ -19,7 +19,7 @@ struct WispParms
         delta_x(5),
         dot_num(5000000),
         offset(Vector(0.0, 0.0, 0.0)),
-        scale1(Vector(1.0, 1.0, 1.0))
+        exp(1.5)
         {}
 
     float corr;
@@ -29,7 +29,7 @@ struct WispParms
     float delta_x;
     int dot_num;
     Vector offset;  // random location offset
-    Vector scale1;  // scale for FSPN1
+    float exp;  // displacement exponent
     Noise* FSPN1;   // guide particle
     Noise* FSPN2;
 };

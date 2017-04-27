@@ -17,7 +17,7 @@ namespace cfg
     typedef map<string, float> FloatValueMap;
     typedef map<string, lux::Color> ColorValueMap;
 
-    FloatValueMap floatValueParser(string cfgFileName)
+    inline FloatValueMap floatValueParser(string cfgFileName)
     {
         ifstream cfgFile(cfgFileName, std::ios::in);
         if (!cfgFile.is_open())
@@ -51,7 +51,7 @@ namespace cfg
     }
 
 
-    ColorValueMap colorValueParser(string cfgFileName)
+    inline ColorValueMap colorValueParser(string cfgFileName)
     {
         ifstream cfgFile(cfgFileName, std::ios::in);
         if (!cfgFile.is_open())

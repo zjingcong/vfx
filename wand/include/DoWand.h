@@ -24,7 +24,7 @@ using namespace lux;
 // renderer
 # define LIGHT_GRID_NUM 50
 // voxel size
-# define WISP_VOXEL_SIZE 0.04
+# define WISP_VOXEL_SIZE 0.02
 
 // camera
 # define WEIGHT 860
@@ -76,7 +76,7 @@ void createWispLines(int frame_id, string output_path)
     xform = Transform::createLinearTransform(WISP_VOXEL_SIZE);
     wispGrid -> setTransform(xform);
 
-    WispCloud wispCloud(5);
+    WispCloud wispCloud(10, 0.8, Vector(0.0, 0.0, -15.0));
     wispCloud.spendTime(frame_id);
     wispCloud.stampWispCloudGrid(wispGrid);
 
@@ -102,15 +102,15 @@ void createWispLines(int frame_id, string output_path)
     cout << "Set lights..." << endl;
     Lights sceneLights;
     // light position
-    Vector keyPos(0.0, 5.0, 0.0);
+    Vector keyPos(0.0, 10.0, 0.0);
     // Vector rimPos(0.0, -3.0, 3.0);
     // light color
-    Color keyColor = Color(1.5, 1.5, 1.5, 1.0);
+    Color keyColor = Color(5.5, 5.5, 5.5, 1.0);
     // Color rimColor = cfgColorParms.at("cumulorim");
     // set lights
     LightSource keyLight(keyPos, keyColor);
     // LightSource rimLight(rimPos, rimColor);
-    sceneLights.push_back(keyLight);
+    // sceneLights.push_back(keyLight);
     // myLights.push_back(rimLight);
     // get light step size
     float bboxSize_x = (finalBBox.max().x() - finalBBox.min().x());
