@@ -8,9 +8,13 @@
 ## TO DO LIST
 ### wand
   - modify wisp class
-     - add guide particle position
-     - clean wisp class
+     - ~~add more parms: offset (random location offset), exp (displacement exponent)~~
+     - ~~normalize FSPN1 and FSPN2 value~~
+     - ~~clean wisp class~~
   - modify wisps parms
-     - test translate
   - build particle class
-  - create single wisps line
+     - ~~Particle struct: id, lifetime, age, pos, tangent, isActive~~
+     - ~~Cloud: std::map\<int, Particle\>: a collection of particle mapping by particle id~~
+  - build a wisp cloud for our wand!
+     - modify wisp parms
+     - add path: create a path class or struct, and locate guide particle along the path
