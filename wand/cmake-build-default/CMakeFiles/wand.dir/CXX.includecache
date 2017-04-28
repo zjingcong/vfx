@@ -167,6 +167,8 @@ Vector.h
 ../include/Vector.h
 Randomm.h
 ../include/Randomm.h
+Xform.h
+../include/Xform.h
 
 ../include/PerlinNoise.h
 Vector.h
@@ -321,6 +323,16 @@ Noise.h
 ../include/Noise.h
 PerlinNoise.h
 ../include/PerlinNoise.h
+
+../include/Xform.h
+cmath
+-
+Volume.h
+../include/Volume.h
+Vector.h
+../include/Vector.h
+math.h
+../include/math.h
 
 /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 exception

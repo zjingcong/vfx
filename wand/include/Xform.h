@@ -85,7 +85,7 @@ namespace lux
 // vector rotation
 // theta in degree
 // axis should be unit vector
-lux::Vector vecRotation(lux::Vector v, lux::Vector axis, float a)
+inline lux::Vector vecRotation(lux::Vector v, lux::Vector axis, float a)
 {
     float theta = M_PI * a / 180.0;
     return v * cos(theta) + axis * (axis * v) * ( 1 - cos(theta)) + (axis ^ v) * sin(theta);

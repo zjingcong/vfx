@@ -9,6 +9,7 @@
 # include "Volume.h"
 # include "Vector.h"
 # include "Randomm.h"
+# include "Xform.h"
 
 
 using namespace lux;
@@ -39,10 +40,10 @@ typedef std::map<int, Particle> Cloud; // a collection of particles
 class WispCloud
 {
     public:
-        WispCloud(int num, float i, Vector sp);
+        WispCloud(int num, float i, Vector sp, Vector dp, float dpf, int seed);
         ~WispCloud()    {}
 
-        void spendTime(int time = 1);
+        void spendTime(int time,  int update_type);
         void stampWispCloudGrid(FloatGrid::Ptr wispGrid);
         void testSys();
 
@@ -50,6 +51,9 @@ class WispCloud
         int particle_num;
         float interval;
         Vector start_pos;
+        Vector dir;
+        float dp_factor;
+        int seed;
 
         std::map<int, WispParms*> wispParmsMap;
         Cloud cloud;

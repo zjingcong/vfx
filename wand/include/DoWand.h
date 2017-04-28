@@ -76,14 +76,24 @@ void createWispLines(int frame_id, string output_path)
     xform = Transform::createLinearTransform(WISP_VOXEL_SIZE);
     wispGrid -> setTransform(xform);
 
-    WispCloud wispCloud(10, 0.8, Vector(0.0, 0.0, -15.0));
-    wispCloud.spendTime(frame_id);
+    cout << "Create wisp cloud..." << endl;
+    float interval = 0.5;
+    Vector start_pos = Vector(0.0, 0.0, 12.0);
+    Vector dir =  Vector(0.0, 0.0, -1.0);
+    float dp_factor = 0.6;
+    int seed = 0;
+    int wisp_num = 20;
+    WispCloud wispCloud(wisp_num, interval, start_pos, dir, dp_factor, seed);
+    wispCloud.spendTime(frame_id, 0);
     wispCloud.stampWispCloudGrid(wispGrid);
+//    WispCloud wispCloud2(wisp_num, interval, start_pos);
+//    wispCloud2.spendTime(frame_id, 1);
+//    wispCloud2.stampWispCloudGrid(wispGrid);
 
+    // get bbox
     BBox wispBBox = getGridBBox<FloatTree>(wispGrid);
     cout << "	 | Wisp bounding box: " << wispBBox.min() << " " << wispBBox.max() << endl;
     FloatGridVolume wispVolume(wispGrid);
-
     BBox finalBBox = wispBBox;
 
     // set volume property
