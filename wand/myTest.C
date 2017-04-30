@@ -1,6 +1,6 @@
 
 # include <iostream>
-# include "DoWand.h"
+# include "DoWandTest.h"
 # include "CmdLineFind.h"
 # include "Particles.h"
 
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
     string output_path = clf.find("-output", "../output", "output image path");
     int frame_id = clf.find("-id", 0, "frame id");
 
-    createWispLines(frame_id, output_path);
+    createWispLinestest(frame_id, output_path);
 
     return 0;
 }

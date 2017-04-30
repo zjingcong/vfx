@@ -19,7 +19,7 @@ struct WispParms
         delta_x(5),
         dot_num(5000000),
         offset(Vector(0.0, 0.0, 0.0)),
-        exp(1.5)
+        exp(0.0)
         {}
 
     float corr;

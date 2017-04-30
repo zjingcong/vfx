@@ -2,6 +2,7 @@
 # define __PARTICLES_H__
 
 # include <vector>
+# include <cmath>
 
 # include "Noise.h"
 # include "Grid.h"
@@ -40,7 +41,7 @@ typedef std::map<int, Particle> Cloud; // a collection of particles
 class WispCloud
 {
     public:
-        WispCloud(int num, float i, Vector sp, Vector dp, float dpf, int seed);
+        WispCloud(float i, Vector sp, Vector ep, Vector dp, float dpf, int l, int seed);
         ~WispCloud()    {}
 
         void spendTime(int time,  int update_type);
@@ -48,13 +49,15 @@ class WispCloud
         void testSys();
 
     private:
-        int particle_num;
         float interval;
         Vector start_pos;
+        Vector end_pos;
         Vector dir;
         float dp_factor;
+        int life_time;
         int seed;
 
+        int particle_num;
         std::map<int, WispParms*> wispParmsMap;
         Cloud cloud;
 

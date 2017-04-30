@@ -1,7 +1,8 @@
-# ifndef __DOWANDTEST_H__
-# define __DOWANDTEST_H__
+# ifndef __DOWAND_H__
+# define __DOWAND_H__
 
 # include <iostream>
+# include <vector>
 
 # include "Types.h"
 # include "Parms.h"
@@ -13,6 +14,9 @@
 # include "Noise.h"
 # include "PerlinNoise.h"
 # include "Wisp.h"
+# include "Particles.h"
+# include "Path.h"
+# include "DoBoom.h"
 
 using namespace std;
 using namespace lux;
@@ -22,7 +26,7 @@ using namespace lux;
 // renderer
 # define LIGHT_GRID_NUM 50
 // voxel size
-# define WISP_VOXEL_SIZE 0.015
+# define WISP_VOXEL_SIZE 0.02
 
 // camera
 # define WEIGHT 860
@@ -55,7 +59,7 @@ void assignVolumeProperty(VolumeFloatPtr volume, VolumeConstProperty pro,
 // ------------------------------------------ rendering ------------------------------------------------
 
 
-void testCreateWispLines(int frame_id, string output_path)
+void createWispLinestest(int frame_id, string output_path)
 {
     /// ----------------------------------- Initialization --------------------------------------------
 
@@ -68,38 +72,50 @@ void testCreateWispLines(int frame_id, string output_path)
 
     /// ------------------------------------- Wisp Setup ----------------------------------------------
 
-    FractalSum<PerlinNoiseGustavson> FSPN1;
-    FractalSum<PerlinNoiseGustavson> FSPN2;
-
-    Noise_t FSPN1Parms;
-    Noise_t FSPN2Parms;
-    // id 383
-    FSPN2Parms.octaves = 1.9;
-    FSPN2Parms.frequency = 1.5343;
-    FSPN2Parms.fjump = 2.5;
-    // FSPN2Parms.translate = Vector(0.0, frame_id * 0.1, 0.0);
-
-    // FSPN1Parms.frequency = 1.52032;
-    FSPN1Parms.translate = Vector(0.0, frame_id * 0.1, 0.0);
-
-    FSPN1.setParameters(FSPN1Parms);
-    FSPN2.setParameters(FSPN2Parms);
-
-    WispParms wispParameters;
-    wispParameters.clump = 2.0;
-    wispParameters.FSPN1 = &FSPN1;
-    wispParameters.FSPN2 = &FSPN2;
-    wispParameters.dot_num = 5000000;
-    wispParameters.offset = Vector(0.0, 0.0, 6.0);
-
     cout << "Create wisp grid..." << endl;
-    SingleGuideWisp wisp(wispParameters, WISP_VOXEL_SIZE);
-    FloatGrid::Ptr wispGrid = wisp.getWispGrid();
-    BBox wispBBox = wisp.getBBox();
+    FloatGrid::Ptr wispGrid = FloatGrid::create(0.0);
+    Transform::Ptr xform = wispGrid -> transformPtr();
+    xform = Transform::createLinearTransform(WISP_VOXEL_SIZE);
+    wispGrid -> setTransform(xform);
+
+    // testBoom(wispGrid);
+
+    float interval = 0.3;
+
+    cout << "Create guide path..." << endl;
+    vector<Vector> pathPoints;
+    Vector p0(0.0, 0.0, 12.0);  pathPoints.push_back(p0);
+    Vector p1(0.0, 0.0, -12.0);   pathPoints.push_back(p1);
+    GuidePath path(pathPoints);
+    Guideline path_guideline = path.getGuideline();
+
+    cout << "Create wisp cloud..." << endl;
+    for (int i = 0; i < path_guideline.size(); ++i)
+    {
+        if (i > 0)
+        {
+            Guide p = path_guideline[i];
+            Vector start_pos = path_guideline[i-1].pos;
+            Vector end_pos = path_guideline[i].pos;
+            Vector dir = p.tangent;
+            cout << "end_pos: " << end_pos.X() << end_pos.Y() << end_pos.Z() << endl;
+            cout << "dir: " << dir.X() << dir.Y() << dir.Z() << endl;
+            float dp_factor = 0.68;
+            int life_time = 20;
+            int seed = 0;
+            WispCloud wispCloud(interval, start_pos, end_pos, dir, dp_factor, life_time, seed);
+            wispCloud.spendTime(frame_id, 0);
+            wispCloud.stampWispCloudGrid(wispGrid);
+        }
+    }
+
+    // get bbox
+    BBox wispBBox = getGridBBox<FloatTree>(wispGrid);
     cout << "	 | Wisp bounding box: " << wispBBox.min() << " " << wispBBox.max() << endl;
     FloatGridVolume wispVolume(wispGrid);
-
     BBox finalBBox = wispBBox;
+
+    /// ------------------------------------- Property Setup ---------------------------------------------
 
     // set volume property
     VolumeConstProperty pro = setVolumeConstProperty();
@@ -117,15 +133,15 @@ void testCreateWispLines(int frame_id, string output_path)
     cout << "Set lights..." << endl;
     Lights sceneLights;
     // light position
-    Vector keyPos(0.0, 5.0, 0.0);
+    Vector keyPos(0.0, 10.0, 0.0);
     // Vector rimPos(0.0, -3.0, 3.0);
     // light color
-    Color keyColor = Color(1.5, 1.5, 1.5, 1.0);
+    Color keyColor = Color(5.5, 5.5, 5.5, 1.0);
     // Color rimColor = cfgColorParms.at("cumulorim");
     // set lights
     LightSource keyLight(keyPos, keyColor);
     // LightSource rimLight(rimPos, rimColor);
-    sceneLights.push_back(keyLight);
+    // sceneLights.push_back(keyLight);
     // myLights.push_back(rimLight);
     // get light step size
     float bboxSize_x = (finalBBox.max().x() - finalBBox.min().x());
@@ -147,7 +163,7 @@ void testCreateWispLines(int frame_id, string output_path)
     myImg.reset(WEIGHT, HEIGHT);
     cout << "Set camera..." << endl;
     Camera myCamera;
-    Vector eye(10.0, 0.0, 0.0);
+    Vector eye(23.0, 0.0, 0.0);
     Vector view(-1.0, 0.0, 0.0);
     Vector up(0.0, 1.0, 0.0);
     myCamera.setFarPlane(NEAR);

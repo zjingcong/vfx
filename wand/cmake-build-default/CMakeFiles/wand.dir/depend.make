@@ -446,6 +446,7 @@ CMakeFiles/wand.dir/wand.C.o: ../include/Camera.h
 CMakeFiles/wand.dir/wand.C.o: ../include/CmdLineFind.h
 CMakeFiles/wand.dir/wand.C.o: ../include/Color.h
 CMakeFiles/wand.dir/wand.C.o: ../include/ConfigParser.h
+CMakeFiles/wand.dir/wand.C.o: ../include/DoBoom.h
 CMakeFiles/wand.dir/wand.C.o: ../include/DoWand.h
 CMakeFiles/wand.dir/wand.C.o: ../include/Grid.h
 CMakeFiles/wand.dir/wand.C.o: ../include/Image.h
@@ -456,6 +457,7 @@ CMakeFiles/wand.dir/wand.C.o: ../include/OIIOFiles.h
 CMakeFiles/wand.dir/wand.C.o: ../include/Operations.h
 CMakeFiles/wand.dir/wand.C.o: ../include/Parms.h
 CMakeFiles/wand.dir/wand.C.o: ../include/Particles.h
+CMakeFiles/wand.dir/wand.C.o: ../include/Path.h
 CMakeFiles/wand.dir/wand.C.o: ../include/PerlinNoise.h
 CMakeFiles/wand.dir/wand.C.o: ../include/PropertyVolume.h
 CMakeFiles/wand.dir/wand.C.o: ../include/Randomm.h

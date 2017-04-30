@@ -42,7 +42,15 @@ string
 Color.h
 ../include/Color.h
 
-../include/DoWand.h
+../include/DoBoom.h
+Wisp.h
+../include/Wisp.h
+Noise.h
+../include/Noise.h
+PerlinNoise.h
+../include/PerlinNoise.h
+
+../include/DoWandTest.h
 iostream
 -
 vector
@@ -69,6 +77,10 @@ Wisp.h
 ../include/Wisp.h
 Particles.h
 ../include/Particles.h
+Path.h
+../include/Path.h
+DoBoom.h
+../include/DoBoom.h
 
 ../include/Grid.h
 openvdb/tools/Interpolation.h
@@ -155,6 +167,8 @@ Color.h
 ../include/Particles.h
 vector
 -
+cmath
+-
 Noise.h
 ../include/Noise.h
 Grid.h
@@ -167,6 +181,18 @@ Vector.h
 ../include/Vector.h
 Randomm.h
 ../include/Randomm.h
+Xform.h
+../include/Xform.h
+
+../include/Path.h
+vector
+-
+cmath
+-
+Vector.h
+../include/Vector.h
+Xform.h
+../include/Xform.h
 
 ../include/PerlinNoise.h
 Vector.h
@@ -321,6 +347,16 @@ Noise.h
 ../include/Noise.h
 PerlinNoise.h
 ../include/PerlinNoise.h
+
+../include/Xform.h
+cmath
+-
+Volume.h
+../include/Volume.h
+Vector.h
+../include/Vector.h
+math.h
+../include/math.h
 
 /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 exception
@@ -1083,8 +1119,8 @@ string
 /home/jingcoz/workspace/clion_projects/wand/myTest.C
 iostream
 -
-DoWand.h
-/home/jingcoz/workspace/clion_projects/wand/DoWand.h
+DoWandTest.h
+/home/jingcoz/workspace/clion_projects/wand/DoWandTest.h
 CmdLineFind.h
 /home/jingcoz/workspace/clion_projects/wand/CmdLineFind.h
 Particles.h

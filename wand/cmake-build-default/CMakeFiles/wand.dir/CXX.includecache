@@ -42,10 +42,22 @@ string
 Color.h
 ../include/Color.h
 
+../include/DoBoom.h
+Wisp.h
+../include/Wisp.h
+Noise.h
+../include/Noise.h
+PerlinNoise.h
+../include/PerlinNoise.h
+
 ../include/DoWand.h
 iostream
 -
 vector
+-
+map
+-
+string
 -
 Types.h
 ../include/Types.h
@@ -69,6 +81,12 @@ Wisp.h
 ../include/Wisp.h
 Particles.h
 ../include/Particles.h
+Path.h
+../include/Path.h
+DoBoom.h
+../include/DoBoom.h
+Xform.h
+../include/Xform.h
 
 ../include/Grid.h
 openvdb/tools/Interpolation.h
@@ -155,6 +173,8 @@ Color.h
 ../include/Particles.h
 vector
 -
+cmath
+-
 Noise.h
 ../include/Noise.h
 Grid.h
@@ -167,6 +187,16 @@ Vector.h
 ../include/Vector.h
 Randomm.h
 ../include/Randomm.h
+Xform.h
+../include/Xform.h
+
+../include/Path.h
+vector
+-
+cmath
+-
+Vector.h
+../include/Vector.h
 Xform.h
 ../include/Xform.h
 

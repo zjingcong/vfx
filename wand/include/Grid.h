@@ -118,6 +118,9 @@ namespace lux
 	{
 		public:
 			ColorVolumeToGrid(Volume<Color>& f, float s, BBox& bbox);
+			ColorVolumeToGrid(Volume<Color>& f, FloatGrid::Ptr floatGrid);
+			// transform from float grid and color grid should be the same
+			ColorVolumeToGrid(Volume<Color>& f, FloatGrid::Ptr floatGrid, Vec4fGrid::Ptr c);
 			~ColorVolumeToGrid()	{}
 
 			Vec4fGrid::Ptr getVolumeGrid();
@@ -126,11 +129,13 @@ namespace lux
 			Volume<Color>& myVolume;
 			float voxelSize;
 			BBox volumeBBox;
+			FloatGrid::Ptr floatGrid;
 
 			Vec4fGrid::Ptr myGrid;
 			Transform::Ptr transform;
 
 			void createVolumeGrid();
+			void maskVolumeGrid();
 	};
 
 

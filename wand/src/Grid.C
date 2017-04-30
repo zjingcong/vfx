@@ -192,6 +192,36 @@ ColorVolumeToGrid::ColorVolumeToGrid(Volume<Color>& f, float s, BBox& bbox):
 	// set voxel size
 	transform = Transform::createLinearTransform(voxelSize);
 	myGrid -> setTransform(transform);
+
+	createVolumeGrid();
+}
+
+
+ColorVolumeToGrid::ColorVolumeToGrid(Volume<Color>& f, FloatGrid::Ptr floatGrid):
+		myVolume(f), floatGrid(floatGrid)
+{
+	Vec3s voxel = floatGrid->voxelSize();
+	voxelSize = voxel.x();
+	// create the color grid
+	myGrid = Vec4fGrid::create();
+	// get the grid transform
+	transform = myGrid -> transformPtr();
+	// set voxel size
+	transform = Transform::createLinearTransform(voxelSize);
+	myGrid -> setTransform(transform);
+
+	maskVolumeGrid();
+}
+
+
+ColorVolumeToGrid::ColorVolumeToGrid(Volume<Color>& f, FloatGrid::Ptr floatGrid, Vec4fGrid::Ptr c):
+		myVolume(f), floatGrid(floatGrid), myGrid(c)
+{
+	Vec3s voxel = c->voxelSize();
+	voxelSize = voxel.x();
+	transform = myGrid -> transformPtr();
+
+	maskVolumeGrid();
 }
 
 
@@ -228,9 +258,38 @@ void ColorVolumeToGrid::createVolumeGrid()
 }
 
 
+void ColorVolumeToGrid::maskVolumeGrid()
+{
+	double start_time = omp_get_wtime();
+	double exe_time = omp_get_wtime() - start_time;
+	Vec4fGrid::Accessor accessor = myGrid -> getAccessor();
+	// # pragma omp parallel for
+	for (FloatGrid::ValueOnIter iter = floatGrid->beginValueOn(); iter; ++iter )
+	{
+		Coord ijk = iter.getCoord();
+		if (*iter > 0)
+		{
+			Vec4s pre_color = accessor.getValue(ijk);
+			Vec3s gridPointPos = transform -> indexToWorld(ijk);
+			lux::Vector vec(gridPointPos.x(), gridPointPos.y(), gridPointPos.z());
+			Color value = myVolume.eval(vec);
+			Vec4s colorValue;
+			if (pre_color > Vec4s(0.0, 0.0, 0.0, 0.0))
+				{colorValue = (Vec4s(value.X(), value.Y(), value.Z(), value.W()) + pre_color); }
+			else
+				{colorValue = Vec4s(value.X(), value.Y(), value.Z(), value.W());}
+			// # pragma omp critical
+			{
+				accessor.setValue(ijk, colorValue);
+			}
+		}
+	}
+	std::cout << "	 | Elapsed Time: " << exe_time << "s" << std::endl;
+}
+
+
 Vec4fGrid::Ptr ColorVolumeToGrid::getVolumeGrid()
 {
-	createVolumeGrid();
 	return myGrid;
 }
 

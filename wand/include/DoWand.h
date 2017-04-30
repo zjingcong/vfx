@@ -3,6 +3,8 @@
 
 # include <iostream>
 # include <vector>
+# include <map>
+# include <string>
 
 # include "Types.h"
 # include "Parms.h"
@@ -15,6 +17,9 @@
 # include "PerlinNoise.h"
 # include "Wisp.h"
 # include "Particles.h"
+# include "Path.h"
+# include "DoBoom.h"
+# include "Xform.h"
 
 using namespace std;
 using namespace lux;
@@ -24,7 +29,10 @@ using namespace lux;
 // renderer
 # define LIGHT_GRID_NUM 50
 // voxel size
-# define WISP_VOXEL_SIZE 0.02
+# define WISP_VOXEL_SIZE 0.03
+// color
+# define COLOR_ORANGE 0
+# define COLOR_PURPLE 1
 
 // camera
 # define WEIGHT 860
@@ -54,7 +62,15 @@ void assignVolumeProperty(VolumeFloatPtr volume, VolumeConstProperty pro,
 }
 
 
-// ------------------------------------------ rendering ------------------------------------------------
+// ------------------------------------------ Filming ------------------------------------------------
+
+// shot lists(360 frames):
+// frame 00 - 49:
+// frame 50 - 99:
+// frame 240 - 359: advection
+
+int start_shot_1 = 0;
+int start_shot_2 = 50;
 
 
 void createWispLines(int frame_id, string output_path)
@@ -68,33 +84,213 @@ void createWispLines(int frame_id, string output_path)
     cout << "--------------------------------------------" << endl;
 
 
+    /// ------------------------------------- Grid Setup ----------------------------------------------
+
+    map<int, Color> colorMap;
+    colorMap[COLOR_ORANGE] = Color(10.0, 0.8, 2.0, 1.0);
+    colorMap[COLOR_PURPLE] = Color(2.0, 0.8, 10.0, 1.0);
+
+    map<int, FloatGrid::Ptr> wispGridMap;
+    map<int, Vec4fGrid::Ptr> wispColorGridMap;
+    vector<VolumeFloatPtr> volumePtrs;
+    vector<VolumeColorPtr> colorPtrs;
+    vector<BBox> bboxs;
+
+    for (map<int, Color>::iterator it = colorMap.begin(); it != colorMap.end(); ++it)
+    {
+        int colorName = it->first;
+        Color color = it->second;
+
+        cout << "Create wisp grid for color " << colorName << "..." << endl;
+        FloatGrid::Ptr wispGrid = FloatGrid::create(0.0);
+        Transform::Ptr xform = wispGrid -> transformPtr();
+        xform = Transform::createLinearTransform(WISP_VOXEL_SIZE);
+        wispGrid -> setTransform(xform);
+
+        cout << "Create color grid for color " << colorName << "..." << endl;
+        Vec4fGrid::Ptr wispColorGrid = Vec4fGrid::create();
+        Transform::Ptr colorxform = wispColorGrid -> transformPtr();
+        colorxform = Transform::createLinearTransform(WISP_VOXEL_SIZE);
+        wispColorGrid -> setTransform(colorxform);
+
+        wispGridMap[colorName] = wispGrid;
+        wispColorGridMap[colorName] = wispColorGrid;
+    }
+    cout << "--------------------------------------------" << endl;
+
     /// ------------------------------------- Wisp Setup ----------------------------------------------
 
-    cout << "Create wisp grid..." << endl;
-    FloatGrid::Ptr wispGrid = FloatGrid::create(0.0);
-    Transform::Ptr xform = wispGrid -> transformPtr();
-    xform = Transform::createLinearTransform(WISP_VOXEL_SIZE);
-    wispGrid -> setTransform(xform);
+    // ---------------------------------------- do boom -----------------------------------------------
 
+    for (map<int, Color>::iterator it = colorMap.begin(); it != colorMap.end(); ++it)
+    {
+        int colorName = it->first;
+        cout << "Generate grids for color " << colorName << "..." << endl;
+
+        WispParms wispParameters;
+        FractalSum<PerlinNoiseGustavson> FSPN1;
+        FractalSum<PerlinNoiseGustavson> FSPN2;
+
+        Noise_t FSPN1Parms;
+        Noise_t FSPN2Parms;
+
+
+        int total_frame = 30;
+        float offset = 10.0 * (total_frame - frame_id) / total_frame;
+
+        switch (colorName)
+        {
+            case COLOR_ORANGE:
+            {
+                wispParameters.offset = Vector(0.0, 0.0, offset);
+                FSPN1Parms.translate = Vector(0.0, 0.0, -frame_id * 0.5f);
+                break;
+            }
+
+            case COLOR_PURPLE:
+            {
+                wispParameters.offset = Vector(0.0, 0.0, -offset);
+                FSPN1Parms.translate = Vector(0.0, 0.0, frame_id * 0.5f);
+                break;
+            }
+
+            default:
+                return;
+        }
+
+        wispParameters.opacity = 0.008f * frame_id / total_frame + 0.0008f;
+        wispParameters.clump = 1.5 * (total_frame - frame_id) / total_frame;
+        wispParameters.exp = 1.5 * (total_frame - frame_id) / total_frame + 0.5;
+        FSPN2Parms.frequency = 5.5343 + 0.8f * frame_id / total_frame;
+
+        FSPN1Parms.frequency = 0.5325;
+        FSPN1Parms.pscale = 1.5;
+        FSPN2Parms.octaves = 2.2;
+        FSPN2Parms.fjump = 2.5;
+        FSPN2Parms.octaves = 2.2;
+        FSPN1.setParameters(FSPN1Parms);
+        FSPN2.setParameters(FSPN2Parms);
+
+        wispParameters.FSPN1 = &FSPN1;
+        wispParameters.FSPN2 = &FSPN2;
+        wispParameters.dot_num = 5000000;
+        wispParameters.delta_x = 1.5;
+        wispParameters.dscale = 2.0;
+
+        Color color = it->second;
+        FloatGrid::Ptr wispGrid = wispGridMap[colorName];
+        Vec4fGrid::Ptr wispColorGrid = wispColorGridMap[colorName];
+
+        cout << "Stamp grid..." << endl;
+        SingleGuideWisp wisp(wispParameters, wispGrid);
+        // xform->postScale(Vec3s(0.2, 1.0, 0.2));
+        // wispGrid->setTransform(xform);
+
+        cout << "Stamp color grid..." << endl;
+        ConstantColor* colorVolume = new ConstantColor(color);
+        ColorVolumeToGrid cyanWispColorV2G(*colorVolume, wispGrid, wispColorGrid);
+    }
+
+    // ---------------------------------------- do wand -----------------------------------------------
+
+    float interval = 0.3;
     cout << "Create wisp cloud..." << endl;
-    float interval = 0.5;
-    Vector start_pos = Vector(0.0, 0.0, 12.0);
-    Vector dir =  Vector(0.0, 0.0, -1.0);
-    float dp_factor = 0.6;
-    int seed = 0;
-    int wisp_num = 20;
-    WispCloud wispCloud(wisp_num, interval, start_pos, dir, dp_factor, seed);
-    wispCloud.spendTime(frame_id, 0);
-    wispCloud.stampWispCloudGrid(wispGrid);
-//    WispCloud wispCloud2(wisp_num, interval, start_pos);
-//    wispCloud2.spendTime(frame_id, 1);
-//    wispCloud2.stampWispCloudGrid(wispGrid);
+    for (map<int, Color>::iterator it = colorMap.begin(); it != colorMap.end(); ++it)
+    {
+        int colorName = it->first;
+        Color color = it->second;
+        FloatGrid::Ptr wispGrid = wispGridMap[colorName];
+        Vec4fGrid::Ptr wispColorGrid = wispColorGridMap[colorName];
 
-    // get bbox
-    BBox wispBBox = getGridBBox<FloatTree>(wispGrid);
+        vector<Vector> pathPoints;
+        int seed = 0;
+        switch (colorName)
+        {
+            case COLOR_ORANGE:
+            {
+                Vector p0(0.0, 0.0, 12.0);  pathPoints.push_back(p0);
+                Vector p1(0.0, 0.0, 0.0);   pathPoints.push_back(p1);
+                seed = 123;
+                break;
+            }
+
+            case COLOR_PURPLE:
+            {
+                Vector p0(0.0, 0.0, -12.0);  pathPoints.push_back(p0);
+                Vector p1(0.0, 0.0, 0.0);   pathPoints.push_back(p1);
+                seed = 456;
+                break;
+            }
+
+            default:
+                return;
+        }
+
+        GuidePath path(pathPoints);
+        Guideline path_guideline = path.getGuideline();
+        cout << "guide num: " << path_guideline.size() << endl;
+        cout << "Create wisp cloud for color " << colorName << "..." << endl;
+        for (int i = 0; i < path_guideline.size(); ++i)
+        {
+            if (i > 0)
+            {
+                Guide p = path_guideline[i];
+                Vector start_pos = path_guideline[i-1].pos;
+                Vector end_pos = path_guideline[i].pos;
+                Vector dir = p.tangent;
+                float dp_factor = 0.68;
+                int life_time = 20;
+                WispCloud wispCloud(interval, start_pos, end_pos, dir, dp_factor, life_time, seed);
+                wispCloud.spendTime(frame_id, 0);
+                wispCloud.stampWispCloudGrid(wispGrid);
+            }
+        }
+
+        cout << "Stamp color grid..." << endl;
+        ConstantColor* colorVolume = new ConstantColor(color);
+        ColorVolumeToGrid cyanWispColorV2G(*colorVolume, wispGrid, wispColorGrid);
+    }
+
+    cout << "--------------------------------------------" << endl;
+
+    /// ------------------------------------- Composition ----------------------------------------------
+
+    cout << "Grid to volume..." << endl;
+    // grid to volume
+    for (map<int, Color>::iterator it = colorMap.begin(); it != colorMap.end(); ++it)
+    {
+        int colorName = it->first;
+        FloatGrid::Ptr wispGrid = wispGridMap[colorName];
+        Vec4fGrid::Ptr wispColorGrid = wispColorGridMap[colorName];
+
+        VolumeFloatPtr wispVolume = new FloatGridVolume(wispGrid);
+        BBox wispBBox = getGridBBox<FloatTree>(wispGrid);
+        VolumeColorPtr wispColor = new ColorGridVolume(wispColorGrid);
+
+        volumePtrs.push_back(wispVolume);
+        colorPtrs.push_back(wispColor);
+        bboxs.push_back(wispBBox);
+    }
+    cout << "Compositing..." << endl;
+    // union float volume
+    ImplicitUnionList wispVolume(volumePtrs);
+    // union color volume
+    ColorAddList wispColor(colorPtrs);
+    // union bbox
+    BBox wispBBox;
+    for (int i = 0; i < bboxs.size(); ++i)
+    {
+        if (i == 0) {wispBBox = bboxs[0];}
+        else
+        {
+            BBox bbox = bboxs[i];
+            wispBBox.expand(bbox);
+        }
+    }
     cout << "	 | Wisp bounding box: " << wispBBox.min() << " " << wispBBox.max() << endl;
-    FloatGridVolume wispVolume(wispGrid);
     BBox finalBBox = wispBBox;
+
+    /// ------------------------------------- Property Setup ---------------------------------------------
 
     // set volume property
     VolumeConstProperty pro = setVolumeConstProperty();
@@ -103,6 +299,8 @@ void createWispLines(int frame_id, string output_path)
     VolumeColorPtr finalMatColorPtr;
     float K;
     assignVolumeProperty(&wispVolume, pro, finalDensityPtr, finalEmColorPtr, finalMatColorPtr, K);
+
+    finalEmColorPtr = &wispColor;
 
     /// ---------------------------------- Lighting & Rendering ---------------------------------------
 

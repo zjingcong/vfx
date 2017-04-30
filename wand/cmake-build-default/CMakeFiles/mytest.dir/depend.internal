@@ -6,7 +6,8 @@ CMakeFiles/mytest.dir/myTest.C.o
  ../include/CmdLineFind.h
  ../include/Color.h
  ../include/ConfigParser.h
- ../include/DoWand.h
+ ../include/DoBoom.h
+ ../include/DoWandTest.h
  ../include/Grid.h
  ../include/Image.h
  ../include/Lighting.h
@@ -16,6 +17,7 @@ CMakeFiles/mytest.dir/myTest.C.o
  ../include/Operations.h
  ../include/Parms.h
  ../include/Particles.h
+ ../include/Path.h
  ../include/PerlinNoise.h
  ../include/PropertyVolume.h
  ../include/Randomm.h
@@ -24,6 +26,7 @@ CMakeFiles/mytest.dir/myTest.C.o
  ../include/Vector.h
  ../include/Volume.h
  ../include/Wisp.h
+ ../include/Xform.h
  /group/dpa/local/openvdb/include/openvdb/Exceptions.h
  /group/dpa/local/openvdb/include/openvdb/Grid.h
  /group/dpa/local/openvdb/include/openvdb/Platform.h
@@ -255,6 +258,7 @@ CMakeFiles/mytest.dir/src/Particles.C.o
  ../include/Vector.h
  ../include/Volume.h
  ../include/Wisp.h
+ ../include/Xform.h
  /group/dpa/local/openvdb/include/openvdb/Exceptions.h
  /group/dpa/local/openvdb/include/openvdb/Grid.h
  /group/dpa/local/openvdb/include/openvdb/Platform.h

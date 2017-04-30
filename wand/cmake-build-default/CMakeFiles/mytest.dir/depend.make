@@ -5,7 +5,8 @@ CMakeFiles/mytest.dir/myTest.C.o: ../include/Camera.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/CmdLineFind.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/Color.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/ConfigParser.h
-CMakeFiles/mytest.dir/myTest.C.o: ../include/DoWand.h
+CMakeFiles/mytest.dir/myTest.C.o: ../include/DoBoom.h
+CMakeFiles/mytest.dir/myTest.C.o: ../include/DoWandTest.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/Grid.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/Image.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/Lighting.h
@@ -15,6 +16,7 @@ CMakeFiles/mytest.dir/myTest.C.o: ../include/OIIOFiles.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/Operations.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/Parms.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/Particles.h
+CMakeFiles/mytest.dir/myTest.C.o: ../include/Path.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/PerlinNoise.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/PropertyVolume.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/Randomm.h
@@ -23,6 +25,7 @@ CMakeFiles/mytest.dir/myTest.C.o: ../include/Types.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/Vector.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/Volume.h
 CMakeFiles/mytest.dir/myTest.C.o: ../include/Wisp.h
+CMakeFiles/mytest.dir/myTest.C.o: ../include/Xform.h
 CMakeFiles/mytest.dir/myTest.C.o: /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 CMakeFiles/mytest.dir/myTest.C.o: /group/dpa/local/openvdb/include/openvdb/Grid.h
 CMakeFiles/mytest.dir/myTest.C.o: /group/dpa/local/openvdb/include/openvdb/Platform.h
@@ -254,6 +257,7 @@ CMakeFiles/mytest.dir/src/Particles.C.o: ../include/Types.h
 CMakeFiles/mytest.dir/src/Particles.C.o: ../include/Vector.h
 CMakeFiles/mytest.dir/src/Particles.C.o: ../include/Volume.h
 CMakeFiles/mytest.dir/src/Particles.C.o: ../include/Wisp.h
+CMakeFiles/mytest.dir/src/Particles.C.o: ../include/Xform.h
 CMakeFiles/mytest.dir/src/Particles.C.o: /group/dpa/local/openvdb/include/openvdb/Exceptions.h
 CMakeFiles/mytest.dir/src/Particles.C.o: /group/dpa/local/openvdb/include/openvdb/Grid.h
 CMakeFiles/mytest.dir/src/Particles.C.o: /group/dpa/local/openvdb/include/openvdb/Platform.h

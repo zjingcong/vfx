@@ -447,6 +447,7 @@ CMakeFiles/wand.dir/wand.C.o
  ../include/CmdLineFind.h
  ../include/Color.h
  ../include/ConfigParser.h
+ ../include/DoBoom.h
  ../include/DoWand.h
  ../include/Grid.h
  ../include/Image.h
@@ -457,6 +458,7 @@ CMakeFiles/wand.dir/wand.C.o
  ../include/Operations.h
  ../include/Parms.h
  ../include/Particles.h
+ ../include/Path.h
  ../include/PerlinNoise.h
  ../include/PropertyVolume.h
  ../include/Randomm.h
