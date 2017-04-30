@@ -22,7 +22,3 @@ target_include_directories(wand PUBLIC /group/dpa/local/openvdb/include)
 add_executable(mytest myTest.C ${SOURCE_FILES})
 target_link_libraries(mytest Half tbb openvdb OpenImageIO)
 target_include_directories(mytest PUBLIC /group/dpa/local/openvdb/include)
-
-add_executable(file file.C ${SOURCE_FILES})
-target_link_libraries(file Half tbb openvdb OpenImageIO)
-target_include_directories(file PUBLIC /group/dpa/local/openvdb/include)

@@ -68,7 +68,7 @@ void WispCloud::initialize()
         Noise_t FSPN2Parms;
         FSPN1Parms.translate = cloud[j].pos;
         FSPN2Parms.translate = cloud[j].pos;
-        wispParameters->opacity = 0.006f;
+        wispParameters->opacity = 0.009f;
         wispParameters->FSPN1->setParameters(FSPN1Parms);
         wispParameters->FSPN2->setParameters(FSPN2Parms);
         wispParmsMap[j] = wispParameters;

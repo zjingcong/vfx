@@ -1,20 +1,51 @@
 #!/usr/bin/env python
-# submit pyro chain render task to DPA queue
+# submit wand render task to DPA queue
 
 import os
 import time
 import datetime
 
 # directory
-QUEUE = "velveeta"
 SCRIPT_ROOT_DIR = "/DPA/jedi/zjingcong/script/"
-EXE_DIR = "/DPA/jedi/zjingcong/wand/cmake-build-default/mytest"
+EXE_DIR = "/DPA/jedi/zjingcong/wand/cmake-build-default/wand"
 OUTPUT_ROOT_DIR = "/DPA/jedi/zjingcong/output"
 FOLDER_HEAD = 'wand'
 
 
+# frame 0 - 50 (51)
+QUEUE = "velveeta"
 start_frame = 0
-task_num = 300
+task_num = 51
+
+
+# frame 51 - 60 (10)
+# QUEUE = "velveeta"
+# start_frame = 51
+# task_num = 61
+
+
+# frame 61 - 111 (51)
+# QUEUE = "velveeta"
+# start_frame = 61
+# task_num = 112
+
+
+# frame 112 - 178 (67)
+# QUEUE = "velveeta"
+# start_frame = 112
+# task_num = 179
+
+
+# frame 179 - 299 (121)
+# QUEUE = "velveeta"
+# start_frame = 179
+# task_num = 300
+
+
+# frame 300 - 359 (60)
+# QUEUE = "velveeta"
+# start_frame = 300
+# task_num = 360
 
 
 def submitTask():
@@ -54,7 +85,7 @@ def submitTask():
             if script_path.endswith('.sh'):
                 frameid = int(script_path.split('/')[-1].split('-')[1].split('.')[0])
                 print "Submit task for frame {:04d} from script {}...".format(frameid, script_path)
-                # os.system("cqsubmittask {queue} {script}".format(queue=QUEUE, script=script_path))
+                os.system("cqsubmittask {queue} {script}".format(queue=QUEUE, script=script_path))
                 num += 1
 
     print "Submission complete."
