@@ -55,6 +55,10 @@ iostream
 -
 vector
 -
+map
+-
+string
+-
 Types.h
 ../include/Types.h
 Parms.h
@@ -81,6 +85,8 @@ Path.h
 ../include/Path.h
 DoBoom.h
 ../include/DoBoom.h
+Xform.h
+../include/Xform.h
 
 ../include/Grid.h
 openvdb/tools/Interpolation.h

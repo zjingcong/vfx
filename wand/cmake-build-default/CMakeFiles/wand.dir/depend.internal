@@ -447,7 +447,6 @@ CMakeFiles/wand.dir/wand.C.o
  ../include/CmdLineFind.h
  ../include/Color.h
  ../include/ConfigParser.h
- ../include/DoBoom.h
  ../include/DoWand.h
  ../include/Grid.h
  ../include/Image.h
@@ -464,16 +463,21 @@ CMakeFiles/wand.dir/wand.C.o
  ../include/Randomm.h
  ../include/Renderer.h
  ../include/Types.h
+ ../include/VDBTool.h
  ../include/Vector.h
  ../include/Volume.h
  ../include/Wisp.h
  ../include/Xform.h
  /group/dpa/local/openvdb/include/openvdb/Exceptions.h
  /group/dpa/local/openvdb/include/openvdb/Grid.h
+ /group/dpa/local/openvdb/include/openvdb/Metadata.h
  /group/dpa/local/openvdb/include/openvdb/Platform.h
  /group/dpa/local/openvdb/include/openvdb/PlatformConfig.h
  /group/dpa/local/openvdb/include/openvdb/Types.h
+ /group/dpa/local/openvdb/include/openvdb/io/Archive.h
  /group/dpa/local/openvdb/include/openvdb/io/Compression.h
+ /group/dpa/local/openvdb/include/openvdb/io/File.h
+ /group/dpa/local/openvdb/include/openvdb/io/GridDescriptor.h
  /group/dpa/local/openvdb/include/openvdb/math/BBox.h
  /group/dpa/local/openvdb/include/openvdb/math/Coord.h
  /group/dpa/local/openvdb/include/openvdb/math/Hermite.h
@@ -491,6 +495,8 @@ CMakeFiles/wand.dir/wand.C.o
  /group/dpa/local/openvdb/include/openvdb/math/Vec4.h
  /group/dpa/local/openvdb/include/openvdb/metadata/MetaMap.h
  /group/dpa/local/openvdb/include/openvdb/metadata/Metadata.h
+ /group/dpa/local/openvdb/include/openvdb/metadata/StringMetadata.h
+ /group/dpa/local/openvdb/include/openvdb/openvdb.h
  /group/dpa/local/openvdb/include/openvdb/tools/Interpolation.h
  /group/dpa/local/openvdb/include/openvdb/tools/ValueTransformer.h
  /group/dpa/local/openvdb/include/openvdb/tree/InternalNode.h

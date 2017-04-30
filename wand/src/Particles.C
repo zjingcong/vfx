@@ -121,7 +121,7 @@ void WispCloud::spendTime(int delta_time, int update_type)
                     if (wispParameters->opacity < 0.0005f)
                         { wispParameters->opacity = 0.0005f; }
                     else    {wispParameters->opacity *= pow(young, 2.0f);}
-                    wispParameters->dot_num = 550000;
+                    wispParameters->dot_num = 300000;
                     wispParameters->clump = 1.5f;
                     wispParameters->exp = 1.2f;
                     wispParameters->offset = -cloud[i].tangent * 3.0;

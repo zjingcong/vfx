@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
     string output_path = clf.find("-output", "../output", "output image path");
     int frame_id = clf.find("-id", 0, "frame id");
 
-    createWispLinestest(frame_id, output_path);
+    createWispLines(frame_id, output_path);
 
     return 0;
 }

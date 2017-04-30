@@ -89,7 +89,6 @@ namespace lux
 	class FloatVolumeToGrid
 	{
 		public:
-            // create a new grid
             // tag = 0: density stamping
             // tag = 1: light stamping
 			FloatVolumeToGrid(Volume<float>& f, float s, BBox& bbox, int tag = DENSITY_STAMP);
